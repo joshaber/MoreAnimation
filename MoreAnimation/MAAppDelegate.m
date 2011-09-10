@@ -8,13 +8,20 @@
 
 #import "MAAppDelegate.h"
 
+
 @implementation MAAppDelegate
 
-@synthesize window = _window;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
-	// Insert code here to initialize your application
+#pragma mark NSApplicationDelegate
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notification {
+
 }
+
+
+#pragma mark API
+
+@synthesize window;
+@synthesize openGLView;
 
 @end

@@ -7,28 +7,39 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		88D4ACAC141B5D670071E4EE /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = 88D4ACAB141B5D670071E4EE /* test.png */; };
 		88E5CE3B141B3E9600E54623 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88E5CE3A141B3E9600E54623 /* Cocoa.framework */; };
 		88E5CE45141B3E9600E54623 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 88E5CE43141B3E9600E54623 /* InfoPlist.strings */; };
 		88E5CE47141B3E9600E54623 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE46141B3E9600E54623 /* main.m */; };
 		88E5CE4B141B3E9600E54623 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 88E5CE49141B3E9600E54623 /* Credits.rtf */; };
 		88E5CE4E141B3E9600E54623 /* MAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE4D141B3E9600E54623 /* MAAppDelegate.m */; };
 		88E5CE51141B3E9600E54623 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88E5CE4F141B3E9600E54623 /* MainMenu.xib */; };
+		88E5CE59141B408800E54623 /* MALayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE58141B408800E54623 /* MALayer.m */; };
+		88E5CE5B141B40FC00E54623 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88E5CE5A141B40FC00E54623 /* OpenGL.framework */; };
+		88E5CE62141B42B500E54623 /* MAOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE61141B42B500E54623 /* MAOpenGLView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		88D4ACAB141B5D670071E4EE /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		88E5CE36141B3E9600E54623 /* MoreAnimation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoreAnimation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88E5CE3A141B3E9600E54623 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		88E5CE3D141B3E9600E54623 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		88E5CE3E141B3E9600E54623 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		88E5CE3F141B3E9600E54623 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		88E5CE42141B3E9600E54623 /* MoreAnimation-Info.plist */ = {isa = PBXFileReference; path = "MoreAnimation-Info.plist"; sourceTree = "<group>"; };
+		88E5CE42141B3E9600E54623 /* MoreAnimation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MoreAnimation-Info.plist"; sourceTree = "<group>"; };
 		88E5CE44141B3E9600E54623 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		88E5CE46141B3E9600E54623 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		88E5CE48141B3E9600E54623 /* MoreAnimation-Prefix.pch */ = {isa = PBXFileReference; path = "MoreAnimation-Prefix.pch"; sourceTree = "<group>"; };
+		88E5CE48141B3E9600E54623 /* MoreAnimation-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MoreAnimation-Prefix.pch"; sourceTree = "<group>"; };
 		88E5CE4A141B3E9600E54623 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		88E5CE4C141B3E9600E54623 /* MAAppDelegate.h */ = {isa = PBXFileReference; path = MAAppDelegate.h; sourceTree = "<group>"; };
+		88E5CE4C141B3E9600E54623 /* MAAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MAAppDelegate.h; sourceTree = "<group>"; };
 		88E5CE4D141B3E9600E54623 /* MAAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MAAppDelegate.m; sourceTree = "<group>"; };
 		88E5CE50141B3E9600E54623 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		88E5CE57141B408800E54623 /* MALayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MALayer.h; path = Classes/MALayer.h; sourceTree = "<group>"; };
+		88E5CE58141B408800E54623 /* MALayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MALayer.m; path = Classes/MALayer.m; sourceTree = "<group>"; };
+		88E5CE5A141B40FC00E54623 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		88E5CE60141B42B500E54623 /* MAOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAOpenGLView.h; path = Classes/MAOpenGLView.h; sourceTree = "<group>"; };
+		88E5CE61141B42B500E54623 /* MAOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAOpenGLView.m; path = Classes/MAOpenGLView.m; sourceTree = "<group>"; };
+		88E5CE6B141B53F000E54623 /* MALayer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MALayer+Private.h"; path = "Classes/MALayer+Private.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88E5CE5B141B40FC00E54623 /* OpenGL.framework in Frameworks */,
 				88E5CE3B141B3E9600E54623 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,6 +75,7 @@
 		88E5CE39141B3E9600E54623 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				88E5CE5A141B40FC00E54623 /* OpenGL.framework */,
 				88E5CE3A141B3E9600E54623 /* Cocoa.framework */,
 				88E5CE3C141B3E9600E54623 /* Other Frameworks */,
 			);
@@ -86,6 +99,11 @@
 				88E5CE4D141B3E9600E54623 /* MAAppDelegate.m */,
 				88E5CE4F141B3E9600E54623 /* MainMenu.xib */,
 				88E5CE41141B3E9600E54623 /* Supporting Files */,
+				88E5CE57141B408800E54623 /* MALayer.h */,
+				88E5CE58141B408800E54623 /* MALayer.m */,
+				88E5CE6B141B53F000E54623 /* MALayer+Private.h */,
+				88E5CE60141B42B500E54623 /* MAOpenGLView.h */,
+				88E5CE61141B42B500E54623 /* MAOpenGLView.m */,
 			);
 			path = MoreAnimation;
 			sourceTree = "<group>";
@@ -93,6 +111,7 @@
 		88E5CE41141B3E9600E54623 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				88D4ACAB141B5D670071E4EE /* test.png */,
 				88E5CE42141B3E9600E54623 /* MoreAnimation-Info.plist */,
 				88E5CE43141B3E9600E54623 /* InfoPlist.strings */,
 				88E5CE46141B3E9600E54623 /* main.m */,
@@ -155,6 +174,7 @@
 				88E5CE45141B3E9600E54623 /* InfoPlist.strings in Resources */,
 				88E5CE4B141B3E9600E54623 /* Credits.rtf in Resources */,
 				88E5CE51141B3E9600E54623 /* MainMenu.xib in Resources */,
+				88D4ACAC141B5D670071E4EE /* test.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,6 +187,8 @@
 			files = (
 				88E5CE47141B3E9600E54623 /* main.m in Sources */,
 				88E5CE4E141B3E9600E54623 /* MAAppDelegate.m in Sources */,
+				88E5CE59141B408800E54623 /* MALayer.m in Sources */,
+				88E5CE62141B42B500E54623 /* MAOpenGLView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,10 +272,19 @@
 		88E5CE55141B3E9600E54623 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MoreAnimation/MoreAnimation-Prefix.pch";
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				INFOPLIST_FILE = "MoreAnimation/MoreAnimation-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -261,10 +292,19 @@
 		88E5CE56141B3E9600E54623 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MoreAnimation/MoreAnimation-Prefix.pch";
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				INFOPLIST_FILE = "MoreAnimation/MoreAnimation-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -288,6 +328,7 @@
 				88E5CE56141B3E9600E54623 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
