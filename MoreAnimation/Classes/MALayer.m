@@ -16,8 +16,6 @@
 	dispatch_queue_t m_renderQueue;
 }
 
-- (void)displayChildren;
-
 @property (readonly) CGImageRef contentsImage;
 @property (readonly) CGLayerRef contentsLayer;
 
@@ -174,17 +172,6 @@
 	
 	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
 		[sublayer renderInContext:context];
-	}
-}
-
-- (void)displayRecursively {
-	[self displayIfNeeded];
-	[self displayChildren];
-}
-
-- (void)displayChildren {
-	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
-		[sublayer displayRecursively];
 	}
 }
 
