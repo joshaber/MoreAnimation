@@ -11,12 +11,30 @@
 #import <libkern/OSAtomic.h>
 
 @interface MALayer () {
+	/**
+	 * The contents of this layer. This may be any object type needed to render
+	 * the layer efficiently, including a \c CGImageRef or \c CGLayerRef.
+	 *
+	 * Use \c CFGetTypeID() or an \c isKindOfClass: check to determine this
+	 * object's type before attempting to use it.
+	 */
 	id m_contents;
 
+	/**
+	 * A dispatch queue used to serialize rendering operations that need to be
+	 * performed in order.
+	 */
 	dispatch_queue_t m_renderQueue;
 }
 
+/**
+ * The layer's #contents, if it is a \c CGImageRef, or \c NULL otherwise.
+ */
 @property (readonly) CGImageRef contentsImage;
+
+/**
+ * The layer's #contents, if it is a \c CGLayerRef, or \c NULL otherwise.
+ */
 @property (readonly) CGLayerRef contentsLayer;
 
 // publicly readonly
@@ -28,6 +46,8 @@
 
 @implementation MALayer
 
+#pragma mark Lifecycle
+
 - (id)init {
 	self = [super init];
 	if(self == nil) return nil;
@@ -35,16 +55,28 @@
 	m_renderQueue = dispatch_queue_create("MoreAnimation.MALayer", DISPATCH_QUEUE_SERIAL);
 	
 	self.sublayers = [NSMutableArray array];
+	
+	// mark layers as needing display right off the bat, since no content has
+	// yet been rendered
 	self.needsDisplay = YES;
 	
 	return self;
 }
 
-#pragma mark API
+- (void)dealloc {	
+	dispatch_release(m_renderQueue);
+}
+
+#pragma mark Properties
+
+- (CGRect)bounds {
+	return CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
+}
 
 - (id)contents {
   	__block id image = NULL;
 
+	// layer contents should only be read/written from a single thread at a time
 	dispatch_sync(m_renderQueue, ^{
 		image = m_contents;
 	});
@@ -59,6 +91,7 @@
 	
 	CFTypeID typeID = CFGetTypeID(obj);
 
+	// return self.contents if it is a CGImageRef
 	if (typeID == CGImageGetTypeID())
 		return obj;
 	else
@@ -72,6 +105,7 @@
 	
 	CFTypeID typeID = CFGetTypeID(obj);
 
+	// return self.contents if it is a CGLayerRef
 	if (typeID == CGLayerGetTypeID())
 		return obj;
 	else
@@ -79,6 +113,7 @@
 }
 
 - (void)setContents:(id)contents {
+	// layer contents should only be read/written from a single thread at a time
 	dispatch_async(m_renderQueue, ^{
 		m_contents = contents;
 	});
@@ -90,9 +125,7 @@
 @synthesize delegate;
 @synthesize needsDisplay;
 
-- (void)dealloc {	
-	dispatch_release(m_renderQueue);
-}
+#pragma mark Displaying and drawing
 
 - (void)display {
 	CGSize size = self.bounds.size;
@@ -101,7 +134,9 @@
 
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 
-	CGContextRef context = CGBitmapContextCreate(
+	// create a bitmap context suitable for drawing the receiver
+	// this will be used as input to a CGLayer, where we actually draw
+	CGContextRef referenceContext = CGBitmapContextCreate(
 		NULL,
 		width,
 		height,
@@ -111,11 +146,11 @@
 		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
 	);
 
-	CGLayerRef layer = CGLayerCreateWithContext(context, size, NULL);
+	CGLayerRef layer = CGLayerCreateWithContext(referenceContext, size, NULL);
+	CGContextRelease(referenceContext);
 
-	CGContextRef newContext = CGLayerGetContext(layer);
-	CGContextRelease(context);
-	context = newContext;
+	// now pull out the layer's context to actually draw into
+	CGContextRef context = CGLayerGetContext(layer);
 	
 	// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
 	CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
@@ -124,11 +159,13 @@
 
 	CGColorSpaceRelease(colorSpace);
 
+	// invoke delegate's drawing logic, if provided
 	if ([self.delegate respondsToSelector:@selector(drawLayer:inContext:)])
 		[self.delegate drawLayer:self inContext:context];
 	else
 		[self drawInContext:context];
 
+	// store the drawn CGLayer as the cached contents
 	self.contents = (__bridge_transfer id)layer;
 }
 
@@ -136,6 +173,7 @@
   	if (!self.needsDisplay)
 		return;
 	
+	// invoke delegate's display logic, if provided
 	if ([self.delegate respondsToSelector:@selector(displayLayer:)])
 		[self.delegate displayLayer:self];
 	else
@@ -144,11 +182,8 @@
   	self.needsDisplay = NO;
 }
 
-- (void)setNeedsDisplay {
-  	self.needsDisplay = YES;
-}
-
 - (void)drawInContext:(CGContextRef)context {
+  	// FOR TESTING ONLY
 	NSImage *nsImage = [NSImage imageNamed:@"test"];
 	CGContextDrawImage(context, self.bounds, [nsImage CGImageForProposedRect:NULL context:NULL hints:nil]);
 	
@@ -159,27 +194,37 @@
 	CGContextFillRect(context, CGRectMake(70.0f, 70.0f, 100.0f, 100.0f));
 }
 
+- (void)setNeedsDisplay {
+  	self.needsDisplay = YES;
+}
+
+#pragma mark Rendering
+
 - (void)renderInContext:(CGContextRef)context {
   	[self displayIfNeeded];
 
 	CGImageRef image;
 	CGLayerRef layer;
 
+	// draw whichever type of contents the layer has
 	if ((layer = self.contentsLayer))
 		CGContextDrawLayerInRect(context, self.bounds, layer);
 	else if ((image = self.contentsImage))
 		CGContextDrawImage(context, self.bounds, image);
-	else
+	else {
+		// if it's some unrecognized type, just draw directly into the
+		// destination
 		[self drawInContext:context];
+	}
 	
+	// render all sublayers
 	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
+		// TODO: transform CTM to sublayer
 		[sublayer renderInContext:context];
 	}
 }
 
-- (CGRect)bounds {
-	return CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
-}
+#pragma mark Sublayer management
 
 - (void)addSublayer:(MALayer *)layer {
   	[layer removeFromSuperlayer];
