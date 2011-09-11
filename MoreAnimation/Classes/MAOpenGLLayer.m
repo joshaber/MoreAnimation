@@ -86,6 +86,7 @@
 		CGContextRelease(bitmapContext);
 
 		self.contents = texture;
+		[self renderTexture:texture];
 	}
 
 	CGLUnlockContext(CGLContext);
@@ -95,6 +96,7 @@
   	MAOpenGLTexture *texture = self.contentsTexture;
 	if (!texture || texture.CGLContext != context) {
 		[self drawInCGLContext:context pixelFormat:pixelFormat];
+		return;
 	}
 
 	// TODO: need to figure out how to render sublayers appropriately
