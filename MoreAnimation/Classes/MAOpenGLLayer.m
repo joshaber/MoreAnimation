@@ -14,6 +14,8 @@
 @end
 
 @implementation MAOpenGLLayer
+@dynamic contents;
+
 - (MAOpenGLTexture *)contentsTexture {
   	id contents = self.contents;
 	NSAssert([contents isKindOfClass:[MAOpenGLTexture class]], @"MAOpenGLLayer contents should be an MAOpenGLTexture");
@@ -30,7 +32,7 @@
 
 - (void)renderInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat {
   	MAOpenGLTexture *texture = self.contentsTexture;
-	if (!texture || texture.context != context) {
+	if (!texture || texture.CGLContext != context) {
 		[self drawInCGLContext:context pixelFormat:pixelFormat];
 		return;
 	}
