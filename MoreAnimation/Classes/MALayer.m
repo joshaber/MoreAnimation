@@ -108,7 +108,7 @@
 		8,
 		4 * width,
 		colorSpace,
-		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
+		kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast
 	);
 
 	CGContextTranslateCTM(context, 0.0f, size.height);

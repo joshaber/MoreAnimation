@@ -57,7 +57,7 @@
 					8,
 					4 * width,
 					colorSpace,
-					kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
+					kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast
 				);
 
 				CGContextTranslateCTM(bitmapContext, 0.0f, size.height);
@@ -80,7 +80,7 @@
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(bitmapContext));
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, CGBitmapContextGetData(bitmapContext));
 
 		CGContextRelease(bitmapContext);
 
