@@ -18,6 +18,7 @@
 
 - (void)displayChildren;
 - (void)drawQuad;
+- (void)generateTextureFromImage:(CGImageRef)image;
 
 @property (nonatomic, assign) GLuint textureId;
 @property (nonatomic, strong) NSMutableArray *sublayers;
@@ -76,24 +77,14 @@
 }
 
 - (void)display {
-	if(self.textureId == 0) {
-		glGenTextures(1, &textureId);
-	}
-		
 	CGSize size = self.bounds.size;
 	size_t width = (size_t)ceil(size.width);
 	size_t height = (size_t)ceil(size.height);
 
-	glBindTexture(GL_TEXTURE_2D, self.textureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	void *textureData = (void *) malloc(width * height * 4);
-
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 
 	CGContextRef context = CGBitmapContextCreate(
-		textureData,
+		NULL,
 		width,
 		height,
 		8,
@@ -120,10 +111,7 @@
 	CGImageRef image = CGBitmapContextCreateImage(context);
 	CGContextRelease(context);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, textureData);
-
-	[self drawQuad];
-	free(textureData);
+	[self generateTextureFromImage:image];
 
 	self.contents = (__bridge_transfer id)image;
   	self.needsDisplay = NO;
@@ -141,6 +129,39 @@
 
 - (void)setNeedsDisplay {
   	self.needsDisplay = YES;
+}
+
+- (void)generateTextureFromImage:(CGImageRef)image {
+	if(self.textureId == 0) {
+		glGenTextures(1, &textureId);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, self.textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	size_t width = CGImageGetWidth(image);
+	size_t height = CGImageGetHeight(image);
+
+	void *textureData = (void *) malloc(width * height * 4);
+		
+	CGContextRef context = CGBitmapContextCreate(
+		textureData,
+		width,
+		height,
+		8,
+		4 * width,
+		CGImageGetColorSpace(image),
+		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
+	);
+
+	CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
+	CGContextRelease(context);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, textureData);
+	free(textureData);
+
+	[self drawQuad];
 }
 
 - (void)drawInContext:(CGContextRef)context {
