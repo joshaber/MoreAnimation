@@ -63,6 +63,12 @@
 		D0355C5A141D700C0053AF73 /* MAOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAOpenGLView.h; sourceTree = "<group>"; };
 		D0355C5B141D700C0053AF73 /* MAOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAOpenGLView.m; sourceTree = "<group>"; };
 		D0355C6B141D70EE0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		D0918646141D7564005F86FF /* .Base.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Base.xcconfig.swp; sourceTree = "<group>"; };
+		D0918647141D7564005F86FF /* .Debug.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Debug.xcconfig.swp; sourceTree = "<group>"; };
+		D0918648141D7564005F86FF /* .Release.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Release.xcconfig.swp; sourceTree = "<group>"; };
+		D0918649141D7564005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		D091864A141D7564005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		D091864B141D7564005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +99,7 @@
 			children = (
 				D0355C2A141D6FDA0053AF73 /* MoreAnimation */,
 				D0355C40141D6FDA0053AF73 /* MoreAnimationTests */,
+				D0918645141D7564005F86FF /* Configuration */,
 				D0355C23141D6FDA0053AF73 /* Frameworks */,
 				D0355C22141D6FDA0053AF73 /* Products */,
 			);
@@ -181,6 +188,20 @@
 				D0355C5B141D700C0053AF73 /* MAOpenGLView.m */,
 			);
 			name = OpenGL;
+			sourceTree = "<group>";
+		};
+		D0918645141D7564005F86FF /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				D0918646141D7564005F86FF /* .Base.xcconfig.swp */,
+				D0918647141D7564005F86FF /* .Debug.xcconfig.swp */,
+				D0918648141D7564005F86FF /* .Release.xcconfig.swp */,
+				D0918649141D7564005F86FF /* Base.xcconfig */,
+				D091864A141D7564005F86FF /* Debug.xcconfig */,
+				D091864B141D7564005F86FF /* Release.xcconfig */,
+			);
+			name = Configuration;
+			path = ../../Configuration;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -352,26 +373,9 @@
 /* Begin XCBuildConfiguration section */
 		D0355C49141D6FDA0053AF73 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D091864A141D7564005F86FF /* Debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -379,20 +383,10 @@
 		};
 		D0355C4A141D6FDA0053AF73 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D091864B141D7564005F86FF /* Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 			};
 			name = Release;

@@ -34,6 +34,12 @@
 		D0355C99141D71ED0053AF73 /* MoreAnimation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MoreAnimation.framework; path = "/Users/justin/Library/Developer/Xcode/DerivedData/MoreAnimation-fvuzwaxctuyffvfbfdndfhdobdxt/Build/Products/Debug/MoreAnimation.framework"; sourceTree = "<absolute>"; };
 		D0355C9A141D71ED0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		D091863B141D7267005F86FF /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
+		D091863F141D755E005F86FF /* .Base.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Base.xcconfig.swp; sourceTree = "<group>"; };
+		D0918640141D755E005F86FF /* .Debug.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Debug.xcconfig.swp; sourceTree = "<group>"; };
+		D0918641141D755E005F86FF /* .Release.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Release.xcconfig.swp; sourceTree = "<group>"; };
+		D0918642141D755E005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		D0918643141D755E005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		D0918644141D755E005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				D0355C82141D71600053AF73 /* OSXDemo */,
+				D091863E141D755E005F86FF /* Configuration */,
 				D0355C7B141D71600053AF73 /* Frameworks */,
 				D0355C79141D71600053AF73 /* Products */,
 			);
@@ -101,6 +108,20 @@
 				D091863B141D7267005F86FF /* test.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D091863E141D755E005F86FF /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				D091863F141D755E005F86FF /* .Base.xcconfig.swp */,
+				D0918640141D755E005F86FF /* .Debug.xcconfig.swp */,
+				D0918641141D755E005F86FF /* .Release.xcconfig.swp */,
+				D0918642141D755E005F86FF /* Base.xcconfig */,
+				D0918643141D755E005F86FF /* Debug.xcconfig */,
+				D0918644141D755E005F86FF /* Release.xcconfig */,
+			);
+			name = Configuration;
+			path = ../../Configuration;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -204,26 +225,9 @@
 /* Begin XCBuildConfiguration section */
 		D0355C94141D71600053AF73 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D0918643141D755E005F86FF /* Debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -231,20 +235,10 @@
 		};
 		D0355C95141D71600053AF73 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D0918644141D755E005F86FF /* Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -252,10 +246,6 @@
 		D0355C97141D71600053AF73 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/Users/justin/Library/Developer/Xcode/DerivedData/MoreAnimation-fvuzwaxctuyffvfbfdndfhdobdxt/Build/Products/Debug\"",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OSXDemo/OSXDemo-Prefix.pch";
 				INFOPLIST_FILE = "OSXDemo/OSXDemo-Info.plist";
@@ -267,10 +257,6 @@
 		D0355C98141D71600053AF73 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/Users/justin/Library/Developer/Xcode/DerivedData/MoreAnimation-fvuzwaxctuyffvfbfdndfhdobdxt/Build/Products/Debug\"",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OSXDemo/OSXDemo-Prefix.pch";
 				INFOPLIST_FILE = "OSXDemo/OSXDemo-Info.plist";
