@@ -76,6 +76,9 @@
 			CGImageGetColorSpace(image),
 			kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
 		);
+		
+		CGContextTranslateCTM(context, 0, height);
+		CGContextScaleCTM(context, 1, -1);
 
 		CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
 
