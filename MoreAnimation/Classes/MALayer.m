@@ -10,7 +10,6 @@
 #import "MALayer+Private.h"
 
 @interface MALayer ()
-- (void)displaySelf;
 - (void)displayChildren;
 - (void)drawQuad;
 
@@ -51,20 +50,41 @@
 }
 
 - (void)display {
+	if(self.textureId == 0) {
+		glGenTextures(1, &textureId);
+	}
+		
+	self.contextSize = self.bounds.size;
+	
 	CGSize size = self.bounds.size;
 	size_t width = (size_t)ceil(size.width);
+	size_t height = (size_t)ceil(size.height);
+
+	glBindTexture(GL_TEXTURE_2D, self.textureId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	void *textureData = (void *) malloc(width * height * 4);
 
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 
 	CGContextRef context = CGBitmapContextCreate(
-		NULL,
+		textureData,
 		width,
-		(size_t)ceil(size.height),
+		height,
 		8,
 		4 * width,
 		colorSpace,
-		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
+		kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast
 	);
+
+	CGContextTranslateCTM(context, 0.0f, self.contextSize.height);
+	CGContextScaleCTM(context, 1.0f, -1.0f);
+	
+	// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
+	CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
+	CGContextSetFillColorWithColor(context, defaultFillColor);
+	CGColorRelease(defaultFillColor);
 
 	CGColorSpaceRelease(colorSpace);
 
@@ -75,6 +95,11 @@
 	
 	CGImageRef image = CGBitmapContextCreateImage(context);
 	CGContextRelease(context);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei) self.contextSize.width, (GLsizei) self.contextSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+
+	[self drawQuad];
+	free(textureData);
 
 	self.contents = (__bridge_transfer id)image;
   	self.needsDisplay = NO;
@@ -119,51 +144,8 @@
 }
 
 - (void)displayRecursively {
-	[self displaySelf];
+	[self displayIfNeeded];
 	[self displayChildren];
-}
-
-- (void)displaySelf {
-	if(self.textureId == 0) {
-		glGenTextures(1, &textureId);
-	}
-		
-	self.contextSize = self.bounds.size;
-	
-	glBindTexture(GL_TEXTURE_2D, self.textureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	void *textureData = (void *) malloc((size_t) (self.contextSize.width * self.contextSize.height * 4));
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	CGContextRef textureContext = CGBitmapContextCreate(textureData, (size_t) self.contextSize.width, (size_t) self.contextSize.height, 8, (size_t) self.contextSize.width * 4, colorSpace, kCGImageAlphaPremultipliedLast);
-	CGColorSpaceRelease(colorSpace);
-	CGContextTranslateCTM(textureContext, 0.0f, self.contextSize.height);
-	CGContextScaleCTM(textureContext, 1.0f, -1.0f);
-	
-	// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
-	CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
-	CGContextSetFillColorWithColor(textureContext, defaultFillColor);
-		
-	[NSGraphicsContext saveGraphicsState];
-	[NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:textureContext flipped:NO]];
-	
-	if(self.delegate != nil) {
-		[self.delegate drawLayer:self inContext:textureContext];
-	} else {
-		[self drawInContext:textureContext];
-	}
-	
-	[NSGraphicsContext restoreGraphicsState];
-	
-	CGColorRelease(defaultFillColor);
-	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei) self.contextSize.width, (GLsizei) self.contextSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
-	
-	[self drawQuad];
-	
-	CGContextRelease(textureContext);
-	free(textureData);
 }
 
 - (void)drawQuad {	
