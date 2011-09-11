@@ -18,7 +18,7 @@
 
 - (MAOpenGLTexture *)contentsTexture {
   	id contents = self.contents;
-	NSAssert([contents isKindOfClass:[MAOpenGLTexture class]], @"MAOpenGLLayer contents should be an MAOpenGLTexture");
+	NSAssert(!contents || [contents isKindOfClass:[MAOpenGLTexture class]], @"MAOpenGLLayer contents should be an MAOpenGLTexture");
 
 	return contents;
 }
