@@ -116,9 +116,6 @@
 	CGContextRef newContext = CGLayerGetContext(layer);
 	CGContextRelease(context);
 	context = newContext;
-
-	CGContextTranslateCTM(context, 0.0f, size.height);
-	CGContextScaleCTM(context, 1.0f, -1.0f);
 	
 	// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
 	CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
