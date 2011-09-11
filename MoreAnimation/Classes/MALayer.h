@@ -28,6 +28,7 @@
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, readonly) CGRect bounds;
 @property (nonatomic, weak) id<MALayerDelegate> delegate;
+@property (nonatomic, readonly, assign) BOOL needsDisplay;
 
 /**
  * The contents of the layer. Can be set to a \c CGImageRef to display. If not
@@ -37,6 +38,9 @@
 @property (strong) id contents;
 
 @property (nonatomic, readonly, strong) NSMutableArray *sublayers;
-@property (nonatomic, readonly, assign) BOOL needsDisplay;
+@property (nonatomic, readonly, weak) MALayer *superlayer;
+
+- (void)addSublayer:(MALayer *)layer;
+- (void)removeFromSuperlayer;
 
 @end

@@ -23,6 +23,7 @@
 
 // publicly readonly
 @property (nonatomic, readwrite, strong) NSMutableArray *sublayers;
+@property (nonatomic, readwrite, weak) MALayer *superlayer;
 @property (nonatomic, readwrite, assign) BOOL needsDisplay;
 @end
 
@@ -81,6 +82,7 @@
 
 @synthesize frame;
 @synthesize sublayers;
+@synthesize superlayer;
 @synthesize delegate;
 @synthesize needsDisplay;
 
@@ -182,6 +184,18 @@
 
 - (CGRect)bounds {
 	return CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
+}
+
+- (void)addSublayer:(MALayer *)layer {
+  	[layer removeFromSuperlayer];
+
+  	[self.sublayers addObject:layer];
+	layer.superlayer = self;
+}
+
+- (void)removeFromSuperlayer {
+  	[self.superlayer.sublayers removeObjectIdenticalTo:self];
+	self.superlayer = nil;
 }
 
 @end
