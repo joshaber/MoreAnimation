@@ -7,6 +7,7 @@
 //
 
 #import "MAOpenGLTexture.h"
+#import <OpenGL/gl.h>
 
 @interface MAOpenGLTexture () {
 	CGLContextObj m_context;

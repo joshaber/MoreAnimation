@@ -8,6 +8,8 @@
 
 #import "MAOpenGLLayer.h"
 #import "MAOpenGLTexture.h"
+#import <OpenGL/gl.h>
+//#import <OpenGL/glu.h>
 
 @interface MAOpenGLLayer ()
 /**
