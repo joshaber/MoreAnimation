@@ -63,6 +63,11 @@
 				CGContextTranslateCTM(bitmapContext, 0.0f, size.height);
 				CGContextScaleCTM(bitmapContext, 1.0f, -1.0f);
 				
+				// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
+				CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
+				CGContextSetFillColorWithColor(bitmapContext, defaultFillColor);
+				CGColorRelease(defaultFillColor);
+				
 				CGColorSpaceRelease(colorSpace);
 			}
 
