@@ -51,8 +51,32 @@
 }
 
 - (void)display {
-	// TODO
+	CGSize size = self.bounds.size;
+	size_t width = (size_t)ceil(size.width);
+
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+
+	CGContextRef context = CGBitmapContextCreate(
+		NULL,
+		width,
+		(size_t)ceil(size.height),
+		8,
+		4 * width,
+		colorSpace,
+		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
+	);
+
+	CGColorSpaceRelease(colorSpace);
+
+	if ([self.delegate respondsToSelector:@selector(drawLayer:inContext:)])
+		[self.delegate drawLayer:self inContext:context];
+	else
+		[self drawInContext:context];
 	
+	CGImageRef image = CGBitmapContextCreateImage(context);
+	CGContextRelease(context);
+
+	self.contents = (__bridge_transfer id)image;
   	self.needsDisplay = NO;
 }
 
