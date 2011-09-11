@@ -13,18 +13,18 @@
 }
 
 @property (nonatomic, assign, readwrite) GLuint textureID;
-@property (nonatomic, readwrite) CGLContextObj context;
+@property (nonatomic, readwrite) CGLContextObj CGLContext;
 
-- (id)initWithContext:(CGLContextObj)cxt;
+- (id)initWithCGLContext:(CGLContextObj)cxt;
 - (void)executeWhileLocked:(dispatch_block_t)block;
 @end
 
 @implementation MAOpenGLTexture
-- (CGLContextObj)context {
+- (CGLContextObj)CGLContext {
   	return m_context;
 }
 
-- (void)setContext:(CGLContextObj)cxt {
+- (void)setCGLContext:(CGLContextObj)cxt {
   	if (cxt != m_context) {
 		if (m_context)
 			CGLReleaseContext(m_context);
@@ -38,13 +38,13 @@
 
 @synthesize textureID;
 
-+ (id)textureWithImage:(CGImageRef)image context:(CGLContextObj)cxt {
-	return [[self alloc] initWithImage:image context:cxt];
++ (id)textureWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt {
+	return [[self alloc] initWithImage:image CGLContext:cxt];
 }
 
-- (id)initWithContext:(CGLContextObj)cxt {
+- (id)initWithCGLContext:(CGLContextObj)cxt {
   	if ((self = [super init])) {
-		self.context = cxt;
+		self.CGLContext = cxt;
 
 		__block GLuint tex = 0;
 
@@ -58,8 +58,8 @@
 	return self;
 }
 
-- (id)initWithImage:(CGImageRef)image context:(CGLContextObj)cxt {
-  	if ((self = [self initWithContext:cxt])) {
+- (id)initWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt {
+  	if ((self = [self initWithCGLContext:cxt])) {
 		size_t width = CGImageGetWidth(image);
 		size_t height = CGImageGetHeight(image);
 			
@@ -97,7 +97,7 @@
 	}];
 
 	self.textureID = 0;
-	self.context = NULL;
+	self.CGLContext = NULL;
 }
 
 - (void)bind {
@@ -107,14 +107,14 @@
 }
 
 - (void)executeWhileLocked:(dispatch_block_t)block {
-  	CGLError error = CGLLockContext(self.context);
+  	CGLError error = CGLLockContext(self.CGLContext);
 	if (error != 0) {
 		// TODO: proper error handling!
 		NSAssert(NO, @"error while locking CGL context");
 	}
 
 	block();
-	CGLUnlockContext(self.context);
+	CGLUnlockContext(self.CGLContext);
 }
 
 @end

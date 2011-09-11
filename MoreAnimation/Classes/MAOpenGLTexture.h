@@ -10,10 +10,10 @@
 
 @interface MAOpenGLTexture : NSObject
 @property (nonatomic, assign, readonly) GLuint textureID;
-@property (nonatomic, readonly) CGLContextObj context;
+@property (nonatomic, readonly) CGLContextObj CGLContext;
 
-+ (id)textureWithImage:(CGImageRef)image context:(CGLContextObj)cxt;
-- (id)initWithImage:(CGImageRef)image context:(CGLContextObj)cxt;
++ (id)textureWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt;
+- (id)initWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt;
 
 /**
  * Locks the #context, binds the receiver's texture, then unlocks the #context.
