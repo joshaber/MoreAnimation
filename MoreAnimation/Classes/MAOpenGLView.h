@@ -8,11 +8,11 @@
 
 #import <OpenGL/OpenGL.h>
 
-@class MALayer;
+@class MAOpenGLLayer;
 
 
 @interface MAOpenGLView : NSOpenGLView
 
-@property (nonatomic, strong) MALayer *contentLayer;
+@property (nonatomic, strong) MAOpenGLLayer *contentLayer;
 
 @end
