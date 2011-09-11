@@ -17,6 +17,9 @@
 @property (nonatomic, assign) GLuint textureId;
 @property (nonatomic, assign) CGSize contextSize;
 @property (nonatomic, strong) NSMutableArray *sublayers;
+
+// publicly readonly
+@property (nonatomic, readwrite, assign) BOOL needsDisplay;
 @end
 
 
@@ -27,6 +30,7 @@
 	if(self == nil) return nil;
 	
 	self.sublayers = [NSMutableArray array];
+	self.needsDisplay = YES;
 	
 	return self;
 }
@@ -40,13 +44,27 @@
 @synthesize sublayers;
 @synthesize delegate;
 @synthesize contents;
+@synthesize needsDisplay;
 
 - (void)dealloc {	
 	glDeleteTextures(1, &textureId);
 }
 
+- (void)display {
+	// TODO
+	
+  	self.needsDisplay = NO;
+}
+
 - (void)displayIfNeeded {
-  	// TODO
+  	if (!self.needsDisplay)
+		return;
+	
+	[self display];
+}
+
+- (void)setNeedsDisplay {
+  	self.needsDisplay = YES;
 }
 
 - (void)drawInContext:(CGContextRef)context {

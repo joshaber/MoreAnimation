@@ -17,13 +17,17 @@
 
 @interface MALayer : NSObject
 
+- (void)display;
 - (void)displayIfNeeded;
 - (void)drawInContext:(CGContextRef)context;
 - (void)renderInContext:(CGContextRef)context;
+- (void)setNeedsDisplay;
 
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, readonly) CGRect bounds;
 @property (nonatomic, weak) id<MALayerDelegate> delegate;
 @property (strong) id contents;
+
+@property (nonatomic, readonly, assign) BOOL needsDisplay;
 
 @end
