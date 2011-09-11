@@ -11,7 +11,7 @@
 #import <libkern/OSAtomic.h>
 
 @interface MALayer () {
-	CGImageRef m_contentsImage;
+	id m_contents;
 
 	dispatch_queue_t m_renderQueue;
 }
@@ -22,6 +22,8 @@
 
 @property (nonatomic, assign) GLuint textureId;
 @property (nonatomic, strong) NSMutableArray *sublayers;
+@property (readonly) CGImageRef contentsImage;
+@property (readonly) CGLayerRef contentsLayer;
 
 // publicly readonly
 @property (nonatomic, readwrite, assign) BOOL needsDisplay;
@@ -48,19 +50,35 @@
   	__block id image = NULL;
 
 	dispatch_sync(m_renderQueue, ^{
-		image = (__bridge_transfer id)CGImageRetain(m_contentsImage);
+		image = m_contents;
 	});
 
 	return image;
 }
 
-- (void)setContents:(id)contents {
-  	CGImageRef newImage = (__bridge CGImageRef)contents;
-	NSAssert(CFGetTypeID(newImage) == CGImageGetTypeID(), @"contents property only supports a CGImageRef");
+- (CGImageRef)contentsImage {
+  	CGImageRef obj = (__bridge CGImageRef)self.contents;
+	CFTypeID typeID = CFGetTypeID(obj);
 
+	if (typeID == CGImageGetTypeID())
+		return obj;
+	else
+		return NULL;
+}
+
+- (CGLayerRef)contentsLayer {
+  	CGLayerRef obj = (__bridge CGLayerRef)self.contents;
+	CFTypeID typeID = CFGetTypeID(obj);
+
+	if (typeID == CGLayerGetTypeID())
+		return obj;
+	else
+		return NULL;
+}
+
+- (void)setContents:(id)contents {
 	dispatch_async(m_renderQueue, ^{
-		CGImageRelease(m_contentsImage);
-		m_contentsImage = CGImageRetain(newImage);
+		m_contents = contents;
 	});
 }
 
@@ -68,7 +86,6 @@
 @synthesize frame;
 @synthesize sublayers;
 @synthesize delegate;
-@synthesize contents;
 @synthesize needsDisplay;
 
 - (void)dealloc {	
@@ -178,8 +195,13 @@
 - (void)renderInContext:(CGContextRef)context {
   	[self displayIfNeeded];
 
-	if (self.contents)
-		CGContextDrawImage(context, self.bounds, (__bridge CGImageRef)self.contents);
+	CGImageRef image;
+	CGLayerRef layer;
+
+	if ((layer = self.contentsLayer))
+		CGContextDrawLayerInRect(context, self.bounds, layer);
+	else if ((image = self.contentsImage))
+		CGContextDrawImage(context, self.bounds, image);
 	else
 		[self drawInContext:context];
 	
