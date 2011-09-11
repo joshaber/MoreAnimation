@@ -9,5 +9,12 @@
 #import "MALayer.h"
 
 @interface MAOpenGLLayer : MALayer
+/**
+ * The contents of the layer. Can be set to an #MAOpenGLTexture to display. No
+ * other types are allowed on an MAOpenGLLayer.
+ */
+@property (strong) id contents;
 
+- (void)drawInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat;
+- (void)renderInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat;
 @end
