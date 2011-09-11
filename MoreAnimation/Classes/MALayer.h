@@ -22,5 +22,6 @@
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, readonly) CGRect bounds;
 @property (nonatomic, weak) id<MALayerDelegate> delegate;
+@property (strong) id contents;
 
 @end

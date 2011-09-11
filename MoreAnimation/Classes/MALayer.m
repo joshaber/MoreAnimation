@@ -39,6 +39,7 @@
 @synthesize contextSize;
 @synthesize sublayers;
 @synthesize delegate;
+@synthesize contents;
 
 - (void)dealloc {	
 	glDeleteTextures(1, &textureId);
