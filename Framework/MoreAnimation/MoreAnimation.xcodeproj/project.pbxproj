@@ -7,22 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		88D1C56B141D7F9E00A58EB9 /* MoreAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C31141D6FDA0053AF73 /* MoreAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C25141D6FDA0053AF73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C24141D6FDA0053AF73 /* Cocoa.framework */; };
 		D0355C2F141D6FDA0053AF73 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0355C2D141D6FDA0053AF73 /* InfoPlist.strings */; };
-		D0355C33141D6FDA0053AF73 /* MoreAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C32141D6FDA0053AF73 /* MoreAnimation.m */; };
 		D0355C3B141D6FDA0053AF73 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C3A141D6FDA0053AF73 /* SenTestingKit.framework */; };
 		D0355C3C141D6FDA0053AF73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C24141D6FDA0053AF73 /* Cocoa.framework */; };
 		D0355C3F141D6FDA0053AF73 /* MoreAnimation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C21141D6FDA0053AF73 /* MoreAnimation.framework */; };
 		D0355C45141D6FDA0053AF73 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0355C43141D6FDA0053AF73 /* InfoPlist.strings */; };
 		D0355C48141D6FDA0053AF73 /* MoreAnimationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C47141D6FDA0053AF73 /* MoreAnimationTests.m */; };
 		D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C53141D700C0053AF73 /* MALayer+Private.h */; };
-		D0355C5D141D700C0053AF73 /* MALayer.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C54141D700C0053AF73 /* MALayer.h */; };
+		D0355C5D141D700C0053AF73 /* MALayer.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C54141D700C0053AF73 /* MALayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C5E141D700C0053AF73 /* MALayer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C55141D700C0053AF73 /* MALayer.m */; };
-		D0355C5F141D700C0053AF73 /* MAOpenGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C56141D700C0053AF73 /* MAOpenGLLayer.h */; };
+		D0355C5F141D700C0053AF73 /* MAOpenGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C56141D700C0053AF73 /* MAOpenGLLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C60141D700C0053AF73 /* MAOpenGLLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C57141D700C0053AF73 /* MAOpenGLLayer.m */; };
-		D0355C61141D700C0053AF73 /* MAOpenGLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C58141D700C0053AF73 /* MAOpenGLTexture.h */; };
+		D0355C61141D700C0053AF73 /* MAOpenGLTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C58141D700C0053AF73 /* MAOpenGLTexture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C62141D700C0053AF73 /* MAOpenGLTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C59141D700C0053AF73 /* MAOpenGLTexture.m */; };
-		D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C5A141D700C0053AF73 /* MAOpenGLView.h */; };
+		D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C5A141D700C0053AF73 /* MAOpenGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C64141D700C0053AF73 /* MAOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C5B141D700C0053AF73 /* MAOpenGLView.m */; };
 		D0355C6C141D70EE0053AF73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C6B141D70EE0053AF73 /* OpenGL.framework */; };
 /* End PBXBuildFile section */
@@ -46,7 +46,6 @@
 		D0355C2E141D6FDA0053AF73 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D0355C30141D6FDA0053AF73 /* MoreAnimation-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MoreAnimation-Prefix.pch"; sourceTree = "<group>"; };
 		D0355C31141D6FDA0053AF73 /* MoreAnimation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MoreAnimation.h; sourceTree = "<group>"; };
-		D0355C32141D6FDA0053AF73 /* MoreAnimation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MoreAnimation.m; sourceTree = "<group>"; };
 		D0355C39141D6FDA0053AF73 /* MoreAnimationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MoreAnimationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0355C3A141D6FDA0053AF73 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		D0355C42141D6FDA0053AF73 /* MoreAnimationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MoreAnimationTests-Info.plist"; sourceTree = "<group>"; };
@@ -130,7 +129,6 @@
 			isa = PBXGroup;
 			children = (
 				D0355C31141D6FDA0053AF73 /* MoreAnimation.h */,
-				D0355C32141D6FDA0053AF73 /* MoreAnimation.m */,
 				D0355C52141D700C0053AF73 /* Classes */,
 				D0355C2B141D6FDA0053AF73 /* Supporting Files */,
 			);
@@ -211,11 +209,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */,
+				88D1C56B141D7F9E00A58EB9 /* MoreAnimation.h in Headers */,
 				D0355C5D141D700C0053AF73 /* MALayer.h in Headers */,
 				D0355C5F141D700C0053AF73 /* MAOpenGLLayer.h in Headers */,
 				D0355C61141D700C0053AF73 /* MAOpenGLTexture.h in Headers */,
 				D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */,
+				D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,7 +324,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D0355C33141D6FDA0053AF73 /* MoreAnimation.m in Sources */,
 				D0355C5E141D700C0053AF73 /* MALayer.m in Sources */,
 				D0355C60141D700C0053AF73 /* MAOpenGLLayer.m in Sources */,
 				D0355C62141D700C0053AF73 /* MAOpenGLTexture.m in Sources */,
