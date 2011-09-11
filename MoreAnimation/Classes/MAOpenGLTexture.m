@@ -100,12 +100,6 @@
 	self.CGLContext = NULL;
 }
 
-- (void)bind {
-  	[self executeWhileLocked:^{
-		glBindTexture(GL_TEXTURE_2D, self.textureID);
-	}];
-}
-
 - (void)executeWhileLocked:(dispatch_block_t)block {
   	CGLError error = CGLLockContext(self.CGLContext);
 	if (error != 0) {

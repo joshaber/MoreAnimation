@@ -14,9 +14,4 @@
 
 + (id)textureWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt;
 - (id)initWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt;
-
-/**
- * Locks the #context, binds the receiver's texture, then unlocks the #context.
- */
-- (void)bind;
 @end
