@@ -71,7 +71,7 @@
 		8,
 		4 * width,
 		colorSpace,
-		kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast
+		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
 	);
 
 	CGContextTranslateCTM(context, 0.0f, size.height);
@@ -92,7 +92,7 @@
 	CGImageRef image = CGBitmapContextCreateImage(context);
 	CGContextRelease(context);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, textureData);
 
 	[self drawQuad];
 	free(textureData);
