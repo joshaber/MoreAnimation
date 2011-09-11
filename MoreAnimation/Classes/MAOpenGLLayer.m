@@ -31,7 +31,59 @@
   	// TODO
 }
 
-- (void)drawInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat {
+- (void)drawInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
+  	CGContextRef bitmapContext = NULL;
+
+	CGSize size = self.bounds.size;
+	size_t width = (size_t)ceil(size.width);
+	size_t height = (size_t)ceil(size.height);
+
+	CGLLockContext(CGLContext);
+
+	for (MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
+		if ([sublayer isKindOfClass:[MAOpenGLLayer class]]) {
+			// TODO: transform matrix for the sublayer
+			MAOpenGLLayer *sublayerGL = (MAOpenGLLayer *)sublayer;
+			[sublayerGL renderInCGLContext:CGLContext pixelFormat:pixelFormat];
+		} else {
+			if (!bitmapContext) {
+				CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+				bitmapContext = CGBitmapContextCreate(
+					NULL,
+					width,
+					height,
+					8,
+					4 * width,
+					colorSpace,
+					kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
+				);
+
+				CGContextTranslateCTM(bitmapContext, 0.0f, size.height);
+				CGContextScaleCTM(bitmapContext, 1.0f, -1.0f);
+				
+				CGColorSpaceRelease(colorSpace);
+			}
+
+			[sublayer renderInContext:bitmapContext];
+		}
+	}
+
+	if (bitmapContext) {
+		// TODO: how do we want to preserve GL sublayers when caching rendered
+		// content like this?
+		
+		MAOpenGLTexture *texture = [MAOpenGLTexture textureWithCGLContext:CGLContext];
+
+		glBindTexture(GL_TEXTURE_2D, texture.textureID);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(bitmapContext));
+
+		CGContextRelease(bitmapContext);
+	}
+
+	CGLUnlockContext(CGLContext);
 }
 
 - (void)renderInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat {
@@ -42,7 +94,6 @@
 	}
 
 	CGLLockContext(context);
-
 	glBindTexture(GL_TEXTURE_2D, texture.textureID);
 	glBegin(GL_QUADS);
 	
@@ -60,6 +111,8 @@
 	
 	glEnd();
 	CGLUnlockContext(context);
+
+	// TODO: need to figure out how to render sublayers appropriately
 }
 
 @end
