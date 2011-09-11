@@ -13,4 +13,6 @@
 
 + (id)textureWithImage:(CGImageRef)image;
 - (id)initWithImage:(CGImageRef)image;
+
+- (void)bind;
 @end

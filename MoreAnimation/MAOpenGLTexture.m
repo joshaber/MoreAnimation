@@ -32,7 +32,8 @@
 
 - (id)initWithImage:(CGImageRef)image {
   	if ((self = [self init])) {
-		glBindTexture(GL_TEXTURE_2D, self.textureID);
+		[self bind];
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -64,6 +65,10 @@
   	glDeleteTextures(1, &tex);
 
 	self.textureID = 0;
+}
+
+- (void)bind {
+	glBindTexture(GL_TEXTURE_2D, self.textureID);
 }
 
 @end
