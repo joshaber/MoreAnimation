@@ -11,7 +11,9 @@
 #import <libkern/OSAtomic.h>
 
 @interface MALayer () {
-	volatile CGImageRef m_contentsImage;
+	CGImageRef m_contentsImage;
+
+	dispatch_queue_t m_renderQueue;
 }
 
 - (void)displayChildren;
@@ -31,33 +33,34 @@
 	self = [super init];
 	if(self == nil) return nil;
 	
+	m_renderQueue = dispatch_queue_create("MoreAnimation.MALayer", DISPATCH_QUEUE_SERIAL);
+	
 	self.sublayers = [NSMutableArray array];
 	self.needsDisplay = YES;
 	
 	return self;
 }
 
-
 #pragma mark API
 
 - (id)contents {
-  	return (__bridge id)m_contentsImage;
+  	__block id image = NULL;
+
+	dispatch_sync(m_renderQueue, ^{
+		image = (__bridge_transfer id)CGImageRetain(m_contentsImage);
+	});
+
+	return image;
 }
 
 - (void)setContents:(id)contents {
   	CGImageRef newImage = (__bridge CGImageRef)contents;
 	NSAssert(CFGetTypeID(newImage) == CGImageGetTypeID(), @"contents property only supports a CGImageRef");
 
-	// atomically swap in the new contents
-	CGImageRetain(newImage);
-
-	CGImageRef oldImage = NULL;
-	for (;;) {
-		oldImage = m_contentsImage;
-		if (OSAtomicCompareAndSwapPtrBarrier(oldImage, newImage, (void * volatile *)&m_contentsImage)) {
-			CGImageRelease(oldImage);
-		}
-	}
+	dispatch_async(m_renderQueue, ^{
+		CGImageRelease(m_contentsImage);
+		m_contentsImage = CGImageRetain(newImage);
+	});
 }
 
 @synthesize textureId;
@@ -69,6 +72,7 @@
 
 - (void)dealloc {	
 	glDeleteTextures(1, &textureId);
+	dispatch_release(m_renderQueue);
 }
 
 - (void)display {
