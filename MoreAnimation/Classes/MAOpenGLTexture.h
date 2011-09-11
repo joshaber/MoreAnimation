@@ -12,6 +12,8 @@
 @property (nonatomic, assign, readonly) GLuint textureID;
 @property (nonatomic, readonly) CGLContextObj CGLContext;
 
++ (id)textureWithCGLContext:(CGLContextObj)cxt;
 + (id)textureWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt;
+- (id)initWithCGLContext:(CGLContextObj)cxt;
 - (id)initWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt;
 @end

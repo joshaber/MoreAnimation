@@ -38,6 +38,10 @@
 
 @synthesize textureID;
 
++ (id)textureWithCGLContext:(CGLContextObj)cxt {
+	return [[self alloc] initWithCGLContext:cxt];
+}
+
 + (id)textureWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt {
 	return [[self alloc] initWithImage:image CGLContext:cxt];
 }
