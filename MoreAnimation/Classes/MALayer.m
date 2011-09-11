@@ -18,11 +18,11 @@
 
 - (void)displayChildren;
 
-@property (nonatomic, strong) NSMutableArray *sublayers;
 @property (readonly) CGImageRef contentsImage;
 @property (readonly) CGLayerRef contentsLayer;
 
 // publicly readonly
+@property (nonatomic, readwrite, strong) NSMutableArray *sublayers;
 @property (nonatomic, readwrite, assign) BOOL needsDisplay;
 @end
 

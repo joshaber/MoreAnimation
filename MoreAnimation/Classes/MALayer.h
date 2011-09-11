@@ -36,6 +36,7 @@
  */
 @property (strong) id contents;
 
+@property (nonatomic, readonly, strong) NSMutableArray *sublayers;
 @property (nonatomic, readonly, assign) BOOL needsDisplay;
 
 @end
