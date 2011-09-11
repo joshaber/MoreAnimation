@@ -8,21 +8,49 @@
 
 #import "MAOpenGLTexture.h"
 
-@interface MAOpenGLTexture ()
+@interface MAOpenGLTexture () {
+	CGLContextObj m_context;
+}
+
 @property (nonatomic, assign, readwrite) GLuint textureID;
+@property (nonatomic, readwrite) CGLContextObj context;
+
+- (id)initWithContext:(CGLContextObj)cxt;
+- (void)executeWhileLocked:(dispatch_block_t)block;
 @end
 
 @implementation MAOpenGLTexture
-@synthesize textureID;
-
-+ (id)textureWithImage:(CGImageRef)image {
-	return [[self alloc] initWithImage:image];
+- (CGLContextObj)context {
+  	return m_context;
 }
 
-- (id)init {
+- (void)setContext:(CGLContextObj)cxt {
+  	if (cxt != m_context) {
+		if (m_context)
+			CGLReleaseContext(m_context);
+		
+		if (cxt)
+			CGLRetainContext(cxt);
+
+		m_context = cxt;
+	}
+}
+
+@synthesize textureID;
+
++ (id)textureWithImage:(CGImageRef)image context:(CGLContextObj)cxt {
+	return [[self alloc] initWithImage:image context:cxt];
+}
+
+- (id)initWithContext:(CGLContextObj)cxt {
   	if ((self = [super init])) {
-		GLuint tex = 0;
-		glGenTextures(1, &tex);
+		self.context = cxt;
+
+		__block GLuint tex = 0;
+
+		[self executeWhileLocked:^{
+			glGenTextures(1, &tex);
+		}];
 		
 		self.textureID = tex;
 	}
@@ -30,13 +58,8 @@
 	return self;
 }
 
-- (id)initWithImage:(CGImageRef)image {
-  	if ((self = [self init])) {
-		[self bind];
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+- (id)initWithImage:(CGImageRef)image context:(CGLContextObj)cxt {
+  	if ((self = [self initWithContext:cxt])) {
 		size_t width = CGImageGetWidth(image);
 		size_t height = CGImageGetHeight(image);
 			
@@ -52,7 +75,13 @@
 
 		CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(context));
+		[self executeWhileLocked:^{
+			glBindTexture(GL_TEXTURE_2D, self.textureID);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(context));
+		}];
 
 		CGContextRelease(context);
 	}
@@ -62,13 +91,30 @@
 
 - (void)dealloc {
   	GLuint tex = self.textureID;
-  	glDeleteTextures(1, &tex);
+
+  	[self executeWhileLocked:^{
+		glDeleteTextures(1, &tex);
+	}];
 
 	self.textureID = 0;
+	self.context = NULL;
 }
 
 - (void)bind {
-	glBindTexture(GL_TEXTURE_2D, self.textureID);
+  	[self executeWhileLocked:^{
+		glBindTexture(GL_TEXTURE_2D, self.textureID);
+	}];
+}
+
+- (void)executeWhileLocked:(dispatch_block_t)block {
+  	CGLError error = CGLLockContext(self.context);
+	if (error != 0) {
+		// TODO: proper error handling!
+		NSAssert(NO, @"error while locking CGL context");
+	}
+
+	block();
+	CGLUnlockContext(self.context);
 }
 
 @end
