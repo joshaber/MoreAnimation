@@ -11,6 +11,8 @@
 @class MALayer;
 
 @protocol MALayerDelegate <NSObject>
+@optional
+- (void)displayLayer:(MALayer *)layer;
 - (void)drawLayer:(MALayer *)layer inContext:(CGContextRef)context;
 @end
 

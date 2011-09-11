@@ -84,7 +84,10 @@
   	if (!self.needsDisplay)
 		return;
 	
-	[self display];
+	if ([self.delegate respondsToSelector:@selector(displayLayer:)])
+		[self.delegate displayLayer:self];
+	else
+		[self display];
 }
 
 - (void)setNeedsDisplay {
