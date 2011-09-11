@@ -108,7 +108,7 @@
 		8,
 		4 * width,
 		colorSpace,
-		kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast
+		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
 	);
 
 	CGLayerRef layer = CGLayerCreateWithContext(context, size, NULL);
