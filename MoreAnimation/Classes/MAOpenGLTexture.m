@@ -12,14 +12,21 @@
 	CGLContextObj m_context;
 }
 
+// publicly readonly
 @property (nonatomic, assign, readwrite) GLuint textureID;
 @property (nonatomic, readwrite) CGLContextObj CGLContext;
 
-- (id)initWithCGLContext:(CGLContextObj)cxt;
+/**
+ * Locks the #CGLContext, executes the given \a block, then unlocks the
+ * #CGLContext.
+ */
 - (void)executeWhileLocked:(dispatch_block_t)block;
 @end
 
 @implementation MAOpenGLTexture
+
+#pragma mark Properties
+
 - (CGLContextObj)CGLContext {
   	return m_context;
 }
@@ -37,6 +44,8 @@
 }
 
 @synthesize textureID;
+
+#pragma mark Lifecycle
 
 + (id)textureWithCGLContext:(CGLContextObj)cxt {
 	return [[self alloc] initWithCGLContext:cxt];
@@ -67,6 +76,8 @@
 		size_t width = CGImageGetWidth(image);
 		size_t height = CGImageGetHeight(image);
 			
+		// create a bitmap context of a known format in which to draw the given
+		// image
 		CGContextRef context = CGBitmapContextCreate(
 			NULL,
 			width,
@@ -77,6 +88,9 @@
 			kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
 		);
 		
+		// flip the context vertically, since Core Graphics' origin is in the
+		// lower-left, whereas texture data is expected to have an upper-left
+		// origin
 		CGContextTranslateCTM(context, 0, height);
 		CGContextScaleCTM(context, 1, -1);
 
@@ -87,6 +101,7 @@
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+			// copy the image data into our texture
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(context));
 		}];
 
@@ -106,6 +121,8 @@
 	self.textureID = 0;
 	self.CGLContext = NULL;
 }
+
+#pragma mark Context management
 
 - (void)executeWhileLocked:(dispatch_block_t)block {
   	CGLError error = CGLLockContext(self.CGLContext);
