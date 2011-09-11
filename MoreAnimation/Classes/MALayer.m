@@ -14,7 +14,6 @@
 - (void)drawQuad;
 
 @property (nonatomic, assign) GLuint textureId;
-@property (nonatomic, assign) CGSize contextSize;
 @property (nonatomic, strong) NSMutableArray *sublayers;
 
 // publicly readonly
@@ -39,7 +38,6 @@
 
 @synthesize textureId;
 @synthesize frame;
-@synthesize contextSize;
 @synthesize sublayers;
 @synthesize delegate;
 @synthesize contents;
@@ -54,8 +52,6 @@
 		glGenTextures(1, &textureId);
 	}
 		
-	self.contextSize = self.bounds.size;
-	
 	CGSize size = self.bounds.size;
 	size_t width = (size_t)ceil(size.width);
 	size_t height = (size_t)ceil(size.height);
@@ -78,7 +74,7 @@
 		kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast
 	);
 
-	CGContextTranslateCTM(context, 0.0f, self.contextSize.height);
+	CGContextTranslateCTM(context, 0.0f, size.height);
 	CGContextScaleCTM(context, 1.0f, -1.0f);
 	
 	// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
@@ -96,7 +92,7 @@
 	CGImageRef image = CGBitmapContextCreateImage(context);
 	CGContextRelease(context);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei) self.contextSize.width, (GLsizei) self.contextSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
 
 	[self drawQuad];
 	free(textureData);
