@@ -111,6 +111,12 @@
 		kCGBitmapByteOrderDefault | kCGImageAlphaPremultipliedLast
 	);
 
+	CGLayerRef layer = CGLayerCreateWithContext(context, size, NULL);
+
+	CGContextRef newContext = CGLayerGetContext(layer);
+	CGContextRelease(context);
+	context = newContext;
+
 	CGContextTranslateCTM(context, 0.0f, size.height);
 	CGContextScaleCTM(context, 1.0f, -1.0f);
 	
@@ -126,8 +132,7 @@
 	else
 		[self drawInContext:context];
 
-	self.contents = (__bridge_transfer id)CGLayerCreateWithContext(context, size, NULL);
-	CGContextRelease(context);
+	self.contents = (__bridge_transfer id)layer;
 }
 
 - (void)displayIfNeeded {
