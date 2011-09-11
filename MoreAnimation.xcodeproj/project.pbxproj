@@ -44,8 +44,8 @@
 		88E5CE6B141B53F000E54623 /* MALayer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MALayer+Private.h"; path = "Classes/MALayer+Private.h"; sourceTree = "<group>"; };
 		D0D020E9141C881C0053D0E4 /* MAOpenGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAOpenGLLayer.h; path = Classes/MAOpenGLLayer.h; sourceTree = "<group>"; };
 		D0D020EA141C881C0053D0E4 /* MAOpenGLLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAOpenGLLayer.m; path = Classes/MAOpenGLLayer.m; sourceTree = "<group>"; };
-		D0D020EF141C88ED0053D0E4 /* MAOpenGLTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAOpenGLTexture.h; sourceTree = "<group>"; };
-		D0D020F0141C88ED0053D0E4 /* MAOpenGLTexture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAOpenGLTexture.m; sourceTree = "<group>"; };
+		D0D020EF141C88ED0053D0E4 /* MAOpenGLTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAOpenGLTexture.h; path = Classes/MAOpenGLTexture.h; sourceTree = "<group>"; };
+		D0D020F0141C88ED0053D0E4 /* MAOpenGLTexture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAOpenGLTexture.m; path = Classes/MAOpenGLTexture.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
