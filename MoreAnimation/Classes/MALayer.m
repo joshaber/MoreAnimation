@@ -17,10 +17,7 @@
 }
 
 - (void)displayChildren;
-- (void)drawQuad;
-- (void)generateTextureFromImage:(CGImageRef)image;
 
-@property (nonatomic, assign) GLuint textureId;
 @property (nonatomic, strong) NSMutableArray *sublayers;
 @property (readonly) CGImageRef contentsImage;
 @property (readonly) CGLayerRef contentsLayer;
@@ -82,14 +79,12 @@
 	});
 }
 
-@synthesize textureId;
 @synthesize frame;
 @synthesize sublayers;
 @synthesize delegate;
 @synthesize needsDisplay;
 
 - (void)dealloc {	
-	glDeleteTextures(1, &textureId);
 	dispatch_release(m_renderQueue);
 }
 
@@ -126,12 +121,7 @@
 		[self drawInContext:context];
 
 	self.contents = (__bridge_transfer id)CGLayerCreateWithContext(context, size, NULL);
-	
-	CGImageRef image = CGBitmapContextCreateImage(context);
 	CGContextRelease(context);
-
-	[self generateTextureFromImage:image];
-	CGImageRelease(image);
 }
 
 - (void)displayIfNeeded {
@@ -148,39 +138,6 @@
 
 - (void)setNeedsDisplay {
   	self.needsDisplay = YES;
-}
-
-- (void)generateTextureFromImage:(CGImageRef)image {
-	if(self.textureId == 0) {
-		glGenTextures(1, &textureId);
-	}
-
-	glBindTexture(GL_TEXTURE_2D, self.textureId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	size_t width = CGImageGetWidth(image);
-	size_t height = CGImageGetHeight(image);
-
-	void *textureData = (void *) malloc(width * height * 4);
-		
-	CGContextRef context = CGBitmapContextCreate(
-		textureData,
-		width,
-		height,
-		8,
-		4 * width,
-		CGImageGetColorSpace(image),
-		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
-	);
-
-	CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
-	CGContextRelease(context);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, textureData);
-	free(textureData);
-
-	[self drawQuad];
 }
 
 - (void)drawInContext:(CGContextRef)context {
@@ -215,24 +172,6 @@
 - (void)displayRecursively {
 	[self displayIfNeeded];
 	[self displayChildren];
-}
-
-- (void)drawQuad {	
-	glBegin(GL_QUADS);
-	
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y);
-	
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f((GLfloat) self.frame.origin.x + (GLfloat) self.frame.size.width, (GLfloat) self.frame.origin.y);
-	
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f((GLfloat) self.frame.origin.x + (GLfloat) self.frame.size.width, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
-	
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
-	
-	glEnd();
 }
 
 - (void)displayChildren {
