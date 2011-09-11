@@ -10,12 +10,22 @@
 #import "MAOpenGLTexture.h"
 
 @interface MAOpenGLLayer ()
+/**
+ * The layer's #contents as an #MAOpenGLTexture. Any other type is disallowed.
+ */
 @property (strong, readonly) MAOpenGLTexture *contentsTexture;
 
+/**
+ * Renders \a texture into its OpenGL context.
+ */
 - (void)renderTexture:(MAOpenGLTexture *)texture;
 @end
 
 @implementation MAOpenGLLayer
+
+#pragma mark Properties
+
+// inherited from superclass
 @dynamic contents;
 
 - (MAOpenGLTexture *)contentsTexture {
@@ -25,6 +35,8 @@
 	return contents;
 }
 
+#pragma mark MALayer overrides
+
 - (void)display {
   	// do nothing, since drawing is specific to the CGLContext being used
 }
@@ -32,6 +44,8 @@
 - (void)drawInContext:(CGContextRef)context {
   	// TODO
 }
+
+#pragma mark OpenGL drawing
 
 - (void)drawInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
   	CGContextRef bitmapContext = NULL;
@@ -42,6 +56,7 @@
 
 	CGLLockContext(CGLContext);
 
+	// TODO: this shouldn't actually draw sublayers
 	for (MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
 		if ([sublayer isKindOfClass:[MAOpenGLLayer class]]) {
 			// TODO: transform matrix for the sublayer
@@ -95,6 +110,8 @@
 	CGLUnlockContext(CGLContext);
 }
 
+#pragma mark OpenGL rendering
+
 - (void)renderInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat {
   	MAOpenGLTexture *texture = self.contentsTexture;
 	if (!texture || texture.CGLContext != context) {
@@ -110,6 +127,8 @@
 - (void)renderTexture:(MAOpenGLTexture *)texture {
 	CGLLockContext(texture.CGLContext);
 	glBindTexture(GL_TEXTURE_2D, texture.textureID);
+
+	// draw a textured quad over the full frame of the layer
 	glBegin(GL_QUADS);
 	
 	glTexCoord2f(0.0f, 0.0f);
@@ -125,6 +144,7 @@
 	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
 	
 	glEnd();
+
 	CGLUnlockContext(texture.CGLContext);
 }
 
