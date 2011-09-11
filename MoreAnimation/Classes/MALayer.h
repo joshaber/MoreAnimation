@@ -17,7 +17,9 @@
 
 @interface MALayer : NSObject
 
+- (void)displayIfNeeded;
 - (void)drawInContext:(CGContextRef)context;
+- (void)renderInContext:(CGContextRef)context;
 
 @property (nonatomic, assign) CGRect frame;
 @property (nonatomic, readonly) CGRect bounds;

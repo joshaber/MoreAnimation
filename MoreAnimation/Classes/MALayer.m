@@ -45,6 +45,10 @@
 	glDeleteTextures(1, &textureId);
 }
 
+- (void)displayIfNeeded {
+  	// TODO
+}
+
 - (void)drawInContext:(CGContextRef)context {
 	NSImage *nsImage = [NSImage imageNamed:@"test"];
 	CGContextDrawImage(context, self.bounds, [nsImage CGImageForProposedRect:NULL context:NULL hints:nil]);
@@ -54,6 +58,19 @@
 	
 	CGContextSetFillColor(context, (CGFloat []) { 1.0f, 0.0f, 0.0f, 1.0f });
 	CGContextFillRect(context, CGRectMake(70.0f, 70.0f, 100.0f, 100.0f));
+}
+
+- (void)renderInContext:(CGContextRef)context {
+  	[self displayIfNeeded];
+
+	if (self.contents)
+		CGContextDrawImage(context, self.bounds, (__bridge CGImageRef)self.contents);
+	else
+		[self drawInContext:context];
+	
+	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
+		[sublayer renderInContext:context];
+	}
 }
 
 - (void)displayRecursively {
