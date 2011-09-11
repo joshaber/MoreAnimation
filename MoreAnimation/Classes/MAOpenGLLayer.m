@@ -44,7 +44,12 @@
 #pragma mark MALayer overrides
 
 - (void)display {
-  	// do nothing, since drawing is specific to the CGLContext being used
+  	// if we have a texture, assume that we want to redisplay in the same
+	// CGLContext; otherwise, do nothing
+	if (self.contentsTexture) {
+		CGLContextObj context = self.contentsTexture.CGLContext;
+		[self displayInCGLContext:context pixelFormat:CGLGetPixelFormat(context)];
+	}
 }
 
 - (void)drawInContext:(CGContextRef)context {
