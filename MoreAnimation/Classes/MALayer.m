@@ -132,8 +132,6 @@
 
 	[self generateTextureFromImage:image];
 	CGImageRelease(image);
-
-  	self.needsDisplay = NO;
 }
 
 - (void)displayIfNeeded {
@@ -144,6 +142,8 @@
 		[self.delegate displayLayer:self];
 	else
 		[self display];
+
+  	self.needsDisplay = NO;
 }
 
 - (void)setNeedsDisplay {
