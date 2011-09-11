@@ -17,6 +17,8 @@
 		88E5CE59141B408800E54623 /* MALayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE58141B408800E54623 /* MALayer.m */; };
 		88E5CE5B141B40FC00E54623 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88E5CE5A141B40FC00E54623 /* OpenGL.framework */; };
 		88E5CE62141B42B500E54623 /* MAOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE61141B42B500E54623 /* MAOpenGLView.m */; };
+		D0D020EB141C881C0053D0E4 /* MAOpenGLLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D020EA141C881C0053D0E4 /* MAOpenGLLayer.m */; };
+		D0D020F1141C88EE0053D0E4 /* MAOpenGLTexture.m in Sources */ = {isa = PBXBuildFile; fileRef = D0D020F0141C88ED0053D0E4 /* MAOpenGLTexture.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,10 @@
 		88E5CE60141B42B500E54623 /* MAOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAOpenGLView.h; path = Classes/MAOpenGLView.h; sourceTree = "<group>"; };
 		88E5CE61141B42B500E54623 /* MAOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAOpenGLView.m; path = Classes/MAOpenGLView.m; sourceTree = "<group>"; };
 		88E5CE6B141B53F000E54623 /* MALayer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MALayer+Private.h"; path = "Classes/MALayer+Private.h"; sourceTree = "<group>"; };
+		D0D020E9141C881C0053D0E4 /* MAOpenGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAOpenGLLayer.h; path = Classes/MAOpenGLLayer.h; sourceTree = "<group>"; };
+		D0D020EA141C881C0053D0E4 /* MAOpenGLLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAOpenGLLayer.m; path = Classes/MAOpenGLLayer.m; sourceTree = "<group>"; };
+		D0D020EF141C88ED0053D0E4 /* MAOpenGLTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAOpenGLTexture.h; path = Classes/MAOpenGLTexture.h; sourceTree = "<group>"; };
+		D0D020F0141C88ED0053D0E4 /* MAOpenGLTexture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAOpenGLTexture.m; path = Classes/MAOpenGLTexture.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,11 +105,9 @@
 				88E5CE4D141B3E9600E54623 /* MAAppDelegate.m */,
 				88E5CE4F141B3E9600E54623 /* MainMenu.xib */,
 				88E5CE41141B3E9600E54623 /* Supporting Files */,
-				88E5CE57141B408800E54623 /* MALayer.h */,
-				88E5CE58141B408800E54623 /* MALayer.m */,
-				88E5CE6B141B53F000E54623 /* MALayer+Private.h */,
-				88E5CE60141B42B500E54623 /* MAOpenGLView.h */,
-				88E5CE61141B42B500E54623 /* MAOpenGLView.m */,
+				D0D020EC141C88230053D0E4 /* Layers */,
+				D0D020EE141C88D60053D0E4 /* Model */,
+				D0D020ED141C882D0053D0E4 /* Views */,
 			);
 			path = MoreAnimation;
 			sourceTree = "<group>";
@@ -119,6 +123,36 @@
 				88E5CE49141B3E9600E54623 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D0D020EC141C88230053D0E4 /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				88E5CE57141B408800E54623 /* MALayer.h */,
+				88E5CE58141B408800E54623 /* MALayer.m */,
+				88E5CE6B141B53F000E54623 /* MALayer+Private.h */,
+				D0D020E9141C881C0053D0E4 /* MAOpenGLLayer.h */,
+				D0D020EA141C881C0053D0E4 /* MAOpenGLLayer.m */,
+			);
+			name = Layers;
+			sourceTree = "<group>";
+		};
+		D0D020ED141C882D0053D0E4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				88E5CE60141B42B500E54623 /* MAOpenGLView.h */,
+				88E5CE61141B42B500E54623 /* MAOpenGLView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		D0D020EE141C88D60053D0E4 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D0D020EF141C88ED0053D0E4 /* MAOpenGLTexture.h */,
+				D0D020F0141C88ED0053D0E4 /* MAOpenGLTexture.m */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -189,6 +223,8 @@
 				88E5CE4E141B3E9600E54623 /* MAAppDelegate.m in Sources */,
 				88E5CE59141B408800E54623 /* MALayer.m in Sources */,
 				88E5CE62141B42B500E54623 /* MAOpenGLView.m in Sources */,
+				D0D020EB141C881C0053D0E4 /* MAOpenGLLayer.m in Sources */,
+				D0D020F1141C88EE0053D0E4 /* MAOpenGLTexture.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

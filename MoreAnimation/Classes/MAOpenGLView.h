@@ -8,11 +8,14 @@
 
 #import <OpenGL/OpenGL.h>
 
-@class MALayer;
+@class MAOpenGLLayer;
 
-
+/**
+ * An \c NSOpenGLView that can display an #MAOpenGLLayer.
+ */
 @interface MAOpenGLView : NSOpenGLView
-
-@property (nonatomic, strong) MALayer *contentLayer;
-
+/**
+ * The layer to display in the receiver.
+ */
+@property (nonatomic, strong) MAOpenGLLayer *contentLayer;
 @end

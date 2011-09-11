@@ -10,7 +10,4 @@
 
 
 @interface MALayer (Private)
-
-- (void)displayRecursively;
-
 @end

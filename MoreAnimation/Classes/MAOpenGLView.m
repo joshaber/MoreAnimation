@@ -7,9 +7,7 @@
 //
 
 #import "MAOpenGLView.h"
-#import "MALayer.h"
-#import "MALayer+Private.h"
-
+#import "MAOpenGLLayer.h"
 
 @implementation MAOpenGLView
 
@@ -20,9 +18,11 @@
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
+
+	CGLContextObj CGLContext = self.openGLContext.CGLContextObj;
+	CGLPixelFormatObj CGLPixelFormat = self.pixelFormat.CGLPixelFormatObj;
 	
-	[self.contentLayer displayRecursively];
-	
+	[self.contentLayer renderInCGLContext:CGLContext pixelFormat:CGLPixelFormat];
 	[[self openGLContext] flushBuffer];
 }
 
@@ -36,7 +36,8 @@
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	
-	self.contentLayer = [[MALayer alloc] init];
+	self.contentLayer = [[MAOpenGLLayer alloc] init];
+	[self.contentLayer addSublayer:[[MALayer alloc] init]];
 }
 
 - (void)reshape {
@@ -51,7 +52,12 @@
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	self.contentLayer.frame = NSRectToCGRect(self.bounds);
+	CGRect frame = NSRectToCGRect(self.bounds);
+	self.contentLayer.frame = frame;
+
+	[self.contentLayer.sublayers enumerateObjectsUsingBlock:^(MALayer *layer, NSUInteger index, BOOL *stop){
+		layer.frame = frame;
+	}];
 }
 
 
