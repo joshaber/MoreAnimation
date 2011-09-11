@@ -8,8 +8,12 @@
 
 #import "MALayer.h"
 #import "MALayer+Private.h"
+#import <libkern/OSAtomic.h>
 
-@interface MALayer ()
+@interface MALayer () {
+	volatile CGImageRef m_contentsImage;
+}
+
 - (void)displayChildren;
 - (void)drawQuad;
 
@@ -35,6 +39,26 @@
 
 
 #pragma mark API
+
+- (id)contents {
+  	return (__bridge id)m_contentsImage;
+}
+
+- (void)setContents:(id)contents {
+  	CGImageRef newImage = (__bridge CGImageRef)contents;
+	NSAssert(CFGetTypeID(newImage) == CGImageGetTypeID(), @"contents property only supports a CGImageRef");
+
+	// atomically swap in the new contents
+	CGImageRetain(newImage);
+
+	CGImageRef oldImage = NULL;
+	for (;;) {
+		oldImage = m_contentsImage;
+		if (OSAtomicCompareAndSwapPtrBarrier(oldImage, newImage, (void * volatile *)&m_contentsImage)) {
+			CGImageRelease(oldImage);
+		}
+	}
+}
 
 @synthesize textureId;
 @synthesize frame;
