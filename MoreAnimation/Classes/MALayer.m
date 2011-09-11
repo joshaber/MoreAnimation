@@ -124,13 +124,15 @@
 		[self.delegate drawLayer:self inContext:context];
 	else
 		[self drawInContext:context];
+
+	self.contents = (__bridge_transfer id)CGLayerCreateWithContext(context, size, NULL);
 	
 	CGImageRef image = CGBitmapContextCreateImage(context);
 	CGContextRelease(context);
 
 	[self generateTextureFromImage:image];
+	CGImageRelease(image);
 
-	self.contents = (__bridge_transfer id)image;
   	self.needsDisplay = NO;
 }
 
