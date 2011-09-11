@@ -56,6 +56,9 @@
 
 - (CGImageRef)contentsImage {
   	CGImageRef obj = (__bridge CGImageRef)self.contents;
+	if (!obj)
+		return NULL;
+	
 	CFTypeID typeID = CFGetTypeID(obj);
 
 	if (typeID == CGImageGetTypeID())
@@ -66,6 +69,9 @@
 
 - (CGLayerRef)contentsLayer {
   	CGLayerRef obj = (__bridge CGLayerRef)self.contents;
+	if (!obj)
+		return NULL;
+	
 	CFTypeID typeID = CFGetTypeID(obj);
 
 	if (typeID == CGLayerGetTypeID())
