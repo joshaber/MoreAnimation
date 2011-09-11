@@ -23,7 +23,6 @@
 	CGLPixelFormatObj CGLPixelFormat = self.pixelFormat.CGLPixelFormatObj;
 	
 	[self.contentLayer renderInCGLContext:CGLContext pixelFormat:CGLPixelFormat];
-	
 	[[self openGLContext] flushBuffer];
 }
 

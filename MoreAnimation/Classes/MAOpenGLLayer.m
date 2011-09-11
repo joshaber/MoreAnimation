@@ -85,7 +85,6 @@
 		CGContextRelease(bitmapContext);
 
 		self.contents = texture;
-		[self renderTexture:texture];
 	}
 
 	CGLUnlockContext(CGLContext);
@@ -95,15 +94,28 @@
   	MAOpenGLTexture *texture = self.contentsTexture;
 	if (!texture || texture.CGLContext != context) {
 		[self drawInCGLContext:context pixelFormat:pixelFormat];
-		return;
 	}
 
 	// TODO: need to figure out how to render sublayers appropriately
+
+	[self renderTexture:self.contentsTexture];
+	
+	#if 0
+    glBindTexture(GL_TEXTURE_2D, 0);
+	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y);
+	glVertex2f((GLfloat) self.frame.origin.x + (GLfloat) self.frame.size.width, (GLfloat) self.frame.origin.y);
+	glVertex2f((GLfloat) self.frame.origin.x + (GLfloat) self.frame.size.width, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
+	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
+	glEnd();
+	#endif
 }
 
 - (void)renderTexture:(MAOpenGLTexture *)texture {
 	CGLLockContext(texture.CGLContext);
 	glBindTexture(GL_TEXTURE_2D, texture.textureID);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_QUADS);
 	
 	glTexCoord2f(0.0f, 0.0f);
