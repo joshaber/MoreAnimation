@@ -8,6 +8,9 @@
 
 #import "MAOpenGLView.h"
 #import "MAOpenGLLayer.h"
+#import <OpenGL/OpenGL.h>
+#import <OpenGL/gl.h>
+#import <OpenGL/glu.h>
 
 @implementation MAOpenGLView
 
