@@ -27,6 +27,10 @@
   	// do nothing, since drawing is specific to the CGLContext being used
 }
 
+- (void)drawInContext:(CGContextRef)context {
+  	// TODO
+}
+
 - (void)drawInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat {
 }
 
