@@ -11,6 +11,8 @@
 
 @interface MAOpenGLLayer ()
 @property (strong, readonly) MAOpenGLTexture *contentsTexture;
+
+- (void)renderTexture:(MAOpenGLTexture *)texture;
 @end
 
 @implementation MAOpenGLLayer
@@ -81,6 +83,9 @@
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(bitmapContext));
 
 		CGContextRelease(bitmapContext);
+
+		self.contents = texture;
+		[self renderTexture:texture];
 	}
 
 	CGLUnlockContext(CGLContext);
@@ -93,7 +98,11 @@
 		return;
 	}
 
-	CGLLockContext(context);
+	// TODO: need to figure out how to render sublayers appropriately
+}
+
+- (void)renderTexture:(MAOpenGLTexture *)texture {
+	CGLLockContext(texture.CGLContext);
 	glBindTexture(GL_TEXTURE_2D, texture.textureID);
 	glBegin(GL_QUADS);
 	
@@ -110,9 +119,7 @@
 	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
 	
 	glEnd();
-	CGLUnlockContext(context);
-
-	// TODO: need to figure out how to render sublayers appropriately
+	CGLUnlockContext(texture.CGLContext);
 }
 
 @end
