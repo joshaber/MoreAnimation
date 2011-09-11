@@ -22,7 +22,9 @@
 
 /**
  * Draws a single frame into the provided OpenGL context, which is of the
- * specified pixel format.
+ * specified pixel format. The default implementation does nothing.
+ *
+ * This method does not draw sublayers.
  */
 - (void)drawInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat;
 

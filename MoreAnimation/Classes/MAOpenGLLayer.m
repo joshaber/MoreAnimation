@@ -16,6 +16,12 @@
 @property (strong, readonly) MAOpenGLTexture *contentsTexture;
 
 /**
+ * Draws the receiver into an empty texture in \a CGLContext, caching the
+ * drawing into a new #contentsTexture.
+ */
+- (void)displayInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat;
+
+/**
  * Renders \a texture into its OpenGL context.
  */
 - (void)renderTexture:(MAOpenGLTexture *)texture;
@@ -47,7 +53,7 @@
 
 #pragma mark OpenGL drawing
 
-- (void)drawInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
+- (void)displayInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
   	CGContextRef bitmapContext = NULL;
 
 	CGSize size = self.bounds.size;
@@ -56,7 +62,9 @@
 
 	CGLLockContext(CGLContext);
 
-	// TODO: this shouldn't actually draw sublayers
+	[self drawInCGLContext:CGLContext pixelFormat:pixelFormat];
+
+	// TODO: need to figure out how to render sublayers appropriately
 	for (MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
 		if ([sublayer isKindOfClass:[MAOpenGLLayer class]]) {
 			// TODO: transform matrix for the sublayer
@@ -104,23 +112,31 @@
 		CGContextRelease(bitmapContext);
 
 		self.contents = texture;
-		[self renderTexture:texture];
 	}
 
 	CGLUnlockContext(CGLContext);
 }
 
+- (void)drawInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
+}
+
 #pragma mark OpenGL rendering
 
-- (void)renderInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat {
-  	MAOpenGLTexture *texture = self.contentsTexture;
-	if (!texture || texture.CGLContext != context) {
-		[self drawInCGLContext:context pixelFormat:pixelFormat];
-		return;
+- (void)renderInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
+  	// captures the case of the texture being nil as well
+	if (self.contentsTexture.CGLContext != CGLContext) {
+		// clear any existing texture
+		self.contents = nil;
+		
+		// clear needsDisplay flag
+		// TODO: this is kind of a hack
+		[self display];
+
+		// redisplay in the given context
+		[self displayInCGLContext:CGLContext pixelFormat:pixelFormat];
 	}
 
-	// TODO: need to figure out how to render sublayers appropriately
-
+	// render the existing or updated texture
 	[self renderTexture:self.contentsTexture];
 }
 
