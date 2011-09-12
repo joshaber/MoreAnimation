@@ -145,6 +145,9 @@
 		colorSpace,
 		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
 	);
+	
+	// A NULL context probably means the width or height are 0. CG doesn't appreciate NULL contexts, so let's just get out of here.
+	if(referenceContext == NULL) return;
 
 	CGLayerRef layer = CGLayerCreateWithContext(referenceContext, size, NULL);
 	CGContextRelease(referenceContext);
@@ -183,15 +186,7 @@
 }
 
 - (void)drawInContext:(CGContextRef)context {
-  	// FOR TESTING ONLY
-	NSImage *nsImage = [NSImage imageNamed:@"test"];
-	CGContextDrawImage(context, self.bounds, [nsImage CGImageForProposedRect:NULL context:NULL hints:nil]);
 	
-	CGContextSetFillColor(context, (CGFloat []) { 0.0f, 0.0f, 1.0f, 1.0f });
-	CGContextFillRect(context, CGRectMake(20.0f, 20.0f, 200.0f, 200.0f));
-	
-	CGContextSetFillColor(context, (CGFloat []) { 1.0f, 0.0f, 0.0f, 1.0f });
-	CGContextFillRect(context, CGRectMake(70.0f, 70.0f, 100.0f, 100.0f));
 }
 
 - (void)setNeedsDisplay {
