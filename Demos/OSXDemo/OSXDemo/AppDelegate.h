@@ -8,9 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class MAOpenGLView;
+
+
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet NSOpenGLView *openGLView;
+@property (assign) IBOutlet MAOpenGLView *openGLView;
 
 @end
