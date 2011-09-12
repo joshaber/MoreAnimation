@@ -146,6 +146,8 @@
 		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
 	);
 	
+	CGColorSpaceRelease(colorSpace);
+	
 	// A NULL context probably means the width or height are 0. CG doesn't appreciate NULL contexts, so let's just get out of here.
 	if(referenceContext == NULL) return;
 
@@ -159,8 +161,6 @@
 	CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
 	CGContextSetFillColorWithColor(context, defaultFillColor);
 	CGColorRelease(defaultFillColor);
-
-	CGColorSpaceRelease(colorSpace);
 
 	// invoke delegate's drawing logic, if provided
 	if ([self.delegate respondsToSelector:@selector(drawLayer:inContext:)])
