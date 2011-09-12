@@ -40,7 +40,6 @@
 	glEnable(GL_TEXTURE_2D);
 	
 	self.contentLayer = [[MAOpenGLLayer alloc] init];
-	[self.contentLayer addSublayer:[[MALayer alloc] init]];
 }
 
 - (void)reshape {
@@ -57,10 +56,16 @@
 	
 	CGRect frame = NSRectToCGRect(self.bounds);
 	self.contentLayer.frame = frame;
+	
+	// TODO: we shouldn't always force redisplay
+	[self.contentLayer display];
 
-	[self.contentLayer.sublayers enumerateObjectsUsingBlock:^(MALayer *layer, NSUInteger index, BOOL *stop){
+	[self.contentLayer.sublayers enumerateObjectsUsingBlock:^(MALayer *layer, NSUInteger index, BOOL *stop) {
 		layer.frame = frame;
+		[layer display];
 	}];
+	
+	[self setNeedsDisplay:YES];
 }
 
 
