@@ -26,6 +26,14 @@
 	self.prettyLayer.frame = self.openGLView.contentLayer.frame;
 	[self.openGLView.contentLayer addSublayer:self.prettyLayer];
 
+    NSButton *anchorButton = [NSButton new];
+    [anchorButton setButtonType:NSMomentaryLightButton];
+    [anchorButton setTitle:NSLocalizedString(@"DEMO_VIEW_CHANGE_ANCHOR_BUTTON_TITLE", @"Change anchor point")];
+    [anchorButton setAction:@selector(changeAnchor)];
+    [anchorButton setTarget:self];
+    anchorButton.frame = CGRectMake(10, 10, 100, 100);
+    [self.window.contentView addSubview:anchorButton];
+
 	[self.openGLView setNeedsDisplay:YES];
 }
 
@@ -48,6 +56,19 @@
 
 @synthesize window;
 @synthesize openGLView;
+@synthesize changeAnchorMenuItem;
 @synthesize prettyLayer;
+
+#pragma mark Actions
+- (IBAction)changeAnchorPoint:(id)sender {
+    CGPoint oldAnchor = self.prettyLayer.anchorPoint;
+    CGPoint newAnchor = CGPointMake(
+        oldAnchor.x * (1/oldAnchor.x)
+        ,oldAnchor.y * (1/oldAnchor.y)
+    );
+
+    self.openGLView.contentLayer.anchorPoint = newAnchor;
+    [self.openGLView setNeedsDisplay:YES];
+}
 
 @end
