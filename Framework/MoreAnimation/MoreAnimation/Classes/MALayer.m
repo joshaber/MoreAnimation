@@ -51,19 +51,19 @@
 - (id)init {
 	self = [super init];
 	if(self == nil) return nil;
-	
+
 	m_renderQueue = dispatch_queue_create("MoreAnimation.MALayer", DISPATCH_QUEUE_SERIAL);
-	
+
 	self.sublayers = [NSMutableArray array];
-	
+
 	// mark layers as needing display right off the bat, since no content has
 	// yet been rendered
 	self.needsDisplay = YES;
-	
+
 	return self;
 }
 
-- (void)dealloc {	
+- (void)dealloc {
 	dispatch_release(m_renderQueue);
 }
 
@@ -88,7 +88,7 @@
   	CGImageRef obj = (__bridge CGImageRef)self.contents;
 	if (!obj)
 		return NULL;
-	
+
 	CFTypeID typeID = CFGetTypeID(obj);
 
 	// return self.contents if it is a CGImageRef
@@ -102,7 +102,7 @@
   	CGLayerRef obj = (__bridge CGLayerRef)self.contents;
 	if (!obj)
 		return NULL;
-	
+
 	CFTypeID typeID = CFGetTypeID(obj);
 
 	// return self.contents if it is a CGLayerRef
@@ -132,31 +132,15 @@
 	size_t width = (size_t)ceil(size.width);
 	size_t height = (size_t)ceil(size.height);
 
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+	if (!width || !height)
+	    return;
 
-	// create a bitmap context suitable for drawing the receiver
-	// this will be used as input to a CGLayer, where we actually draw
-	CGContextRef referenceContext = CGBitmapContextCreate(
-		NULL,
-		width,
-		height,
-		8,
-		4 * width,
-		colorSpace,
-		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
-	);
-	
-	CGColorSpaceRelease(colorSpace);
-	
-	// A NULL context probably means the width or height are 0. CG doesn't appreciate NULL contexts, so let's just get out of here.
-	if(referenceContext == NULL) return;
-
-	CGLayerRef layer = CGLayerCreateWithContext(referenceContext, size, NULL);
-	CGContextRelease(referenceContext);
+	CGContextRef windowContext = [NSGraphicsContext currentContext].graphicsPort;
+	CGLayerRef layer = CGLayerCreateWithContext(windowContext, size, NULL);
 
 	// now pull out the layer's context to actually draw into
 	CGContextRef context = CGLayerGetContext(layer);
-	
+
 	// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
 	CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
 	CGContextSetFillColorWithColor(context, defaultFillColor);
@@ -175,7 +159,7 @@
 - (void)displayIfNeeded {
   	if (!self.needsDisplay)
 		return;
-	
+
 	// invoke delegate's display logic, if provided
 	if ([self.delegate respondsToSelector:@selector(displayLayer:)])
 		[self.delegate displayLayer:self];
@@ -186,7 +170,7 @@
 }
 
 - (void)drawInContext:(CGContextRef)context {
-	
+
 }
 
 - (void)setNeedsDisplay {
@@ -211,7 +195,7 @@
 		// destination
 		[self drawInContext:context];
 	}
-	
+
 	// render all sublayers
 	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
 		// TODO: transform CTM to sublayer
