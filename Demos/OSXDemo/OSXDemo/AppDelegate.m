@@ -9,8 +9,12 @@
 #import "AppDelegate.h"
 #import <MoreAnimation/MoreAnimation.h>
 
+CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrantAnchor}*/, {0, 0}/*FirstQuadrantAnchor*/, {0, 1}/*FourthQuadrantAnchor*/, {0.5, 0.5} /*CenterAnchor*/};
 
-@interface AppDelegate () <MALayerDelegate>
+@interface AppDelegate () <MALayerDelegate> {
+    NSUInteger anchorIndex;
+}
+
 @property (nonatomic, strong) MALayer *prettyLayer;
 @end
 
@@ -33,6 +37,8 @@
     [anchorButton setTarget:self];
     anchorButton.frame = CGRectMake(10, 10, 100, 100);
     [self.window.contentView addSubview:anchorButton];
+
+    anchorIndex = 0;
 
 	[self.openGLView setNeedsDisplay:YES];
 }
@@ -62,11 +68,8 @@
 #pragma mark Actions
 - (IBAction)changeAnchorPoint:(id)sender {
     CGPoint oldAnchor = self.prettyLayer.anchorPoint;
-    CGPoint newAnchor = CGPointMake(
-        oldAnchor.x * (1/oldAnchor.x)
-        ,oldAnchor.y * (1/oldAnchor.y)
-    );
-
+    CGPoint newAnchor = anchorArray[anchorIndex % 5];
+    anchorIndex++;
     self.openGLView.contentLayer.anchorPoint = newAnchor;
     [self.openGLView setNeedsDisplay:YES];
 }
