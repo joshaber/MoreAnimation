@@ -23,9 +23,9 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
 	self.prettyLayer = [[MALayer alloc] init];
 	self.prettyLayer.delegate = self;
-	self.prettyLayer.frame = self.openGLView.contentLayer.bounds;
+	self.prettyLayer.frame = self.openGLView.contentLayer.frame;
 	[self.openGLView.contentLayer addSublayer:self.prettyLayer];
-	
+
 	[self.openGLView setNeedsDisplay:YES];
 }
 
@@ -35,10 +35,10 @@
 - (void)drawLayer:(MALayer *)layer inContext:(CGContextRef)context {
 	NSImage *nsImage = [NSImage imageNamed:@"test"];
 	CGContextDrawImage(context, layer.bounds, [nsImage CGImageForProposedRect:NULL context:NULL hints:nil]);
-	
+
 	CGContextSetFillColor(context, (CGFloat []) { 0.0f, 0.0f, 1.0f, 1.0f });
 	CGContextFillRect(context, CGRectMake(20.0f, 20.0f, 200.0f, 200.0f));
-	
+
 	CGContextSetFillColor(context, (CGFloat []) { 1.0f, 0.0f, 0.0f, 1.0f });
 	CGContextFillRect(context, CGRectMake(70.0f, 70.0f, 100.0f, 100.0f));
 }

@@ -55,6 +55,7 @@
 	m_renderQueue = dispatch_queue_create("MoreAnimation.MALayer", DISPATCH_QUEUE_SERIAL);
 
 	self.sublayers = [NSMutableArray array];
+	self.anchorPoint = CGPointMake(0.5, 0.5);
 
 	// mark layers as needing display right off the bat, since no content has
 	// yet been rendered
@@ -68,10 +69,6 @@
 }
 
 #pragma mark Properties
-
-- (CGRect)bounds {
-	return CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
-}
 
 - (id)contents {
   	__block id image = NULL;
@@ -119,11 +116,66 @@
 	});
 }
 
-@synthesize frame;
+- (CGAffineTransform)affineTransform {
+    return CATransform3DGetAffineTransform(self.transform);
+}
+
+- (void)setAffineTransform:(CGAffineTransform)affineTransform {
+    self.transform = CATransform3DMakeAffineTransform(affineTransform);
+}
+
+- (CGRect)frame {
+    CGSize size = self.bounds.size;
+    CGPoint anchor = self.anchorPoint;
+    CGPoint originalPosition = self.position;
+
+    CGPoint transformedAnchorPoint = CGPointMake(
+        (anchor.x - 0.5) * size.width,
+        (anchor.y - 0.5) * size.height
+    );
+
+    CGPoint newPosition = CGPointMake(
+        originalPosition.x + transformedAnchorPoint.x,
+        originalPosition.y + transformedAnchorPoint.y
+    );
+
+    return CGRectMake(
+        newPosition.x,
+        newPosition.y,
+        size.width,
+        size.height
+    );
+}
+
+- (void)setFrame:(CGRect)rect {
+    CGSize size = rect.size;
+    self.bounds = CGRectMake(0, 0, size.width, size.height);
+
+    CGPoint anchor = self.anchorPoint;
+
+    CGPoint transformedAnchorPoint = CGPointMake(
+        (anchor.x - 0.5) * size.width,
+        (anchor.y - 0.5) * size.height
+    );
+
+    self.position = CGPointMake(
+        rect.origin.x - transformedAnchorPoint.x,
+        rect.origin.y - transformedAnchorPoint.y
+    );
+}
+
 @synthesize sublayers;
 @synthesize superlayer;
 @synthesize delegate;
 @synthesize needsDisplay;
+@synthesize position;
+@synthesize zPosition;
+@synthesize anchorPoint;
+@synthesize anchorPointZ;
+@synthesize contentsScale;
+@synthesize sublayerTransform;
+@synthesize bounds;
+@synthesize transform;
 
 #pragma mark Displaying and drawing
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36C4BFFB141F29DE00E5DFA5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */; };
 		88D1C56B141D7F9E00A58EB9 /* MoreAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C31141D6FDA0053AF73 /* MoreAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C25141D6FDA0053AF73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C24141D6FDA0053AF73 /* Cocoa.framework */; };
 		D0355C2F141D6FDA0053AF73 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0355C2D141D6FDA0053AF73 /* InfoPlist.strings */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D0355C21141D6FDA0053AF73 /* MoreAnimation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoreAnimation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0355C24141D6FDA0053AF73 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D0355C27141D6FDA0053AF73 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -75,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36C4BFFB141F29DE00E5DFA5 /* QuartzCore.framework in Frameworks */,
 				D0355C6C141D70EE0053AF73 /* OpenGL.framework in Frameworks */,
 				D0355C25141D6FDA0053AF73 /* Cocoa.framework in Frameworks */,
 			);
@@ -120,6 +123,7 @@
 				D0355C24141D6FDA0053AF73 /* Cocoa.framework */,
 				D0355C29141D6FDA0053AF73 /* Foundation.framework */,
 				D0355C6B141D70EE0053AF73 /* OpenGL.framework */,
+				36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */,
 				D0355C3A141D6FDA0053AF73 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;

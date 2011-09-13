@@ -37,15 +37,59 @@
  */
 @interface MALayer : NSObject
 /**
+ * The position of the layer relative to its superlayer, expressed in the
+ * superlayer's coordinate system.
+ */
+@property (assign) CGPoint position;
+
+/**
+ * The Z component of the layer's #position.
+ */
+@property (assign) CGFloat zPosition;
+
+/**
+ * The location within the bounds of the layer that corresponds with the
+ * #position coordinate. Specifies how the #bounds are positioned relative to
+ * the #position property, as well as serving as the point that transforms are
+ * applied around.
+ */
+@property (assign) CGPoint anchorPoint;
+
+/**
+ * The Z component of the layer's #anchorPoint.
+ */
+@property (assign) CGFloat anchorPointZ;
+
+/**
+ * The scale factor applied to the layer.
+ */
+@property (assign) CGFloat contentsScale;
+
+/**
+ * Convenience accessor to get and set the #transform as a \c CGAffineTransform.
+ */
+@property (assign) CGAffineTransform affineTransform;
+
+/**
+ * A transform to be applied to each sublayer before rendering.
+ */
+@property (assign) CATransform3D sublayerTransform;
+
+/**
  * The frame of the receiver (specified in the coordinate space of its
  * superlayer).
  */
-@property (nonatomic, assign) CGRect frame;
+@property (assign) CGRect frame;
 
 /**
  * The bounds of the receiver (specified in the receiver's coordinate space).
  */
-@property (nonatomic, readonly) CGRect bounds;
+@property (assign) CGRect bounds;
+
+/**
+ * A transformation to apply to this layer before drawing.
+ */
+@property (assign) CATransform3D transform;
 
 /**
  * If set, a delegate to use for certain rendering operations.
