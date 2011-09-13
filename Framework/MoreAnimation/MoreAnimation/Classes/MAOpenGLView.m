@@ -55,7 +55,8 @@
 	glLoadIdentity();
 
 	CGRect bounds = NSRectToCGRect(self.frame);
-	self.contentLayer.frame = CGRectInset(bounds, 50, 50);
+    self.contentLayer.bounds = bounds;
+//	self.contentLayer.frame = CGRectInset(bounds, 50, 50);
 
 	// TODO: we shouldn't always force redisplay
 	[self.contentLayer display];

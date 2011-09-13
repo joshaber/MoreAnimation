@@ -135,8 +135,8 @@
     );
 
     CGPoint newPosition = CGPointMake(
-        originalPosition.x + transformedAnchorPoint.x,
-        originalPosition.y + transformedAnchorPoint.y
+        originalPosition.x - transformedAnchorPoint.x,
+        originalPosition.y - transformedAnchorPoint.y
     );
 
     return CGRectMake(
@@ -159,8 +159,8 @@
     );
 
     self.position = CGPointMake(
-        rect.origin.x - transformedAnchorPoint.x,
-        rect.origin.y - transformedAnchorPoint.y
+        CGRectGetMidX(rect) - transformedAnchorPoint.x,
+        CGRectGetMidY(rect) - transformedAnchorPoint.y
     );
 }
 
