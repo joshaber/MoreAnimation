@@ -232,6 +232,8 @@
 #pragma mark Rendering
 
 - (void)renderInContext:(CGContextRef)context {
+    CGContextSaveGState(context);
+
   	[self displayIfNeeded];
 
 	CGImageRef image;
@@ -248,10 +250,16 @@
 		[self drawInContext:context];
 	}
 
+	CGContextRestoreGState(context);
+
 	// render all sublayers
 	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
+	    CGContextSaveGState(context);
+
 		// TODO: transform CTM to sublayer
 		[sublayer renderInContext:context];
+
+		CGContextRestoreGState(context);
 	}
 }
 
