@@ -201,8 +201,8 @@
 
     // translate to anchor point of the sublayer
     CGAffineTransform affineTransform = CGAffineTransformMakeTranslation(
-        layerPosition.x + (layerAnchor.x * size.width),
-        layerPosition.y + (layerAnchor.y * size.height)
+        layerPosition.x + ((layerAnchor.x - 0.5) * size.width),
+        layerPosition.y + ((layerAnchor.y - 0.5) * size.height)
     );
 
     // apply the sublayer's affine affineTransform
