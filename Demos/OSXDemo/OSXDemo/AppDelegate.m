@@ -27,7 +27,7 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
 	self.prettyLayer = [[MALayer alloc] init];
 	self.prettyLayer.delegate = self;
-	self.prettyLayer.frame = self.openGLView.contentLayer.frame;
+	self.prettyLayer.frame = CGRectInset(self.openGLView.contentLayer.frame, 20, 20);
 	[self.openGLView.contentLayer addSublayer:self.prettyLayer];
 
     NSButton *anchorButton = [NSButton new];
