@@ -137,7 +137,7 @@
 
 - (void)renderInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
   	// captures the case of the texture being nil as well
-	if (self.contentsTexture.CGLContext != CGLContext) {
+	if (self.contentsTexture.CGLContext != CGLContext || [self needsDisplay]) {
 		// clear any existing texture
 		self.contents = nil;
 
