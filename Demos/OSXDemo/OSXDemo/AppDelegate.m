@@ -74,4 +74,17 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
     [self.openGLView setNeedsDisplay:YES];
 }
 
+- (IBAction)flipABitch:(id)sender {
+    CGSize size = self.openGLView.bounds.size;
+    CGAffineTransform transform = self.prettyLayer.affineTransform;
+
+    transform = CGAffineTransformTranslate(transform, size.width, size.height);
+    transform = CGAffineTransformScale(transform, -1, -1);
+
+    self.prettyLayer.affineTransform = transform;
+    [self.prettyLayer setNeedsDisplay];
+    [self.openGLView.contentLayer setNeedsDisplay];
+    [self.openGLView setNeedsDisplay:YES];
+}
+
 @end
