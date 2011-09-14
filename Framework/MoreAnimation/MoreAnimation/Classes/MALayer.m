@@ -208,7 +208,7 @@
     );
 
     // apply the sublayer's affine affineTransform
-    affineTransform = CGAffineTransformConcat(affineTransform, sublayer.affineTransform);
+    affineTransform = CGAffineTransformConcat(sublayer.affineTransform, affineTransform);
 
     // translate back to the origin in the sublayer's coordinate system
     affineTransform = CGAffineTransformTranslate(
