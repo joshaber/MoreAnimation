@@ -89,30 +89,36 @@
 					colorSpace,
 					kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
 				);
-				
+
 				CGContextTranslateCTM(bitmapContext, 0, height);
 				CGContextScaleCTM(bitmapContext, 1, -1);
-				
+
 				// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
 				CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
 				CGContextSetFillColorWithColor(bitmapContext, defaultFillColor);
 				CGColorRelease(defaultFillColor);
-				
+
 				CGColorSpaceRelease(colorSpace);
 			}
 
+            CGContextSaveGState(bitmapContext);
+
+            CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
+            CGContextConcatCTM(bitmapContext, affineTransform);
+
 			[sublayer renderInContext:bitmapContext];
+            CGContextRestoreGState(bitmapContext);
 		}
 	}
 
 	if (bitmapContext) {
 		// TODO: how do we want to preserve GL sublayers when caching rendered
 		// content like this?
-		
+
 		MAOpenGLTexture *texture = [MAOpenGLTexture textureWithCGLContext:CGLContext];
 
 		glBindTexture(GL_TEXTURE_2D, texture.textureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(bitmapContext));
 
