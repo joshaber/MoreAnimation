@@ -108,5 +108,20 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
     [self.openGLView.contentLayer setNeedsDisplay];
     [self.openGLView setNeedsDisplay:YES];
 }
+- (IBAction)infinitizeLayers:(id)sender {
+    MALayer *topLayer = self.prettyLayer;
+    for (NSUInteger i = 0;i < 10000;++i) {
+        MALayer *nextLayer = [[MALayer alloc] init];
+        nextLayer.delegate = self;
+        nextLayer.frame = CGRectInset(topLayer.bounds, 2, 2);
+        [topLayer addSublayer:nextLayer];
+        [topLayer setNeedsDisplay];
+
+        topLayer = nextLayer;
+    }
+
+    [self.openGLView.contentLayer setNeedsDisplay];
+    [self.openGLView setNeedsDisplay:YES];
+}
 
 @end
