@@ -97,11 +97,11 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
     [self.openGLView.contentLayer setNeedsDisplay];
     [self.openGLView setNeedsDisplay:YES];
 }
-- (IBAction)brotate45:(id)sender {
+- (IBAction)brotate:(id)sender {
     CGSize size = self.openGLView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
-    transform = CGAffineTransformRotate(transform, M_PI_4);
+    transform = CGAffineTransformRotate(transform, M_PI_4/4);
 
     self.prettyLayer.affineTransform = transform;
     [self.prettyLayer setNeedsDisplay];
@@ -118,6 +118,24 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
         [topLayer setNeedsDisplay];
 
         topLayer = nextLayer;
+    }
+
+    [self.openGLView.contentLayer setNeedsDisplay];
+    [self.openGLView setNeedsDisplay:YES];
+}
+
+- (IBAction)hugEveryCat:(id)sender {
+    MALayer *topLayer = self.prettyLayer;
+    
+    CGFloat height = topLayer.frame.size.height / 10;
+    for (NSUInteger i = 0;i < topLayer.frame.size.width/5;++i) {
+        for(NSUInteger j = 0; j < 10; ++j) {
+            MALayer *nextLayer = [[MALayer alloc] init];
+            nextLayer.delegate = self;
+            nextLayer.frame = CGRectMake(i * 5, height * j, 5, height);
+            [topLayer addSublayer:nextLayer];
+            [topLayer setNeedsDisplay];
+        }
     }
 
     [self.openGLView.contentLayer setNeedsDisplay];
