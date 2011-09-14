@@ -44,6 +44,12 @@
  */
 - (MALayer *)commonParentLayerWithLayer:(MALayer *)layer;
 
+/**
+ * Returns the affine transformation needed to move into the coordinate system
+ * of \a sublayer, which must be an immediate descendant of the receiver.
+ */
+- (CGAffineTransform)affineTransformToImmediateSublayer:(MALayer *)sublayer;
+
 // publicly readonly
 @property (nonatomic, readwrite, strong) NSMutableArray *sublayers;
 @property (nonatomic, readwrite, weak) MALayer *superlayer;
@@ -184,6 +190,86 @@
 @synthesize bounds;
 @synthesize transform;
 
+#pragma mark Coordinate systems and transformations
+
+- (CGAffineTransform)affineTransformToImmediateSublayer:(MALayer *)sublayer; {
+    NSAssert(sublayer.superlayer == self, @"argument to -affineTransformToImmediateSublayer: must have the receiver as its superlayer");
+
+    CGPoint layerAnchor = sublayer.anchorPoint;
+    CGPoint layerPosition = sublayer.position;
+    CGSize size = sublayer.bounds.size;
+
+    // translate to anchor point of the sublayer
+    CGAffineTransform affineTransform = CGAffineTransformMakeTranslation(
+        layerPosition.x + (layerAnchor.x * size.width),
+        layerPosition.y + (layerAnchor.y * size.height)
+    );
+
+    // apply the sublayer's affine affineTransform
+    affineTransform = CGAffineTransformConcat(affineTransform, sublayer.affineTransform);
+
+    // translate back to the origin in the sublayer's coordinate system
+    affineTransform = CGAffineTransformTranslate(
+        affineTransform,
+        -(layerAnchor.x * size.width ),
+        -(layerAnchor.y * size.height)
+    );
+
+    return affineTransform;
+}
+
+- (CGAffineTransform)affineTransformToLayer:(MALayer *)layer {
+    MALayer *parentLayer = [self commonParentLayerWithLayer:layer];
+
+    // returns the transformation needed to get from 'fromLayer' to
+    // 'parentLayer'
+    CGAffineTransform (^transformFromLayer)(MALayer *) = ^(MALayer *fromLayer){
+        CGAffineTransform affineTransform = CGAffineTransformIdentity;
+
+        while (fromLayer != parentLayer) {
+            // work backwards, getting the transformation from the superlayer to
+            // the sublayer
+            MALayer *toLayer = fromLayer.superlayer;
+            CGAffineTransform invertedTransform = [toLayer affineTransformToImmediateSublayer:fromLayer];
+
+            // then invert that, to get the other direction
+            affineTransform = CGAffineTransformConcat(affineTransform, CGAffineTransformInvert(invertedTransform));
+
+            fromLayer = toLayer;
+        }
+
+        return affineTransform;
+    };
+
+    // get the transformation from self to 'parentLayer'
+    CGAffineTransform transformFromSelf = transformFromLayer(self);
+
+    // get the transformation from 'parentLayer' to 'layer'
+    CGAffineTransform transformFromOther = transformFromLayer(layer);
+    CGAffineTransform transformToOther = CGAffineTransformInvert(transformFromOther);
+
+    // combine the two
+    return CGAffineTransformConcat(transformFromSelf, transformToOther);
+}
+
+- (CGPoint)convertPoint:(CGPoint)point fromLayer:(MALayer *)layer; {
+    return [layer convertPoint:point toLayer:self];
+}
+
+- (CGPoint)convertPoint:(CGPoint)point toLayer:(MALayer *)layer; {
+    CGAffineTransform affineTransform = [self affineTransformToLayer:layer];
+    return CGPointApplyAffineTransform(point, affineTransform);
+}
+
+- (CGRect)convertRect:(CGRect)rect fromLayer:(MALayer *)layer; {
+    return [layer convertRect:rect toLayer:self];
+}
+
+- (CGRect)convertRect:(CGRect)rect toLayer:(MALayer *)layer; {
+    CGAffineTransform affineTransform = [self affineTransformToLayer:layer];
+    return CGRectApplyAffineTransform(rect, affineTransform);
+}
+
 #pragma mark Displaying and drawing
 
 - (void)display {
@@ -263,27 +349,8 @@
 	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
 	    CGContextSaveGState(context);
 
-		CGPoint sublayerAnchor = sublayer.anchorPoint;
-		CGPoint sublayerPosition = sublayer.position;
-		CGSize size = sublayer.bounds.size;
-
-        // translate to anchor point of the sublayer
-        CGContextTranslateCTM(
-            context,
-            sublayerPosition.x + (sublayerAnchor.x * size.width),
-            sublayerPosition.y + (sublayerAnchor.y * size.height)
-        );
-
-        // apply the sublayer's affine transform
-        CGContextConcatCTM(context, sublayer.affineTransform);
-
-        // translate back to the origin in the sublayer's coordinate system
-        CGContextTranslateCTM(
-            context,
-            -(sublayerAnchor.x * size.width ),
-            -(sublayerAnchor.y * size.height)
-        );
-
+        CGAffineTransform affineTransform = [self affineTransformToImmediateSublayer:sublayer];
+        CGContextConcatCTM(context, affineTransform);
 		[sublayer renderInContext:context];
 
 		CGContextRestoreGState(context);

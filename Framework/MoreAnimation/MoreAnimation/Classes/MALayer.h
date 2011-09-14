@@ -119,6 +119,34 @@
 @property (nonatomic, readonly, weak) MALayer *superlayer;
 
 /**
+ * Returns the affine transformation that would have to be applied to convert
+ * from the receiver's coordinate system to that of \a layer.
+ */
+- (CGAffineTransform)affineTransformToLayer:(MALayer *)layer;
+
+/**
+ * Converts the given point, specified in the coordinate system of \a layer, to
+ * that of the receiver.
+ */
+- (CGPoint)convertPoint:(CGPoint)point fromLayer:(MALayer *)layer;
+
+/**
+ * Converts the given point, specified in the coordinate system of the receiver,
+ * to that of \a layer.
+ */
+- (CGPoint)convertPoint:(CGPoint)point toLayer:(MALayer *)layer;
+
+/**
+ * Converts the given rectangle, specified in the coordinate system of \a layer, to that of the receiver.
+ */
+- (CGRect)convertRect:(CGRect)rect fromLayer:(MALayer *)layer;
+
+/**
+ * Converts the given rectangle, specified in the coordinate system of the receiver, to that of \a layer.
+ */
+- (CGRect)convertRect:(CGRect)rect toLayer:(MALayer *)layer;
+
+/**
  * Invokes #drawInContext: with a custom rendering context, then caches the
  * drawn content in the #contents property.
  *
