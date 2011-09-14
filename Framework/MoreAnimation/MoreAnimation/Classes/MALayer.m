@@ -263,7 +263,27 @@
 	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
 	    CGContextSaveGState(context);
 
-		// TODO: transform CTM to sublayer
+		CGPoint sublayerAnchor = sublayer.anchorPoint;
+		CGPoint sublayerPosition = sublayer.position;
+		CGSize size = sublayer.bounds.size;
+
+        // translate to anchor point of the sublayer
+        CGContextTranslateCTM(
+            context,
+            sublayerPosition.x + (sublayerAnchor.x * size.width),
+            sublayerPosition.y + (sublayerAnchor.y * size.height)
+        );
+
+        // apply the sublayer's affine transform
+        CGContextConcatCTM(context, sublayer.affineTransform);
+
+        // translate back to the origin in the sublayer's coordinate system
+        CGContextTranslateCTM(
+            context,
+            -(sublayerAnchor.x * size.width ),
+            -(sublayerAnchor.y * size.height)
+        );
+
 		[sublayer renderInContext:context];
 
 		CGContextRestoreGState(context);
