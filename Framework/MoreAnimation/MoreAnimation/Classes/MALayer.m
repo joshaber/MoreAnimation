@@ -69,6 +69,8 @@
 
 	self.sublayers = [NSMutableArray array];
 	self.anchorPoint = CGPointMake(0.5, 0.5);
+	self.transform = CATransform3DIdentity;
+	self.sublayerTransform = CATransform3DIdentity;
 
 	// mark layers as needing display right off the bat, since no content has
 	// yet been rendered

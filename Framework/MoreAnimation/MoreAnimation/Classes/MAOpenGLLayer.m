@@ -134,7 +134,7 @@
 	if (self.contentsTexture.CGLContext != CGLContext) {
 		// clear any existing texture
 		self.contents = nil;
-		
+
 		// clear needsDisplay flag
 		// TODO: this is kind of a hack
 		[self display];
@@ -153,19 +153,19 @@
 
 	// draw a textured quad over the full frame of the layer
 	glBegin(GL_QUADS);
-	
+
 	glTexCoord2f(0.0f, 0.0f);
 	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y);
-	
+
 	glTexCoord2f(1.0f, 0.0f);
 	glVertex2f((GLfloat) self.frame.origin.x + (GLfloat) self.frame.size.width, (GLfloat) self.frame.origin.y);
-	
+
 	glTexCoord2f(1.0f, 1.0f);
 	glVertex2f((GLfloat) self.frame.origin.x + (GLfloat) self.frame.size.width, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
-	
+
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
-	
+
 	glEnd();
 
 	CGLUnlockContext(texture.CGLContext);
