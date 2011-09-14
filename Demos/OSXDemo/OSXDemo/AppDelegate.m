@@ -78,7 +78,6 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
     CGSize size = self.openGLView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
-    transform = CGAffineTransformTranslate(transform, size.width, size.height);
     transform = CGAffineTransformScale(transform, -1, -1);
 
     self.prettyLayer.affineTransform = transform;
@@ -91,7 +90,6 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
     CGSize size = self.openGLView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
-    transform = CGAffineTransformTranslate(transform, 0, size.height);
     transform = CGAffineTransformScale(transform, 1, -1);
 
     self.prettyLayer.affineTransform = transform;
