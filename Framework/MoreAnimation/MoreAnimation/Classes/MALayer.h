@@ -163,4 +163,9 @@
  */
 - (void)removeFromSuperlayer;
 
+/**
+ * Returns whether the receiver is a descendant of or identical to \a layer.
+ */
+- (BOOL)isDescendantOfLayer:(MALayer *)layer;
+
 @end

@@ -37,6 +37,13 @@
  */
 @property (readonly) CGLayerRef contentsLayer;
 
+/**
+ * If the receiver and \a layer share a common parent (or one is the parent of
+ * the other), this returns that parent layer. If the receiver and \a layer do
+ * not exist in the same layer tree, \c nil is returned.
+ */
+- (MALayer *)commonParentLayerWithLayer:(MALayer *)layer;
+
 // publicly readonly
 @property (nonatomic, readwrite, strong) NSMutableArray *sublayers;
 @property (nonatomic, readwrite, weak) MALayer *superlayer;
@@ -275,6 +282,34 @@
 - (void)removeFromSuperlayer {
   	[self.superlayer.sublayers removeObjectIdenticalTo:self];
 	self.superlayer = nil;
+}
+
+- (BOOL)isDescendantOfLayer:(MALayer *)layer {
+    NSParameterAssert(layer != nil);
+
+    MALayer *testLayer = self;
+    do {
+        if (testLayer == layer)
+            return YES;
+
+        testLayer = testLayer.superlayer;
+    } while (testLayer);
+
+    return NO;
+}
+
+- (MALayer *)commonParentLayerWithLayer:(MALayer *)layer {
+    // TODO: this is a naive implementation
+
+    MALayer *parentLayer = self;
+    do {
+        if ([self isDescendantOfLayer:parentLayer] && [layer isDescendantOfLayer:parentLayer])
+            return parentLayer;
+
+        parentLayer = parentLayer.superlayer;
+    } while (parentLayer);
+
+    return nil;
 }
 
 @end
