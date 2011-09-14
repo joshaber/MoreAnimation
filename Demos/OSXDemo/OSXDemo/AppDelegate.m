@@ -87,4 +87,28 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
     [self.openGLView setNeedsDisplay:YES];
 }
 
+- (IBAction)flipDemTables:(id)sender {
+    CGSize size = self.openGLView.bounds.size;
+    CGAffineTransform transform = self.prettyLayer.affineTransform;
+
+    transform = CGAffineTransformTranslate(transform, 0, size.height);
+    transform = CGAffineTransformScale(transform, 1, -1);
+
+    self.prettyLayer.affineTransform = transform;
+    [self.prettyLayer setNeedsDisplay];
+    [self.openGLView.contentLayer setNeedsDisplay];
+    [self.openGLView setNeedsDisplay:YES];
+}
+- (IBAction)brotate45:(id)sender {
+    CGSize size = self.openGLView.bounds.size;
+    CGAffineTransform transform = self.prettyLayer.affineTransform;
+
+    transform = CGAffineTransformRotate(transform, M_PI_4);
+
+    self.prettyLayer.affineTransform = transform;
+    [self.prettyLayer setNeedsDisplay];
+    [self.openGLView.contentLayer setNeedsDisplay];
+    [self.openGLView setNeedsDisplay:YES];
+}
+
 @end
