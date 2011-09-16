@@ -8,14 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class MAOpenGLView;
-
-
 @interface AppDelegate : NSObject <NSApplicationDelegate>
-
-@property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet MAOpenGLView *openGLView;
-@property (weak) IBOutlet NSMenuItem *changeAnchorMenuItem;
-
-
+@property (strong) NSMutableArray *windowControllers;
 @end
