@@ -16,6 +16,8 @@
 		D0355C90141D71600053AF73 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C8F141D71600053AF73 /* AppDelegate.m */; };
 		D0355C93141D71600053AF73 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0355C91141D71600053AF73 /* MainMenu.xib */; };
 		D0355C9C141D71ED0053AF73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C9A141D71ED0053AF73 /* OpenGL.framework */; };
+		D08B81151423FE9800F887A5 /* JAWeakReferenceHaterProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B81121423FE9800F887A5 /* JAWeakReferenceHaterProxy.m */; };
+		D08B81161423FE9800F887A5 /* JAWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B81141423FE9800F887A5 /* JAWindowController.m */; };
 		D091863C141D7267005F86FF /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = D091863B141D7267005F86FF /* test.png */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +73,10 @@
 		D0355C8F141D71600053AF73 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		D0355C92141D71600053AF73 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D0355C9A141D71ED0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		D08B81111423FE9800F887A5 /* JAWeakReferenceHaterProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JAWeakReferenceHaterProxy.h; sourceTree = "<group>"; };
+		D08B81121423FE9800F887A5 /* JAWeakReferenceHaterProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JAWeakReferenceHaterProxy.m; sourceTree = "<group>"; };
+		D08B81131423FE9800F887A5 /* JAWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JAWindowController.h; sourceTree = "<group>"; };
+		D08B81141423FE9800F887A5 /* JAWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JAWindowController.m; sourceTree = "<group>"; };
 		D091863B141D7267005F86FF /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		D0918642141D755E005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D0918643141D755E005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -121,6 +127,7 @@
 		D0355C7B141D71600053AF73 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D08B81101423FE8400F887A5 /* JAWeakReferenceHaterProxy */,
 				88D1C55E141D7F0A00A58EB9 /* MoreAnimation.xcodeproj */,
 				D0355C7F141D71600053AF73 /* AppKit.framework */,
 				D0355C7C141D71600053AF73 /* Cocoa.framework */,
@@ -152,6 +159,17 @@
 				D091863B141D7267005F86FF /* test.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D08B81101423FE8400F887A5 /* JAWeakReferenceHaterProxy */ = {
+			isa = PBXGroup;
+			children = (
+				D08B81111423FE9800F887A5 /* JAWeakReferenceHaterProxy.h */,
+				D08B81121423FE9800F887A5 /* JAWeakReferenceHaterProxy.m */,
+				D08B81131423FE9800F887A5 /* JAWindowController.h */,
+				D08B81141423FE9800F887A5 /* JAWindowController.m */,
+			);
+			name = JAWeakReferenceHaterProxy;
 			sourceTree = "<group>";
 		};
 		D091863E141D755E005F86FF /* Configuration */ = {
@@ -256,6 +274,8 @@
 			files = (
 				D0355C89141D71600053AF73 /* main.m in Sources */,
 				D0355C90141D71600053AF73 /* AppDelegate.m in Sources */,
+				D08B81151423FE9800F887A5 /* JAWeakReferenceHaterProxy.m in Sources */,
+				D08B81161423FE9800F887A5 /* JAWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
