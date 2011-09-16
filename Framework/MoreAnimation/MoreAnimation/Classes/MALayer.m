@@ -257,7 +257,8 @@
 }
 
 - (CGPoint)convertPoint:(CGPoint)point fromLayer:(MALayer *)layer; {
-    return [layer convertPoint:point toLayer:self];
+    CGAffineTransform affineTransform = [layer affineTransformToLayer:self];
+    return CGPointApplyAffineTransform(point, affineTransform);
 }
 
 - (CGPoint)convertPoint:(CGPoint)point toLayer:(MALayer *)layer; {
@@ -266,7 +267,8 @@
 }
 
 - (CGRect)convertRect:(CGRect)rect fromLayer:(MALayer *)layer; {
-    return [layer convertRect:rect toLayer:self];
+    CGAffineTransform affineTransform = [layer affineTransformToLayer:self];
+    return CGRectApplyAffineTransform(rect, affineTransform);
 }
 
 - (CGRect)convertRect:(CGRect)rect toLayer:(MALayer *)layer; {
