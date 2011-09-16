@@ -15,4 +15,13 @@
  * there was an error.
  */
 - (NSOpenGLPixelFormat *)pixelFormat;
+
+/**
+ * Executes \a block while the receiver has been locked and set as the current
+ * thread's OpenGL context.
+ * 
+ * @warning This method may block for an indefinite amount of time, if the
+ * receiver's CGL context has been locked on another thread.
+ */
+- (void)executeWhileCurrentContext:(dispatch_block_t)block;
 @end

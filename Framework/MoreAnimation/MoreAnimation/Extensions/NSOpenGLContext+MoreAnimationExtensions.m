@@ -20,4 +20,19 @@
 
 	return format;
 }
+
+- (void)executeWhileCurrentContext:(dispatch_block_t)block; {
+  	NSOpenGLContext *previousContext = [NSOpenGLContext currentContext];
+
+  	CGLContextObj CGLContext = CGLRetainContext([self CGLContextObj]);
+	CGLLockContext(CGLContext);
+
+	[self makeCurrentContext];
+	block();
+
+	CGLUnlockContext(CGLContext);
+	CGLReleaseContext(CGLContext);
+
+	[previousContext makeCurrentContext];
+}
 @end
