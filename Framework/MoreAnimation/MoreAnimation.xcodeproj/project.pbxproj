@@ -26,6 +26,13 @@
 		D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C5A141D700C0053AF73 /* MAOpenGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C64141D700C0053AF73 /* MAOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C5B141D700C0053AF73 /* MAOpenGLView.m */; };
 		D0355C6C141D70EE0053AF73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C6B141D70EE0053AF73 /* OpenGL.framework */; };
+		D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */; };
+		D05A860E1423E5D7009A4748 /* EXTSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */; };
+		D05A86121423E5E0009A4748 /* EXTRuntimeExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86101423E5E0009A4748 /* EXTRuntimeExtensions.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -Wno-sign-conversion -Wno-conversion"; }; };
+		D05A86171423E5EC009A4748 /* EXTRuntimeExtensionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86141423E5EC009A4748 /* EXTRuntimeExtensionsTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D05A86181423E5EC009A4748 /* EXTSafeCategoryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D05A861A1423E600009A4748 /* metamacros.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A86191423E600009A4748 /* metamacros.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +71,15 @@
 		D0355C5A141D700C0053AF73 /* MAOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAOpenGLView.h; sourceTree = "<group>"; };
 		D0355C5B141D700C0053AF73 /* MAOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAOpenGLView.m; sourceTree = "<group>"; };
 		D0355C6B141D70EE0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTSafeCategory.h; sourceTree = "<group>"; };
+		D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTSafeCategory.m; sourceTree = "<group>"; };
+		D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTRuntimeExtensions.h; sourceTree = "<group>"; };
+		D05A86101423E5E0009A4748 /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTRuntimeExtensions.m; sourceTree = "<group>"; };
+		D05A86131423E5EC009A4748 /* EXTRuntimeExtensionsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTRuntimeExtensionsTest.h; path = MoreAnimationTests/EXTRuntimeExtensionsTest.h; sourceTree = "<group>"; };
+		D05A86141423E5EC009A4748 /* EXTRuntimeExtensionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTRuntimeExtensionsTest.m; path = MoreAnimationTests/EXTRuntimeExtensionsTest.m; sourceTree = "<group>"; };
+		D05A86151423E5EC009A4748 /* EXTSafeCategoryTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTSafeCategoryTest.h; path = MoreAnimationTests/EXTSafeCategoryTest.h; sourceTree = "<group>"; };
+		D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTSafeCategoryTest.m; path = MoreAnimationTests/EXTSafeCategoryTest.m; sourceTree = "<group>"; };
+		D05A86191423E600009A4748 /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metamacros.h; sourceTree = "<group>"; };
 		D0918649141D7564005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D091864A141D7564005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D091864B141D7564005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -116,6 +132,7 @@
 		D0355C23141D6FDA0053AF73 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D05A86091423E5C8009A4748 /* libextobjc */,
 				D0355C27141D6FDA0053AF73 /* AppKit.framework */,
 				D0355C24141D6FDA0053AF73 /* Cocoa.framework */,
 				D0355C29141D6FDA0053AF73 /* Foundation.framework */,
@@ -189,6 +206,22 @@
 			name = OpenGL;
 			sourceTree = "<group>";
 		};
+		D05A86091423E5C8009A4748 /* libextobjc */ = {
+			isa = PBXGroup;
+			children = (
+				D05A86191423E600009A4748 /* metamacros.h */,
+				D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */,
+				D05A86101423E5E0009A4748 /* EXTRuntimeExtensions.m */,
+				D05A86131423E5EC009A4748 /* EXTRuntimeExtensionsTest.h */,
+				D05A86141423E5EC009A4748 /* EXTRuntimeExtensionsTest.m */,
+				D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */,
+				D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */,
+				D05A86151423E5EC009A4748 /* EXTSafeCategoryTest.h */,
+				D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */,
+			);
+			name = libextobjc;
+			sourceTree = "<group>";
+		};
 		D0918645141D7564005F86FF /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,6 +246,9 @@
 				D0355C61141D700C0053AF73 /* MAOpenGLTexture.h in Headers */,
 				D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */,
 				D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */,
+				D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */,
+				D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */,
+				D05A861A1423E600009A4748 /* metamacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +362,8 @@
 				D0355C60141D700C0053AF73 /* MAOpenGLLayer.m in Sources */,
 				D0355C62141D700C0053AF73 /* MAOpenGLTexture.m in Sources */,
 				D0355C64141D700C0053AF73 /* MAOpenGLView.m in Sources */,
+				D05A860E1423E5D7009A4748 /* EXTSafeCategory.m in Sources */,
+				D05A86121423E5E0009A4748 /* EXTRuntimeExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +372,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0355C48141D6FDA0053AF73 /* MoreAnimationTests.m in Sources */,
+				D05A86171423E5EC009A4748 /* EXTRuntimeExtensionsTest.m in Sources */,
+				D05A86181423E5EC009A4748 /* EXTSafeCategoryTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
