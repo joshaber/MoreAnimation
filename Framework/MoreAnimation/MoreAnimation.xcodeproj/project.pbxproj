@@ -33,6 +33,8 @@
 		D05A86171423E5EC009A4748 /* EXTRuntimeExtensionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86141423E5EC009A4748 /* EXTRuntimeExtensionsTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D05A86181423E5EC009A4748 /* EXTSafeCategoryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D05A861A1423E600009A4748 /* metamacros.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A86191423E600009A4748 /* metamacros.h */; };
+		D05A86291423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A86271423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D05A862A1423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86281423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +82,8 @@
 		D05A86151423E5EC009A4748 /* EXTSafeCategoryTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTSafeCategoryTest.h; path = MoreAnimationTests/EXTSafeCategoryTest.h; sourceTree = "<group>"; };
 		D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTSafeCategoryTest.m; path = MoreAnimationTests/EXTSafeCategoryTest.m; sourceTree = "<group>"; };
 		D05A86191423E600009A4748 /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metamacros.h; sourceTree = "<group>"; };
+		D05A86271423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOpenGLContext+MoreAnimationExtensions.h"; sourceTree = "<group>"; };
+		D05A86281423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOpenGLContext+MoreAnimationExtensions.m"; sourceTree = "<group>"; };
 		D0918649141D7564005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D091864A141D7564005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D091864B141D7564005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -148,6 +152,7 @@
 			children = (
 				D0355C31141D6FDA0053AF73 /* MoreAnimation.h */,
 				D0355C52141D700C0053AF73 /* Classes */,
+				D05A86251423E734009A4748 /* Extensions */,
 				D0355C2B141D6FDA0053AF73 /* Supporting Files */,
 			);
 			path = MoreAnimation;
@@ -222,6 +227,15 @@
 			name = libextobjc;
 			sourceTree = "<group>";
 		};
+		D05A86251423E734009A4748 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D05A86271423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h */,
+				D05A86281423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		D0918645141D7564005F86FF /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +259,7 @@
 				D0355C5F141D700C0053AF73 /* MAOpenGLLayer.h in Headers */,
 				D0355C61141D700C0053AF73 /* MAOpenGLTexture.h in Headers */,
 				D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */,
+				D05A86291423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h in Headers */,
 				D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */,
 				D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */,
 				D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */,
@@ -364,6 +379,7 @@
 				D0355C64141D700C0053AF73 /* MAOpenGLView.m in Sources */,
 				D05A860E1423E5D7009A4748 /* EXTSafeCategory.m in Sources */,
 				D05A86121423E5E0009A4748 /* EXTRuntimeExtensions.m in Sources */,
+				D05A862A1423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

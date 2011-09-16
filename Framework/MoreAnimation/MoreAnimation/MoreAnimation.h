@@ -6,6 +6,7 @@
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
+#import <MoreAnimation/NSOpenGLContext+MoreAnimationExtensions.h>
 #import <MoreAnimation/MALayer.h>
 #import <MoreAnimation/MAOpenGLLayer.h>
 #import <MoreAnimation/MAOpenGLView.h>
