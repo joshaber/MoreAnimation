@@ -370,11 +370,16 @@
 
   	[self.sublayers addObject:layer];
 	layer.superlayer = self;
+
+	[self setNeedsDisplay];
 }
 
 - (void)removeFromSuperlayer {
-  	[self.superlayer.sublayers removeObjectIdenticalTo:self];
+  	__strong MALayer *superlayer = self.superlayer;
 	self.superlayer = nil;
+
+  	[superlayer.sublayers removeObjectIdenticalTo:self];
+	[superlayer setNeedsDisplay];
 }
 
 - (BOOL)isDescendantOfLayer:(MALayer *)layer {
