@@ -179,18 +179,18 @@
     );
 }
 
-@synthesize sublayers;
-@synthesize superlayer;
-@synthesize delegate;
-@synthesize needsDisplay;
-@synthesize position;
-@synthesize zPosition;
-@synthesize anchorPoint;
-@synthesize anchorPointZ;
-@synthesize contentsScale;
-@synthesize sublayerTransform;
-@synthesize bounds;
-@synthesize transform;
+@synthesize sublayers = m_sublayers;
+@synthesize superlayer = m_superlayer;
+@synthesize delegate = m_delegate;
+@synthesize needsDisplay = m_needsDisplay;
+@synthesize position = m_position;
+@synthesize zPosition = m_zPosition;
+@synthesize anchorPoint = m_anchorPoint;
+@synthesize anchorPointZ = m_anchorPointZ;
+@synthesize contentsScale = m_contentsScale;
+@synthesize sublayerTransform = m_sublayerTransform;
+@synthesize bounds = m_bounds;
+@synthesize transform = m_transform;
 
 #pragma mark Coordinate systems and transformations
 
