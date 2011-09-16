@@ -51,18 +51,10 @@
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	CGRect bounds = NSRectToCGRect(self.frame);
+	CGRect bounds = NSRectToCGRect(self.bounds);
     self.contentLayer.bounds = bounds;
-//	self.contentLayer.frame = CGRectInset(bounds, 50, 50);
 
-	// TODO: we shouldn't always force redisplay
-	[self.contentLayer display];
-
-	[self.contentLayer.sublayers enumerateObjectsUsingBlock:^(MALayer *layer, NSUInteger index, BOOL *stop) {
-		layer.bounds = bounds;
-		[layer display];
-	}];
-
+	[self.contentLayer setNeedsDisplay];
 	[self setNeedsDisplay:YES];
 }
 
