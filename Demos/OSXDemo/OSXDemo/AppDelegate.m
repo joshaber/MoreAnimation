@@ -30,14 +30,6 @@ CGPoint anchorArray[5] = { {1, 1}/*ThirdQuadrantAnchor*/, {1, 0}/*SecondQuadrant
 	self.prettyLayer.frame = CGRectInset(self.openGLView.contentLayer.frame, 20, 20);
 	[self.openGLView.contentLayer addSublayer:self.prettyLayer];
 
-    NSButton *anchorButton = [NSButton new];
-    [anchorButton setButtonType:NSMomentaryLightButton];
-    [anchorButton setTitle:NSLocalizedString(@"DEMO_VIEW_CHANGE_ANCHOR_BUTTON_TITLE", @"Change anchor point")];
-    [anchorButton setAction:@selector(changeAnchor)];
-    [anchorButton setTarget:self];
-    anchorButton.frame = CGRectMake(10, 10, 100, 100);
-    [self.window.contentView addSubview:anchorButton];
-
     anchorIndex = 0;
 
 	[self.openGLView setNeedsDisplay:YES];
