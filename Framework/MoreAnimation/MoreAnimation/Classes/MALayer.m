@@ -326,6 +326,7 @@
 
 - (void)setNeedsDisplay {
   	self.needsDisplay = YES;
+	[self.superlayer setNeedsDisplay];
 }
 
 #pragma mark Rendering
