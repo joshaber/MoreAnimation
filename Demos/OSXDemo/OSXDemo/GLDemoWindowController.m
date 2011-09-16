@@ -51,7 +51,6 @@ static const CGPoint anchorArray[5] = {
 	[self.openGLView.contentLayer addSublayer:self.prettyLayer];
 
     self.anchorIndex = 0;
-	[self.openGLView setNeedsDisplay:YES];
 }
 
 #pragma mark MALayerDelegate
@@ -74,7 +73,6 @@ static const CGPoint anchorArray[5] = {
     CGPoint newAnchor = anchorArray[self.anchorIndex % 5];
     self.anchorIndex++;
     self.openGLView.contentLayer.anchorPoint = newAnchor;
-    [self.openGLView setNeedsDisplay:YES];
 }
 
 - (IBAction)flipABitch:(id)sender {
@@ -84,9 +82,6 @@ static const CGPoint anchorArray[5] = {
     transform = CGAffineTransformScale(transform, -1, -1);
 
     self.prettyLayer.affineTransform = transform;
-    [self.prettyLayer setNeedsDisplay];
-    [self.openGLView.contentLayer setNeedsDisplay];
-    [self.openGLView setNeedsDisplay:YES];
 }
 
 - (IBAction)flipDemTables:(id)sender {
@@ -96,9 +91,6 @@ static const CGPoint anchorArray[5] = {
     transform = CGAffineTransformScale(transform, 1, -1);
 
     self.prettyLayer.affineTransform = transform;
-    [self.prettyLayer setNeedsDisplay];
-    [self.openGLView.contentLayer setNeedsDisplay];
-    [self.openGLView setNeedsDisplay:YES];
 }
 
 - (IBAction)brotate:(id)sender {
@@ -108,9 +100,6 @@ static const CGPoint anchorArray[5] = {
     transform = CGAffineTransformRotate(transform, M_PI_4/4);
 
     self.prettyLayer.affineTransform = transform;
-    [self.prettyLayer setNeedsDisplay];
-    [self.openGLView.contentLayer setNeedsDisplay];
-    [self.openGLView setNeedsDisplay:YES];
 }
 
 - (IBAction)infinitizeLayers:(id)sender {
@@ -120,13 +109,9 @@ static const CGPoint anchorArray[5] = {
         nextLayer.delegate = self;
         nextLayer.frame = CGRectInset(topLayer.bounds, 2, 2);
         [topLayer addSublayer:nextLayer];
-        [topLayer setNeedsDisplay];
 
         topLayer = nextLayer;
     }
-
-    [self.openGLView.contentLayer setNeedsDisplay];
-    [self.openGLView setNeedsDisplay:YES];
 }
 
 - (IBAction)hugEveryCat:(id)sender {
@@ -139,12 +124,8 @@ static const CGPoint anchorArray[5] = {
             nextLayer.delegate = self;
             nextLayer.frame = CGRectMake(i * 5, height * j, 5, height);
             [topLayer addSublayer:nextLayer];
-            [topLayer setNeedsDisplay];
         }
     }
-
-    [self.openGLView.contentLayer setNeedsDisplay];
-    [self.openGLView setNeedsDisplay:YES];
 }
 
 
