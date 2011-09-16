@@ -25,28 +25,28 @@
  * bind the receiver's #textureID in any other OpenGL context without first
  * copying the texture object into that context.
  */
-@property (nonatomic, readonly) CGLContextObj CGLContext;
+@property (nonatomic, strong, readonly) NSOpenGLContext *GLContext;
 
 /**
- * Returns an autoreleased texture initialized with #initWithCGLContext:.
+ * Returns an autoreleased texture initialized with #initWithGLContext:.
  */
-+ (id)textureWithCGLContext:(CGLContextObj)cxt;
++ (id)textureWithGLContext:(NSOpenGLContext *)cxt;
 
 /**
- * Returns an autoreleased texture initialized with #initWithImage:CGLContext:.
+ * Returns an autoreleased texture initialized with #initWithImage:GLContext:.
  */
-+ (id)textureWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt;
++ (id)textureWithImage:(CGImageRef)image GLContext:(NSOpenGLContext *)cxt;
 
 /**
  * Initializes a texture object with the specified OpenGL context. A #textureID
  * will be automatically created, and can be associated with any image data
  * desired.
  */
-- (id)initWithCGLContext:(CGLContextObj)cxt;
+- (id)initWithGLContext:(NSOpenGLContext *)cxt;
 
 /**
  * Initializes a texture object with the specified OpenGL context, using the
  * image data from \a image.
  */
-- (id)initWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt;
+- (id)initWithImage:(CGImageRef)image GLContext:(NSOpenGLContext *)cxt;
 @end

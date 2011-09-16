@@ -8,8 +8,8 @@
 
 #import "MAOpenGLLayer.h"
 #import "MAOpenGLTexture.h"
+#import "NSOpenGLContext+MoreAnimationExtensions.h"
 #import <OpenGL/gl.h>
-//#import <OpenGL/glu.h>
 
 @interface MAOpenGLLayer ()
 /**
@@ -18,10 +18,10 @@
 @property (strong, readonly) MAOpenGLTexture *contentsTexture;
 
 /**
- * Draws the receiver into an empty texture in \a CGLContext, caching the
+ * Draws the receiver into an empty texture in an OpenGL context, caching the
  * drawing into a new #contentsTexture.
  */
-- (void)displayInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat;
+- (void)displayInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat;
 
 /**
  * Renders \a texture into its OpenGL context.
@@ -47,10 +47,10 @@
 
 - (void)display {
   	// if we have a texture, assume that we want to redisplay in the same
-	// CGLContext; otherwise, do nothing
+	// context; otherwise, do nothing
 	if (self.contentsTexture) {
-		CGLContextObj context = self.contentsTexture.CGLContext;
-		[self displayInCGLContext:context pixelFormat:CGLGetPixelFormat(context)];
+		NSOpenGLContext *context = self.contentsTexture.GLContext;
+		[self displayInGLContext:context pixelFormat:[context pixelFormat]];
 	}
 }
 
@@ -60,101 +60,100 @@
 
 #pragma mark OpenGL drawing
 
-- (void)displayInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
-  	CGContextRef bitmapContext = NULL;
-
+- (void)displayInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat; {
 	CGSize size = self.bounds.size;
 	size_t width = (size_t)ceil(size.width);
 	size_t height = (size_t)ceil(size.height);
 
-	CGLLockContext(CGLContext);
+	[context executeWhileCurrentContext:^{
+		CGContextRef bitmapContext = NULL;
 
-	[self drawInCGLContext:CGLContext pixelFormat:pixelFormat];
+		[self drawInGLContext:context pixelFormat:pixelFormat];
 
-	// TODO: need to figure out how to render sublayers appropriately
-	for (MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
-		if ([sublayer isKindOfClass:[MAOpenGLLayer class]]) {
-			// TODO: transform matrix for the sublayer
-			MAOpenGLLayer *sublayerGL = (MAOpenGLLayer *)sublayer;
-			[sublayerGL renderInCGLContext:CGLContext pixelFormat:pixelFormat];
-		} else {
-			if (!bitmapContext) {
-				CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-				bitmapContext = CGBitmapContextCreate(
-					NULL,
-					width,
-					height,
-					8,
-					4 * width,
-					colorSpace,
-					kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
-				);
+		// TODO: need to figure out how to render sublayers appropriately
+		for (MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
+			if ([sublayer isKindOfClass:[MAOpenGLLayer class]]) {
+				// TODO: transform matrix for the sublayer
+				MAOpenGLLayer *sublayerGL = (MAOpenGLLayer *)sublayer;
+				[sublayerGL renderInGLContext:context pixelFormat:pixelFormat];
+			} else {
+				if (!bitmapContext) {
+					CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+					bitmapContext = CGBitmapContextCreate(
+						NULL,
+						width,
+						height,
+						8,
+						4 * width,
+						colorSpace,
+						kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
+					);
 
-				CGContextTranslateCTM(bitmapContext, 0, height);
-				CGContextScaleCTM(bitmapContext, 1, -1);
+					CGContextTranslateCTM(bitmapContext, 0, height);
+					CGContextScaleCTM(bitmapContext, 1, -1);
 
-				// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
-				CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
-				CGContextSetFillColorWithColor(bitmapContext, defaultFillColor);
-				CGColorRelease(defaultFillColor);
+					// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
+					CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
+					CGContextSetFillColorWithColor(bitmapContext, defaultFillColor);
+					CGColorRelease(defaultFillColor);
 
-				CGColorSpaceRelease(colorSpace);
+					CGColorSpaceRelease(colorSpace);
+				}
+
+				CGContextSaveGState(bitmapContext);
+
+				CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
+				CGContextConcatCTM(bitmapContext, affineTransform);
+
+				[sublayer renderInContext:bitmapContext];
+				CGContextRestoreGState(bitmapContext);
 			}
-
-            CGContextSaveGState(bitmapContext);
-
-            CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
-            CGContextConcatCTM(bitmapContext, affineTransform);
-
-			[sublayer renderInContext:bitmapContext];
-            CGContextRestoreGState(bitmapContext);
 		}
-	}
 
-	if (bitmapContext) {
-		// TODO: how do we want to preserve GL sublayers when caching rendered
-		// content like this?
+		if (bitmapContext) {
+			// TODO: how do we want to preserve GL sublayers when caching rendered
+			// content like this?
 
-		MAOpenGLTexture *texture = [MAOpenGLTexture textureWithCGLContext:CGLContext];
+			MAOpenGLTexture *texture = [MAOpenGLTexture textureWithGLContext:context];
 
-		glBindTexture(GL_TEXTURE_2D, texture.textureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(bitmapContext));
+			glBindTexture(GL_TEXTURE_2D, texture.textureID);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)width, (GLsizei)height, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, CGBitmapContextGetData(bitmapContext));
 
-		CGContextRelease(bitmapContext);
+			CGContextRelease(bitmapContext);
 
-		self.contents = texture;
-	}
-
-	CGLUnlockContext(CGLContext);
+			self.contents = texture;
+		}
+	}];
 }
 
-- (void)drawInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
+- (void)drawInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat; {
 }
 
 #pragma mark OpenGL rendering
 
-- (void)renderInCGLContext:(CGLContextObj)CGLContext pixelFormat:(CGLPixelFormatObj)pixelFormat {
-  	// captures the case of the texture being nil as well
-	if (self.contentsTexture.CGLContext != CGLContext || [self needsDisplay]) {
-		// clear any existing texture
-		self.contents = nil;
+- (void)renderInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat; {
+  	[context executeWhileCurrentContext:^{
+		// captures the case of the texture being nil as well
+		if (self.contentsTexture.GLContext != context || [self needsDisplay]) {
+			// clear any existing texture
+			self.contents = nil;
 
-		// clear needsDisplay flag
-		// TODO: this is kind of a hack
-		[self display];
+			// clear needsDisplay flag
+			// TODO: this is kind of a hack
+			[self display];
 
-		// redisplay in the given context
-		[self displayInCGLContext:CGLContext pixelFormat:pixelFormat];
-	}
+			// redisplay in the given context
+			[self displayInGLContext:context pixelFormat:pixelFormat];
+		}
 
-	// render the existing or updated texture
-	[self renderTexture:self.contentsTexture];
+		// render the existing or updated texture
+		[self renderTexture:self.contentsTexture];
+	}];
 }
 
 - (void)renderTexture:(MAOpenGLTexture *)texture {
-	CGLLockContext(texture.CGLContext);
 	glBindTexture(GL_TEXTURE_2D, texture.textureID);
 
 	// draw a textured quad over the full frame of the layer
@@ -173,8 +172,6 @@
 	glVertex2f((GLfloat) self.frame.origin.x, (GLfloat) self.frame.origin.y + (GLfloat) self.frame.size.height);
 
 	glEnd();
-
-	CGLUnlockContext(texture.CGLContext);
 }
 
 @end

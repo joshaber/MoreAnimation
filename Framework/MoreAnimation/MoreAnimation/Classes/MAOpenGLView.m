@@ -22,10 +22,7 @@
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	CGLContextObj CGLContext = self.openGLContext.CGLContextObj;
-	CGLPixelFormatObj CGLPixelFormat = self.pixelFormat.CGLPixelFormatObj;
-
-	[self.contentLayer renderInCGLContext:CGLContext pixelFormat:CGLPixelFormat];
+	[self.contentLayer renderInGLContext:self.openGLContext pixelFormat:self.pixelFormat];
 	[[self openGLContext] flushBuffer];
 }
 

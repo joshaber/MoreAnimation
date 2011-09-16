@@ -26,11 +26,11 @@
  *
  * This method does not draw sublayers.
  */
-- (void)drawInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat;
+- (void)drawInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat;
 
 /**
  * Renders a cached representation of the receiver into the provided OpenGL
  * context, which is of the specified pixel format.
  */
-- (void)renderInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat;
+- (void)renderInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat;
 @end
