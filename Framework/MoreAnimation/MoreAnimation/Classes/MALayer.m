@@ -10,6 +10,9 @@
 #import "MALayer+Private.h"
 #import <libkern/OSAtomic.h>
 
+// unique pointer for KVO context
+static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedContext";
+
 @interface MALayer () {
 	/**
 	 * The contents of this layer. This may be any object type needed to render
@@ -76,10 +79,30 @@
 	// yet been rendered
 	self.needsDisplay = YES;
 
+	// observe all geometry properties for changes, so that we know when we need
+	// to redisplay
+	[self addObserver:self forKeyPath:@"position" options:0 context:MALayerGeometryChangedContext];
+	[self addObserver:self forKeyPath:@"zPosition" options:0 context:MALayerGeometryChangedContext];
+	[self addObserver:self forKeyPath:@"anchorPoint" options:0 context:MALayerGeometryChangedContext];
+	[self addObserver:self forKeyPath:@"anchorPointZ" options:0 context:MALayerGeometryChangedContext];
+	[self addObserver:self forKeyPath:@"contentsScale" options:0 context:MALayerGeometryChangedContext];
+	[self addObserver:self forKeyPath:@"sublayerTransform" options:0 context:MALayerGeometryChangedContext];
+	[self addObserver:self forKeyPath:@"bounds" options:0 context:MALayerGeometryChangedContext];
+	[self addObserver:self forKeyPath:@"transform" options:0 context:MALayerGeometryChangedContext];
+
 	return self;
 }
 
 - (void)dealloc {
+	[self removeObserver:self forKeyPath:@"position" context:MALayerGeometryChangedContext];
+	[self removeObserver:self forKeyPath:@"zPosition" context:MALayerGeometryChangedContext];
+	[self removeObserver:self forKeyPath:@"anchorPoint" context:MALayerGeometryChangedContext];
+	[self removeObserver:self forKeyPath:@"anchorPointZ" context:MALayerGeometryChangedContext];
+	[self removeObserver:self forKeyPath:@"contentsScale" context:MALayerGeometryChangedContext];
+	[self removeObserver:self forKeyPath:@"sublayerTransform" context:MALayerGeometryChangedContext];
+	[self removeObserver:self forKeyPath:@"bounds" context:MALayerGeometryChangedContext];
+	[self removeObserver:self forKeyPath:@"transform" context:MALayerGeometryChangedContext];
+
 	dispatch_release(m_renderQueue);
 }
 
@@ -409,6 +432,18 @@
     } while (parentLayer);
 
     return nil;
+}
+
+#pragma mark Key-value observing
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+  	if (context == MALayerGeometryChangedContext) {
+		// goemetry changed, we need to re-render
+		[self setNeedsDisplay];
+	} else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+		return;
+	}
 }
 
 @end
