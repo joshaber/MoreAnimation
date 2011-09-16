@@ -223,6 +223,8 @@
 - (CGAffineTransform)affineTransformToLayer:(MALayer *)layer {
     MALayer *parentLayer = [self commonParentLayerWithLayer:layer];
 
+	// FIXME: this is a really naive implementation
+
     // returns the transformation needed to get from 'fromLayer' to
     // 'parentLayer'
     CGAffineTransform (^transformFromLayer)(MALayer *) = ^(MALayer *fromLayer){
