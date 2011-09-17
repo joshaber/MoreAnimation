@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "GLDemoWindowController.h"
 #import "CGDemoWindowController.h"
+#import "CADemoWindowController.h"
 
 @implementation AppDelegate
 

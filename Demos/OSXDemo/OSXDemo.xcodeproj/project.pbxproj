@@ -24,6 +24,9 @@
 		D08B81161423FE9800F887A5 /* JAWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B81141423FE9800F887A5 /* JAWindowController.m */; };
 		D091863C141D7267005F86FF /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = D091863B141D7267005F86FF /* test.png */; };
 		D098C97F14246978000B98BA /* DemoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D098C97E14246978000B98BA /* DemoWindowController.m */; };
+		D0AEF94D14253149000D42B2 /* CADemoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0AEF94C14253149000D42B2 /* CADemoWindowController.m */; };
+		D0AEF94F142531F6000D42B2 /* CADemoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0AEF94E142531F6000D42B2 /* CADemoWindow.xib */; };
+		D0AEF95114253250000D42B2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0AEF95014253250000D42B2 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +97,10 @@
 		D0918644141D755E005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		D098C97D14246978000B98BA /* DemoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoWindowController.h; sourceTree = "<group>"; };
 		D098C97E14246978000B98BA /* DemoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoWindowController.m; sourceTree = "<group>"; };
+		D0AEF94B14253149000D42B2 /* CADemoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CADemoWindowController.h; sourceTree = "<group>"; };
+		D0AEF94C14253149000D42B2 /* CADemoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CADemoWindowController.m; sourceTree = "<group>"; };
+		D0AEF94E142531F6000D42B2 /* CADemoWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CADemoWindow.xib; sourceTree = "<group>"; };
+		D0AEF95014253250000D42B2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0AEF95114253250000D42B2 /* QuartzCore.framework in Frameworks */,
 				88D1C569141D7F3100A58EB9 /* MoreAnimation.framework in Frameworks */,
 				D0355C9C141D71ED0053AF73 /* OpenGL.framework in Frameworks */,
 				D0355C7D141D71600053AF73 /* Cocoa.framework in Frameworks */,
@@ -146,6 +154,7 @@
 				D0355C7C141D71600053AF73 /* Cocoa.framework */,
 				D0355C81141D71600053AF73 /* Foundation.framework */,
 				D0355C9A141D71ED0053AF73 /* OpenGL.framework */,
+				D0AEF95014253250000D42B2 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -180,6 +189,9 @@
 			children = (
 				D098C97D14246978000B98BA /* DemoWindowController.h */,
 				D098C97E14246978000B98BA /* DemoWindowController.m */,
+				D0AEF94B14253149000D42B2 /* CADemoWindowController.h */,
+				D0AEF94C14253149000D42B2 /* CADemoWindowController.m */,
+				D0AEF94E142531F6000D42B2 /* CADemoWindow.xib */,
 				D044F4D814243B6600C4EFCE /* CGDemoWindowController.h */,
 				D044F4D914243B6600C4EFCE /* CGDemoWindowController.m */,
 				D044F4DB14243B8100C4EFCE /* CGDemoWindow.xib */,
@@ -293,6 +305,7 @@
 				D091863C141D7267005F86FF /* test.png in Resources */,
 				D08B810E1423F70800F887A5 /* GLDemoWindow.xib in Resources */,
 				D044F4DD14243B8100C4EFCE /* CGDemoWindow.xib in Resources */,
+				D0AEF94F142531F6000D42B2 /* CADemoWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,6 +323,7 @@
 				D08B810B1423F3D700F887A5 /* GLDemoWindowController.m in Sources */,
 				D044F4DA14243B6600C4EFCE /* CGDemoWindowController.m in Sources */,
 				D098C97F14246978000B98BA /* DemoWindowController.m in Sources */,
+				D0AEF94D14253149000D42B2 /* CADemoWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
