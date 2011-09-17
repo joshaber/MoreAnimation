@@ -819,9 +819,6 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 				[self renderInContextUncached:subtreeLayerContext];
 
-				// TODO: this kind of caching is extremely naive, as it will result in
-				// EVERY layer having a cached copy of its subtree -- we need a better
-				// algorithm to determine when subtree caching is appropriate
 				self.cachedLayerTree = subtreeLayer;
 				CGLayerRelease(subtreeLayer);
 			}
@@ -920,13 +917,10 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 }
 	
 - (void)renderInContextUncached:(CGContextRef)context {
-	// just trash contents if we need display, since this method isn't going
-	// to redisplay and recache anyways
-	if (self.needsDisplay) {
-		OSSpinLockLock(&m_contentsSpinLock);
-		m_contents = nil;
-		OSSpinLockUnlock(&m_contentsSpinLock);
-	}
+  	// clear contents
+	OSSpinLockLock(&m_contentsSpinLock);
+	m_contents = nil;
+	OSSpinLockUnlock(&m_contentsSpinLock);
 
 	// clear any subtree caching
 	self.cachedLayerTree = NULL;
