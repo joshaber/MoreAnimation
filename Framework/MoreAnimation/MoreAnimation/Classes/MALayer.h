@@ -102,6 +102,11 @@
 @property (nonatomic, readonly, assign) BOOL needsDisplay;
 
 /**
+ * Whether the receiver has been marked as needing layout.
+ */
+@property (nonatomic, readonly, assign) BOOL needsLayout;
+
+/**
  * The contents of the layer. Can be set to a \c CGImageRef to display. If not
  * explicitly set, the layer may store its own cached contents here in an
  * unspecified format (i.e., you cannot depend on this being a \c CGImageRef).
@@ -170,6 +175,16 @@
 - (void)drawInContext:(CGContextRef)context;
 
 /**
+ * Lays out the receiver if it has been marked as needing layout.
+ */
+- (void)layoutIfNeeded;
+
+/**
+ * Lays out the receiver's sublayers. The default implementation does nothing.
+ */
+- (void)layoutSublayers;
+
+/**
  * Renders the receiver and all of its sublayers into \a context.
  */
 - (void)renderInContext:(CGContextRef)context;
@@ -178,6 +193,11 @@
  * Marks the receiver as needing display.
  */
 - (void)setNeedsDisplay;
+
+/**
+ * Marks the receiver as needing layout.
+ */
+- (void)setNeedsLayout;
 
 /**
  * Adds \a layer as a sublayer of the receiver after removing it from its

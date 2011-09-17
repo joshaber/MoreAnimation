@@ -134,6 +134,8 @@
 #pragma mark OpenGL rendering
 
 - (void)renderInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat; {
+  	[self layoutIfNeeded];
+
   	[context executeWhileCurrentContext:^{
 		// captures the case of the texture being nil as well
 		if (self.contentsTexture.GLContext != context || [self needsDisplay]) {

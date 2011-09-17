@@ -53,10 +53,16 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
  */
 - (CGAffineTransform)affineTransformToImmediateSublayer:(MALayer *)sublayer;
 
+/**
+ * Lays out the receiver and all of its descendant layers concurrently.
+ */
+- (void)concurrentlyLayoutLayerTree;
+
 // publicly readonly
 @property (nonatomic, readwrite, strong) NSMutableArray *sublayers;
 @property (nonatomic, readwrite, weak) MALayer *superlayer;
 @property (nonatomic, readwrite, assign) BOOL needsDisplay;
+@property (nonatomic, readwrite, assign) BOOL needsLayout;
 @end
 
 
@@ -206,6 +212,7 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
 @synthesize superlayer = m_superlayer;
 @synthesize delegate = m_delegate;
 @synthesize needsDisplay = m_needsDisplay;
+@synthesize needsLayout = m_needsLayout;
 @synthesize position = m_position;
 @synthesize zPosition = m_zPosition;
 @synthesize anchorPoint = m_anchorPoint;
@@ -349,9 +356,43 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
 
 - (void)setNeedsDisplay {
   	self.needsDisplay = YES;
+}
 
-	// TODO: this shouldn't be necessary
-	[self.superlayer setNeedsDisplay];
+#pragma mark Layout
+
+- (void)layoutIfNeeded {
+  	if (!self.needsLayout)
+		return;
+	
+  	MALayer *lastNeedingLayout = self;
+	MALayer *nextLayer = self.superlayer;
+
+	while (nextLayer.needsLayout) {
+		lastNeedingLayout = nextLayer;
+		nextLayer = nextLayer.superlayer;
+	}
+
+	[lastNeedingLayout concurrentlyLayoutLayerTree];
+}
+
+- (void)layoutSublayers {
+}
+
+- (void)concurrentlyLayoutLayerTree {
+	[self layoutSublayers];
+	[self.sublayers
+		enumerateObjectsWithOptions:NSEnumerationConcurrent
+		usingBlock:^(MALayer *layer, NSUInteger index, BOOL *stop){
+			[layer concurrentlyLayoutLayerTree];
+		}
+	];
+
+	self.needsLayout = NO;
+}
+
+- (void)setNeedsLayout {
+  	self.needsLayout = YES;
+	[self.superlayer setNeedsLayout];
 }
 
 #pragma mark Rendering
@@ -360,6 +401,7 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
     CGContextSaveGState(context);
 
   	[self displayIfNeeded];
+	[self layoutIfNeeded];
 
 	CGImageRef image;
 	CGLayerRef layer;
@@ -400,7 +442,7 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
   	[self.sublayers addObject:layer];
 	layer.superlayer = self;
 
-	[self setNeedsDisplay];
+	[self setNeedsLayout];
 }
 
 - (void)removeFromSuperlayer {
@@ -408,7 +450,7 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
 	self.superlayer = nil;
 
   	[superlayer.sublayers removeObjectIdenticalTo:self];
-	[superlayer setNeedsDisplay];
+	[superlayer setNeedsLayout];
 }
 
 - (BOOL)isDescendantOfLayer:(MALayer *)layer {
