@@ -26,6 +26,8 @@
 		D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C5A141D700C0053AF73 /* MAOpenGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C64141D700C0053AF73 /* MAOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C5B141D700C0053AF73 /* MAOpenGLView.m */; };
 		D0355C6C141D70EE0053AF73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C6B141D70EE0053AF73 /* OpenGL.framework */; };
+		D044F4E514243CC400C4EFCE /* MAView.h in Headers */ = {isa = PBXBuildFile; fileRef = D044F4E314243CC400C4EFCE /* MAView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D044F4E614243CC400C4EFCE /* MAView.m in Sources */ = {isa = PBXBuildFile; fileRef = D044F4E414243CC400C4EFCE /* MAView.m */; };
 		D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */; };
 		D05A860E1423E5D7009A4748 /* EXTSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */; };
@@ -73,6 +75,8 @@
 		D0355C5A141D700C0053AF73 /* MAOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAOpenGLView.h; sourceTree = "<group>"; };
 		D0355C5B141D700C0053AF73 /* MAOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAOpenGLView.m; sourceTree = "<group>"; };
 		D0355C6B141D70EE0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		D044F4E314243CC400C4EFCE /* MAView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAView.h; sourceTree = "<group>"; };
+		D044F4E414243CC400C4EFCE /* MAView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAView.m; sourceTree = "<group>"; };
 		D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTSafeCategory.h; sourceTree = "<group>"; };
 		D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTSafeCategory.m; sourceTree = "<group>"; };
 		D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTRuntimeExtensions.h; sourceTree = "<group>"; };
@@ -202,6 +206,8 @@
 			children = (
 				D0355C5A141D700C0053AF73 /* MAOpenGLView.h */,
 				D0355C5B141D700C0053AF73 /* MAOpenGLView.m */,
+				D044F4E314243CC400C4EFCE /* MAView.h */,
+				D044F4E414243CC400C4EFCE /* MAView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -276,6 +282,7 @@
 				D0355C61141D700C0053AF73 /* MAOpenGLTexture.h in Headers */,
 				D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */,
 				D05A86291423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h in Headers */,
+				D044F4E514243CC400C4EFCE /* MAView.h in Headers */,
 				D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */,
 				D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */,
 				D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */,
@@ -396,6 +403,7 @@
 				D05A860E1423E5D7009A4748 /* EXTSafeCategory.m in Sources */,
 				D05A86121423E5E0009A4748 /* EXTRuntimeExtensions.m in Sources */,
 				D05A862A1423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m in Sources */,
+				D044F4E614243CC400C4EFCE /* MAView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
