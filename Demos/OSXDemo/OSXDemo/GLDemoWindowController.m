@@ -74,7 +74,7 @@ static const CGPoint anchorArray[5] = {
     CGPoint oldAnchor = self.prettyLayer.anchorPoint;
     CGPoint newAnchor = anchorArray[self.anchorIndex % 5];
     self.anchorIndex++;
-    self.openGLView.contentLayer.anchorPoint = newAnchor;
+    self.prettyLayer.anchorPoint = newAnchor;
 }
 
 - (IBAction)flipABitch:(id)sender {
