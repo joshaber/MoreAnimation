@@ -57,21 +57,17 @@
 }
 
 /**
- * The layer's #contents, if it is a \c CGImageRef, or \c NULL otherwise.
- */
-@property (readonly) CGImageRef contentsImage;
-
-/**
- * The layer's #contents, if it is a \c CGLayerRef, or \c NULL otherwise.
- */
-@property (readonly) CGLayerRef contentsLayer;
-
-/**
  * If the receiver and \a layer share a common parent (or one is the parent of
  * the other), this returns that parent layer. If the receiver and \a layer do
  * not exist in the same layer tree, \c nil is returned.
  */
 - (MALayer *)commonParentLayerWithLayer:(MALayer *)layer;
+
+/**
+ * Concurrently displays any layers from the receiver's layer tree that are
+ * marked as needing display.
+ */
+- (void)concurrentlyDisplayLayerTree;
 
 /**
  * Lays out the receiver and all of its descendant layers concurrently.
@@ -132,34 +128,6 @@
 
 - (id)contents {
   	return m_contents;
-}
-
-- (CGImageRef)contentsImage {
-  	CGImageRef obj = (__bridge CGImageRef)self.contents;
-	if (!obj)
-		return NULL;
-
-	CFTypeID typeID = CFGetTypeID(obj);
-
-	// return self.contents if it is a CGImageRef
-	if (typeID == CGImageGetTypeID())
-		return obj;
-	else
-		return NULL;
-}
-
-- (CGLayerRef)contentsLayer {
-  	CGLayerRef obj = (__bridge CGLayerRef)self.contents;
-	if (!obj)
-		return NULL;
-
-	CFTypeID typeID = CFGetTypeID(obj);
-
-	// return self.contents if it is a CGLayerRef
-	if (typeID == CGLayerGetTypeID())
-		return obj;
-	else
-		return NULL;
 }
 
 - (void)setContents:(id)contents {
@@ -577,20 +545,30 @@
 }
 
 - (void)displayIfNeeded {
-  	if (!self.needsDisplay)
-		return;
+  	dispatch_async(m_renderQueue, ^{
+		if (!self.needsDisplay)
+			return;
 
-	// invoke delegate's display logic, if provided
-	if ([self.delegate respondsToSelector:@selector(displayLayer:)])
-		[self.delegate displayLayer:self];
-	else
-		[self display];
+		// invoke delegate's display logic, if provided
+		if ([self.delegate respondsToSelector:@selector(displayLayer:)])
+			[self.delegate displayLayer:self];
+		else
+			[self display];
 
-  	self.needsDisplay = NO;
+		self.needsDisplay = NO;
+	});
+}
+
+- (void)concurrentlyDisplayLayerTree {
+  	[self displayIfNeeded];
+
+	NSArray *sublayers = self.sublayers;
+	[sublayers enumerateObjectsUsingBlock:^(MALayer *layer, NSUInteger index, BOOL *stop){
+		[layer displayIfNeeded];
+	}];
 }
 
 - (void)drawInContext:(CGContextRef)context {
-
 }
 
 - (void)setNeedsDisplay {
@@ -640,24 +618,32 @@
 - (void)renderInContext:(CGContextRef)context {
     CGContextSaveGState(context);
 
-  	[self displayIfNeeded];
 	[self layoutIfNeeded];
+  	[self concurrentlyDisplayLayerTree];
 
-	CGImageRef image;
-	CGLayerRef layer;
+	@autoreleasepool {
+		__block id contents = nil;
 
-	// draw whichever type of contents the layer has
-	if ((layer = self.contentsLayer))
-		CGContextDrawLayerInRect(context, self.bounds, layer);
-	else if ((image = self.contentsImage))
-		CGContextDrawImage(context, self.bounds, image);
-	else {
-		// if it's some unrecognized type, just draw directly into the
-		// destination
-		if ([self.delegate respondsToSelector:@selector(drawLayer:inContext:)])
-			[self.delegate drawLayer:self inContext:context];
-		else
-			[self drawInContext:context];
+		// block on the render queue until we've redisplayed for sure
+		dispatch_sync(m_renderQueue, ^{
+			contents = m_contents;
+		});
+
+		CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
+
+		// draw whichever type of contents the layer has
+		if (typeID == CGLayerGetTypeID()) {
+			CGContextDrawLayerInRect(context, self.bounds, (__bridge CGLayerRef)contents);
+		} else if (typeID == CGImageGetTypeID()) {
+			CGContextDrawImage(context, self.bounds, (__bridge CGImageRef)contents);
+		} else {
+			// if it's some unrecognized type, just draw directly into the
+			// destination
+			if ([self.delegate respondsToSelector:@selector(drawLayer:inContext:)])
+				[self.delegate drawLayer:self inContext:context];
+			else
+				[self drawInContext:context];
+		}
 	}
 
 	CGContextRestoreGState(context);
