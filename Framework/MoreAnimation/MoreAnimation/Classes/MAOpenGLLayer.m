@@ -48,8 +48,9 @@
 - (void)display {
   	// if we have a texture, assume that we want to redisplay in the same
 	// context; otherwise, do nothing
-	if (self.contentsTexture) {
-		NSOpenGLContext *context = self.contentsTexture.GLContext;
+	MAOpenGLTexture *texture = self.contentsTexture;
+	if (texture) {
+		NSOpenGLContext *context = texture.GLContext;
 		[self displayInGLContext:context pixelFormat:[context pixelFormat]];
 	}
 }
@@ -137,8 +138,10 @@
   	[self layoutIfNeeded];
 
   	[context executeWhileCurrentContext:^{
+		MAOpenGLTexture *texture = self.contentsTexture;
+
 		// captures the case of the texture being nil as well
-		if (self.contentsTexture.GLContext != context || [self needsDisplay]) {
+		if (texture.GLContext != context || [self needsDisplay]) {
 			// clear any existing texture
 			self.contents = nil;
 
@@ -151,7 +154,7 @@
 		}
 
 		// render the existing or updated texture
-		[self renderTexture:self.contentsTexture];
+		[self renderTexture:texture];
 	}];
 }
 
