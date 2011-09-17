@@ -28,8 +28,24 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	/**
 	 * A dispatch queue used to serialize rendering operations that need to be
 	 * performed in order.
+	 *
+	 * This queue also synchronizes access to non-geometrical properties that
+	 * affect rendering, such as the render tree and the layer's #delegate.
 	 */
 	dispatch_queue_t m_renderQueue;
+
+	/**
+	 * The delegate of the layer. Access to this variable should be protected
+	 * using the render dispatch queue.
+	 */
+	__weak id m_delegate;
+
+	/**
+	 * Layer tree properties. Access to these should be protected using the
+	 * render dispatch queue.
+	 */
+	NSMutableArray *m_sublayers;
+	MALayer *m_superlayer;
 
 	/**
 	 * A spin lock used to synchronize access to all the atomic geometry
@@ -74,14 +90,18 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 - (void)concurrentlyLayoutLayerTree;
 
 /**
+ * Removes \a layer from the receiver's list of sublayers.
+ */
+- (void)removeSublayer:(MALayer *)layer;
+
+/**
  * Returns the affine transformation needed to move into the coordinate system
  * of the receiver from that of its superlayer.
  */
 @property (readonly) CGAffineTransform affineTransformFromSuperlayer;
 
 // publicly readonly
-@property (nonatomic, readwrite, strong) NSMutableArray *sublayers;
-@property (nonatomic, readwrite, weak) MALayer *superlayer;
+@property (readwrite, weak) MALayer *superlayer;
 @property (readwrite, assign) BOOL needsDisplay;
 @property (readwrite, assign) BOOL needsLayout;
 @end
@@ -97,12 +117,12 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 
 	m_renderQueue = dispatch_queue_create("MoreAnimation.MALayer", DISPATCH_QUEUE_SERIAL);
 
-	self.sublayers = [NSMutableArray array];
+	// initialize geometry
 	self.anchorPoint = CGPointMake(0.5, 0.5);
 	self.transform = CATransform3DIdentity;
 	self.sublayerTransform = CATransform3DIdentity;
 
-	// mark layers as needing display right off the bat, since no content has
+	// mark layer as needing display right off the bat, since no content has
 	// yet been rendered
 	self.needsDisplay = YES;
 
@@ -466,9 +486,48 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	m_contentsScale = value;
 }
 
-@synthesize sublayers = m_sublayers;
-@synthesize superlayer = m_superlayer;
-@synthesize delegate = m_delegate;
+- (NSArray *)sublayers {
+  	__block NSArray *sublayersCopy = nil;
+
+	dispatch_sync(m_renderQueue, ^{
+		sublayersCopy = [m_sublayers copy];
+	});
+
+	return sublayersCopy;
+}
+
+- (MALayer *)superlayer {
+  	__block MALayer *layer = nil;
+
+	dispatch_sync(m_renderQueue, ^{
+		layer = m_superlayer;
+	});
+
+	return layer;
+}
+
+- (void)setSuperlayer:(MALayer *)layer {
+	dispatch_async(m_renderQueue, ^{
+		m_superlayer = layer;
+	});
+}
+
+- (id<MALayerDelegate>)delegate {
+  	__block id delegate = nil;
+
+	dispatch_sync(m_renderQueue, ^{
+		delegate = m_delegate;
+	});
+
+	return delegate;
+}
+
+- (void)setDelegate:(id<MALayerDelegate>)dg {
+	dispatch_async(m_renderQueue, ^{
+		m_delegate = dg;
+	});
+}
+
 @synthesize needsDisplay = m_needsDisplay;
 @synthesize needsLayout = m_needsLayout;
 
@@ -629,7 +688,6 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 
 - (void)setNeedsLayout {
   	self.needsLayout = YES;
-	[self.superlayer setNeedsLayout];
 }
 
 #pragma mark Rendering
@@ -676,18 +734,32 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 - (void)addSublayer:(MALayer *)layer {
   	[layer removeFromSuperlayer];
 
-  	[self.sublayers addObject:layer];
-	layer.superlayer = self;
+  	dispatch_async(m_renderQueue, ^{
+		if (![m_sublayers count])
+			m_sublayers = [NSMutableArray array];
 
-	[self setNeedsLayout];
+		[m_sublayers addObject:layer];
+		layer.superlayer = self;
+
+		[self setNeedsLayout];
+	});
 }
 
 - (void)removeFromSuperlayer {
-  	__strong MALayer *superlayer = self.superlayer;
+  	MALayer *superlayer = self.superlayer;
 	self.superlayer = nil;
 
-  	[superlayer.sublayers removeObjectIdenticalTo:self];
-	[superlayer setNeedsLayout];
+	[superlayer removeSublayer:self];
+}
+
+- (void)removeSublayer:(MALayer *)sublayer {
+  	dispatch_async(m_renderQueue, ^{
+		[m_sublayers removeObjectIdenticalTo:sublayer];
+		if (![m_sublayers count])
+			m_sublayers = nil;
+
+		[self setNeedsLayout];
+	});
 }
 
 - (BOOL)isDescendantOfLayer:(MALayer *)layer {

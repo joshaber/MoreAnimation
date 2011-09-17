@@ -119,12 +119,12 @@
 /**
  * The sublayers of the receiver.
  */
-@property (nonatomic, readonly, strong) NSMutableArray *sublayers;
+@property (readonly, copy) NSArray *sublayers;
 
 /**
  * The superlayer of the receiver, or \c nil if it has no superlayer.
  */
-@property (nonatomic, readonly, weak) MALayer *superlayer;
+@property (readonly, weak) MALayer *superlayer;
 
 /**
  * Returns the affine transformation that would have to be applied to convert
