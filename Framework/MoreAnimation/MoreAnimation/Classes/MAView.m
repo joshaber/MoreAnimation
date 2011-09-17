@@ -53,18 +53,11 @@ static char * const MAViewNeedsDisplayContext = "MAViewNeedsDisplayContext";
 #pragma mark Drawing
 
 - (void)drawRect:(NSRect)dirtyRect {
-  	CGContextRef context = [NSGraphicsContext currentContext].graphicsPort;
-	[self.contentLayer renderInContext:context];
-}
-
-#pragma mark Layout
-
-- (void)layout {
-  	[super layout];
-
 	CGRect bounds = NSRectToCGRect(self.bounds);
     self.contentLayer.bounds = bounds;
-	[self.contentLayer setNeedsDisplay];
+
+  	CGContextRef context = [NSGraphicsContext currentContext].graphicsPort;
+	[self.contentLayer renderInContext:context];
 }
 
 #pragma mark Key-value observing
