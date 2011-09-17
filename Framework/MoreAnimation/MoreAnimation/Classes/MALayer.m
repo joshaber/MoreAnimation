@@ -33,6 +33,12 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	id m_contents;
 
 	/**
+	 * A cached rendering of this layer's entire subtree. Protected by the
+	 * contents spin lock.
+	 */
+	CGLayerRef m_cachedLayerTree;
+
+	/**
 	 * A spin lock used to synchronize mutation to the sublayers array (below).
 	 */
 	OSSpinLock m_sublayersSpinLock;
@@ -88,6 +94,11 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
  */
 @property (readonly) CGAffineTransform affineTransformFromSuperlayer;
 
+/**
+ * A cached rendering of this layer's entire subtree.
+ */
+@property CGLayerRef cachedLayerTree;
+
 // publicly readonly
 @property (readwrite, unsafe_unretained) MALayer *superlayer;
 @property (readwrite, assign) BOOL needsDisplay;
@@ -115,6 +126,10 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	return self;
 }
 
+- (void)dealloc {
+  	self.cachedLayerTree = NULL;
+}
+
 #pragma mark Key-value coding
 
 + (NSSet *)keyPathsForValuesAffectingFrame {
@@ -139,6 +154,22 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	OSSpinLockUnlock(&m_contentsSpinLock);
 
 	[self setNeedsRender];
+}
+
+- (CGLayerRef)cachedLayerTree {
+  	OSSpinLockLock(&m_contentsSpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_contentsSpinLock);
+	};
+
+  	return m_cachedLayerTree;
+}
+
+- (void)setCachedLayerTree:(CGLayerRef)tree {
+	OSSpinLockLock(&m_contentsSpinLock);
+	CGLayerRelease(m_cachedLayerTree);
+	m_cachedLayerTree = CGLayerRetain(tree);
+	OSSpinLockUnlock(&m_contentsSpinLock);
 }
 
 - (CGAffineTransform)affineTransform {
@@ -653,92 +684,110 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 - (void)renderInContext:(CGContextRef)context {
 	[self layoutIfNeeded];
 
-	// if we're on the main thread, increase rendering priority to avoid
-	// blocking as much as possible
-	long renderingPriority = DISPATCH_QUEUE_PRIORITY_DEFAULT;
-	if (dispatch_get_current_queue() == dispatch_get_main_queue())
-		renderingPriority = DISPATCH_QUEUE_PRIORITY_HIGH;
+	CGRect bounds = self.bounds;
+	CGLayerRef subtreeLayer = self.cachedLayerTree;
 
-	// start rendering sublayers
-	NSArray *orderedSublayers = self.orderedSublayers;
-	NSUInteger sublayerCount = [orderedSublayers count];
+	if (!subtreeLayer) {
+		subtreeLayer = CGLayerCreateWithContext(context, bounds.size, NULL);
+		CGContextRef subtreeLayerContext = CGLayerGetContext(subtreeLayer);
 
-	volatile int32_t *sublayerIndicesRendered = calloc(sublayerCount, sizeof(*sublayerIndicesRendered));
-	@onExit {
-		free((void *)sublayerIndicesRendered);
-	};
+		// if we're on the main thread, increase rendering priority to avoid
+		// blocking as much as possible
+		long renderingPriority = DISPATCH_QUEUE_PRIORITY_DEFAULT;
+		if (dispatch_get_current_queue() == dispatch_get_main_queue())
+			renderingPriority = DISPATCH_QUEUE_PRIORITY_HIGH;
 
-	dispatch_queue_t sublayerRenderQueue = dispatch_get_global_queue(renderingPriority, 0);
-	dispatch_semaphore_t sublayerSemaphore = dispatch_semaphore_create(0);
-	@onExit {
-		dispatch_release(sublayerSemaphore);
-	};
+		// start rendering sublayers
+		NSArray *orderedSublayers = self.orderedSublayers;
+		NSUInteger sublayerCount = [orderedSublayers count];
 
-	[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
-		dispatch_async(sublayerRenderQueue, ^{
-			[sublayer displayIfNeeded];
+		volatile int32_t *sublayerIndicesRendered = calloc(sublayerCount, sizeof(*sublayerIndicesRendered));
+		@onExit {
+			free((void *)sublayerIndicesRendered);
+		};
 
-			OSAtomicIncrement32Barrier(sublayerIndicesRendered + index);
-			dispatch_semaphore_signal(sublayerSemaphore);
-		});
-	}];
+		dispatch_queue_t sublayerRenderQueue = dispatch_get_global_queue(renderingPriority, 0);
+		dispatch_semaphore_t sublayerSemaphore = dispatch_semaphore_create(0);
+		@onExit {
+			dispatch_release(sublayerSemaphore);
+		};
 
-	// render self synchronously while sublayers are rendering concurrently
-	@autoreleasepool {
-		[self displayIfNeeded];
+		[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
+			dispatch_async(sublayerRenderQueue, ^{
+				[sublayer displayIfNeeded];
 
-		id contents = self.contents;
-		BOOL foundMatch = NO;
+				OSAtomicIncrement32Barrier(sublayerIndicesRendered + index);
+				dispatch_semaphore_signal(sublayerSemaphore);
+			});
+		}];
 
-		// 'contents' may still not exist, if there was nothing to cache
-		if (contents) {
-			CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
+		// render self synchronously while sublayers are rendering concurrently
+		@autoreleasepool {
+			[self displayIfNeeded];
 
-			// draw whichever type of contents the layer has
-			if (typeID == CGLayerGetTypeID()) {
-				CGContextDrawLayerInRect(context, self.bounds, (__bridge CGLayerRef)contents);
-				foundMatch = YES;
-			} else if (typeID == CGImageGetTypeID()) {
-				CGContextDrawImage(context, self.bounds, (__bridge CGImageRef)contents);
-				foundMatch = YES;
+			id contents = self.contents;
+			BOOL foundMatch = NO;
+
+			// 'contents' may still not exist, if there was nothing to cache
+			if (contents) {
+				CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
+
+				// draw whichever type of contents the layer has
+				if (typeID == CGLayerGetTypeID()) {
+					CGContextDrawLayerInRect(subtreeLayerContext, bounds, (__bridge CGLayerRef)contents);
+					foundMatch = YES;
+				} else if (typeID == CGImageGetTypeID()) {
+					CGContextDrawImage(subtreeLayerContext, bounds, (__bridge CGImageRef)contents);
+					foundMatch = YES;
+				}
+			}
+
+			if (!foundMatch) {
+				CGContextSaveGState(subtreeLayerContext);
+
+				// if it's some unrecognized type, just draw directly into the
+				// destination
+				id<MALayerDelegate> dg = self.delegate;
+				if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
+					[dg drawLayer:self inContext:subtreeLayerContext];
+				else
+					[self drawInContext:subtreeLayerContext];
+
+				CGContextRestoreGState(subtreeLayerContext);
 			}
 		}
 
-		if (!foundMatch) {
-			CGContextSaveGState(context);
+		// render all sublayers, blocking on any that are still displaying
+		[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
+			// wait on this sublayer to be rendered
+			while (!sublayerIndicesRendered[index]) {
+				dispatch_semaphore_wait(sublayerSemaphore, DISPATCH_TIME_FOREVER);
+			}
 
-			// if it's some unrecognized type, just draw directly into the
-			// destination
-			id<MALayerDelegate> dg = self.delegate;
-			if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
-				[dg drawLayer:self inContext:context];
-			else
-				[self drawInContext:context];
+			@autoreleasepool {
+				CGContextSaveGState(subtreeLayerContext);
 
-			CGContextRestoreGState(context);
-		}
+				CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
+				CGContextConcatCTM(subtreeLayerContext, affineTransform);
+				[sublayer renderInContext:subtreeLayerContext];
+
+				CGContextRestoreGState(subtreeLayerContext);
+			}
+		}];
+
+		// TODO: this kind of caching is extremely naive, as it will result in
+		// EVERY layer having a cached copy of its subtree -- we need a better
+		// algorithm to determine when subtree caching is appropriate
+		self.cachedLayerTree = subtreeLayer;
+		CGLayerRelease(subtreeLayer);
 	}
 
-	// render all sublayers, blocking on any that are still displaying
-	[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
-		// wait on this sublayer to be rendered
-		while (!sublayerIndicesRendered[index]) {
-			dispatch_semaphore_wait(sublayerSemaphore, DISPATCH_TIME_FOREVER);
-		}
-
-		@autoreleasepool {
-			CGContextSaveGState(context);
-
-			CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
-			CGContextConcatCTM(context, affineTransform);
-			[sublayer renderInContext:context];
-
-			CGContextRestoreGState(context);
-		}
-	}];
+	CGContextDrawLayerAtPoint(context, CGPointZero, subtreeLayer);
 }
 
 - (void)setNeedsRender {
+  	self.cachedLayerTree = NULL;
+
   	MALayerNeedsRenderBlock callback = self.needsRenderBlock;
 	if (callback) {
 		callback(self);
