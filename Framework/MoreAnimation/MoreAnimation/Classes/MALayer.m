@@ -440,7 +440,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
 	    CGContextSaveGState(context);
 
-        CGAffineTransform affineTransform = [self affineTransformToImmediateSublayer:sublayer];
+        CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
         CGContextConcatCTM(context, affineTransform);
 		[sublayer renderInContext:context];
 
