@@ -596,6 +596,8 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	size_t width = (size_t)ceil(size.width);
 	size_t height = (size_t)ceil(size.height);
 
+	self.contents = nil;
+
 	if (!width || !height)
 	    return;
 
