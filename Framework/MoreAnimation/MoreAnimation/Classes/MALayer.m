@@ -26,15 +26,9 @@
 	 * performed in order.
 	 *
 	 * This queue also synchronizes access to non-geometrical properties that
-	 * affect rendering, such as the render tree and the layer's #delegate.
+	 * affect rendering, such as the render tree.
 	 */
 	dispatch_queue_t m_renderQueue;
-
-	/**
-	 * The delegate of the layer. Access to this variable should be protected
-	 * using the render dispatch queue.
-	 */
-	__weak id m_delegate;
 
 	/**
 	 * Sublayers. Access to this array should be protected using the render
@@ -474,23 +468,8 @@
 	return sublayersCopy;
 }
 
-- (id<MALayerDelegate>)delegate {
-  	__block id delegate = nil;
-
-	dispatch_sync(m_renderQueue, ^{
-		delegate = m_delegate;
-	});
-
-	return delegate;
-}
-
-- (void)setDelegate:(id<MALayerDelegate>)dg {
-	dispatch_async(m_renderQueue, ^{
-		m_delegate = dg;
-	});
-}
-
 @synthesize superlayer = m_superlayer;
+@synthesize delegate = m_delegate;
 @synthesize needsDisplay = m_needsDisplay;
 @synthesize needsLayout = m_needsLayout;
 @synthesize needsRenderBlock = m_needsRenderBlock;
