@@ -16,7 +16,6 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
 	self.windowControllers = [NSMutableArray arrayWithObjects:
-		[[GLDemoWindowController alloc] init],
 		[[CGDemoWindowController alloc] init],
 		nil
 	];
