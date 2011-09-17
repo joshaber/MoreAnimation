@@ -8,6 +8,9 @@
 
 #import <AppKit/AppKit.h>
 
-
 @interface MALayer (Private)
+/**
+ * Marks the receiver and its ancestors as needing re-rendering.
+ */
+- (void)setNeedsRender;
 @end

@@ -11,10 +11,6 @@
 #import "EXTScope.h"
 #import <libkern/OSAtomic.h>
 
-// unique pointer for KVO context
-static char * const MALayerGeometryNeedsLayoutContext = "MALayerGeometryNeedsLayoutContext";
-static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDisplayContext";
-
 @interface MALayer () {
 	/**
 	 * The contents of this layer. This may be any object type needed to render
@@ -41,11 +37,10 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	__weak id m_delegate;
 
 	/**
-	 * Layer tree properties. Access to these should be protected using the
-	 * render dispatch queue.
+	 * Sublayers. Access to this array should be protected using the render
+	 * dispatch queue.
 	 */
 	NSMutableArray *m_sublayers;
-	MALayer *m_superlayer;
 
 	/**
 	 * A spin lock used to synchronize access to all the atomic geometry
@@ -126,30 +121,10 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	// yet been rendered
 	self.needsDisplay = YES;
 
-	// observe all geometry properties for changes, so that we know when we need
-	// to redisplay
-	[self addObserver:self forKeyPath:@"position" options:0 context:MALayerGeometryNeedsLayoutContext];
-	[self addObserver:self forKeyPath:@"zPosition" options:0 context:MALayerGeometryNeedsLayoutContext];
-	[self addObserver:self forKeyPath:@"anchorPoint" options:0 context:MALayerGeometryNeedsLayoutContext];
-	[self addObserver:self forKeyPath:@"anchorPointZ" options:0 context:MALayerGeometryNeedsLayoutContext];
-	[self addObserver:self forKeyPath:@"contentsScale" options:0 context:MALayerGeometryNeedsDisplayContext];
-	[self addObserver:self forKeyPath:@"sublayerTransform" options:0 context:MALayerGeometryNeedsLayoutContext];
-	[self addObserver:self forKeyPath:@"bounds" options:0 context:MALayerGeometryNeedsLayoutContext];
-	[self addObserver:self forKeyPath:@"transform" options:0 context:MALayerGeometryNeedsLayoutContext];
-
 	return self;
 }
 
 - (void)dealloc {
-	[self removeObserver:self forKeyPath:@"position"];
-	[self removeObserver:self forKeyPath:@"zPosition"];
-	[self removeObserver:self forKeyPath:@"anchorPoint"];
-	[self removeObserver:self forKeyPath:@"anchorPointZ"];
-	[self removeObserver:self forKeyPath:@"contentsScale"];
-	[self removeObserver:self forKeyPath:@"sublayerTransform"];
-	[self removeObserver:self forKeyPath:@"bounds"];
-	[self removeObserver:self forKeyPath:@"transform"];
-
 	dispatch_release(m_renderQueue);
 }
 
@@ -162,14 +137,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 #pragma mark Properties
 
 - (id)contents {
-  	__block id image = NULL;
-
-	// layer contents should only be read/written from a single thread at a time
-	dispatch_sync(m_renderQueue, ^{
-		image = m_contents;
-	});
-
-	return image;
+  	return m_contents;
 }
 
 - (CGImageRef)contentsImage {
@@ -204,6 +172,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	// layer contents should only be read/written from a single thread at a time
 	dispatch_async(m_renderQueue, ^{
 		m_contents = contents;
+		[self setNeedsRender];
 	});
 }
 
@@ -248,6 +217,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"frame"];
 	@onExit {
 		[self didChangeValueForKey:@"frame"];
+		[self setNeedsRender];
 	};
 
   	// apply geometry spin lock to protect the values we're setting
@@ -315,6 +285,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"position"];
 	@onExit {
 		[self didChangeValueForKey:@"position"];
+		[self.superlayer setNeedsRender];
 	};
 
 	OSSpinLockLock(&m_geometrySpinLock);
@@ -338,6 +309,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"zPosition"];
 	@onExit {
 		[self didChangeValueForKey:@"zPosition"];
+		[self.superlayer setNeedsRender];
 	};
 
 	OSSpinLockLock(&m_geometrySpinLock);
@@ -361,6 +333,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"anchorPoint"];
 	@onExit {
 		[self didChangeValueForKey:@"anchorPoint"];
+		[self.superlayer setNeedsRender];
 	};
 
 	OSSpinLockLock(&m_geometrySpinLock);
@@ -384,6 +357,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"anchorPointZ"];
 	@onExit {
 		[self didChangeValueForKey:@"anchorPointZ"];
+		[self.superlayer setNeedsRender];
 	};
 
 	OSSpinLockLock(&m_geometrySpinLock);
@@ -407,6 +381,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"bounds"];
 	@onExit {
 		[self didChangeValueForKey:@"bounds"];
+		[self setNeedsRender];
 	};
 
 	OSSpinLockLock(&m_geometrySpinLock);
@@ -430,6 +405,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"sublayerTransform"];
 	@onExit {
 		[self didChangeValueForKey:@"sublayerTransform"];
+		[self setNeedsLayout];
 	};
 
 	OSSpinLockLock(&m_geometrySpinLock);
@@ -453,6 +429,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"transform"];
 	@onExit {
 		[self didChangeValueForKey:@"transform"];
+		[self.superlayer setNeedsRender];
 	};
 
 	OSSpinLockLock(&m_geometrySpinLock);
@@ -476,6 +453,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
   	[self willChangeValueForKey:@"contentsScale"];
 	@onExit {
 		[self didChangeValueForKey:@"contentsScale"];
+		[self setNeedsDisplay];
 	};
 
 	OSSpinLockLock(&m_geometrySpinLock);
@@ -496,22 +474,6 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	return sublayersCopy;
 }
 
-- (MALayer *)superlayer {
-  	__block MALayer *layer = nil;
-
-	dispatch_sync(m_renderQueue, ^{
-		layer = m_superlayer;
-	});
-
-	return layer;
-}
-
-- (void)setSuperlayer:(MALayer *)layer {
-	dispatch_async(m_renderQueue, ^{
-		m_superlayer = layer;
-	});
-}
-
 - (id<MALayerDelegate>)delegate {
   	__block id delegate = nil;
 
@@ -528,8 +490,10 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	});
 }
 
+@synthesize superlayer = m_superlayer;
 @synthesize needsDisplay = m_needsDisplay;
 @synthesize needsLayout = m_needsLayout;
+@synthesize needsRenderBlock = m_needsRenderBlock;
 
 #pragma mark NSObject overrides
 
@@ -652,6 +616,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 
 - (void)setNeedsDisplay {
   	self.needsDisplay = YES;
+	[self setNeedsRender];
 }
 
 #pragma mark Layout
@@ -688,6 +653,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 
 - (void)setNeedsLayout {
   	self.needsLayout = YES;
+	[self setNeedsRender];
 }
 
 #pragma mark Rendering
@@ -727,6 +693,15 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 
 		CGContextRestoreGState(context);
 	}
+}
+
+- (void)setNeedsRender {
+  	MALayerNeedsRenderBlock callback = [self.needsRenderBlock copy];
+	if (callback) {
+		callback(self);
+	}
+
+	[self.superlayer setNeedsRender];
 }
 
 #pragma mark Sublayer management
@@ -788,19 +763,6 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
     } while (parentLayer);
 
     return nil;
-}
-
-#pragma mark Key-value observing
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-  	if (context == MALayerGeometryNeedsDisplayContext) {
-		[self setNeedsDisplay];
-	} else if (context == MALayerGeometryNeedsLayoutContext) {
-		[self setNeedsLayout];
-	} else {
-		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-		return;
-	}
 }
 
 @end

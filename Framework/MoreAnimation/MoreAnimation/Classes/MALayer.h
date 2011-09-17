@@ -36,6 +36,12 @@
 @end
 
 /**
+ * A block callback for when an #MALayer needs to be re-rendered. The argument
+ * is the layer that triggered the call.
+ */
+typedef void (^MALayerNeedsRenderBlock)(MALayer *);
+
+/**
  * A layer, which can have arbitrary content and any number of sublayers.
  */
 @interface MALayer : NSObject
@@ -125,6 +131,17 @@
  * The superlayer of the receiver, or \c nil if it has no superlayer.
  */
 @property (readonly, weak) MALayer *superlayer;
+
+/**
+ * Invoked when the receiver or any of its descendants have changed enough to
+ * invalidate any existing renderings of the receiver's layer tree.
+ *
+ * The default value is \c nil.
+ * 
+ * @note This block may be invoked multiple times in quick succession. You
+ * should not re-render the layer tree immediately each time.
+ */
+@property (copy) MALayerNeedsRenderBlock needsRenderBlock;
 
 /**
  * Returns the affine transformation that would have to be applied to convert
