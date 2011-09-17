@@ -89,6 +89,12 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 - (void)removeSublayer:(MALayer *)layer;
 
 /**
+ * Renders the receiver and its sublayers into \a context without caching the
+ * subtree. \a bounds and \a orderedSublayers must be provided.
+ */
+- (void)renderInContextUncached:(CGContextRef)context bounds:(CGRect)bounds orderedSublayers:(NSArray *)orderedSublayers;
+
+/**
  * Returns the affine transformation needed to move into the coordinate system
  * of the receiver from that of its superlayer.
  */
@@ -685,104 +691,30 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	[self layoutIfNeeded];
 
 	CGRect bounds = self.bounds;
+	NSArray *orderedSublayers = self.orderedSublayers;
+	NSUInteger sublayerCount = [orderedSublayers count];
+
 	CGLayerRef subtreeLayer = self.cachedLayerTree;
+	BOOL shouldCacheSubtree = (sublayerCount > 0);
 
-	if (!subtreeLayer) {
-		subtreeLayer = CGLayerCreateWithContext(context, bounds.size, NULL);
-		CGContextRef subtreeLayerContext = CGLayerGetContext(subtreeLayer);
+	if (subtreeLayer || shouldCacheSubtree) {
+		if (!subtreeLayer) {
+			subtreeLayer = CGLayerCreateWithContext(context, bounds.size, NULL);
+			CGContextRef subtreeLayerContext = CGLayerGetContext(subtreeLayer);
 
-		// if we're on the main thread, increase rendering priority to avoid
-		// blocking as much as possible
-		long renderingPriority = DISPATCH_QUEUE_PRIORITY_DEFAULT;
-		if (dispatch_get_current_queue() == dispatch_get_main_queue())
-			renderingPriority = DISPATCH_QUEUE_PRIORITY_HIGH;
+			[self renderInContextUncached:subtreeLayerContext bounds:bounds orderedSublayers:orderedSublayers];
 
-		// start rendering sublayers
-		NSArray *orderedSublayers = self.orderedSublayers;
-		NSUInteger sublayerCount = [orderedSublayers count];
-
-		volatile int32_t *sublayerIndicesRendered = calloc(sublayerCount, sizeof(*sublayerIndicesRendered));
-		@onExit {
-			free((void *)sublayerIndicesRendered);
-		};
-
-		dispatch_queue_t sublayerRenderQueue = dispatch_get_global_queue(renderingPriority, 0);
-		dispatch_semaphore_t sublayerSemaphore = dispatch_semaphore_create(0);
-		@onExit {
-			dispatch_release(sublayerSemaphore);
-		};
-
-		[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
-			dispatch_async(sublayerRenderQueue, ^{
-				[sublayer displayIfNeeded];
-
-				OSAtomicIncrement32Barrier(sublayerIndicesRendered + index);
-				dispatch_semaphore_signal(sublayerSemaphore);
-			});
-		}];
-
-		// render self synchronously while sublayers are rendering concurrently
-		@autoreleasepool {
-			[self displayIfNeeded];
-
-			id contents = self.contents;
-			BOOL foundMatch = NO;
-
-			// 'contents' may still not exist, if there was nothing to cache
-			if (contents) {
-				CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
-
-				// draw whichever type of contents the layer has
-				if (typeID == CGLayerGetTypeID()) {
-					CGContextDrawLayerInRect(subtreeLayerContext, bounds, (__bridge CGLayerRef)contents);
-					foundMatch = YES;
-				} else if (typeID == CGImageGetTypeID()) {
-					CGContextDrawImage(subtreeLayerContext, bounds, (__bridge CGImageRef)contents);
-					foundMatch = YES;
-				}
-			}
-
-			if (!foundMatch) {
-				CGContextSaveGState(subtreeLayerContext);
-
-				// if it's some unrecognized type, just draw directly into the
-				// destination
-				id<MALayerDelegate> dg = self.delegate;
-				if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
-					[dg drawLayer:self inContext:subtreeLayerContext];
-				else
-					[self drawInContext:subtreeLayerContext];
-
-				CGContextRestoreGState(subtreeLayerContext);
-			}
+			// TODO: this kind of caching is extremely naive, as it will result in
+			// EVERY layer having a cached copy of its subtree -- we need a better
+			// algorithm to determine when subtree caching is appropriate
+			self.cachedLayerTree = subtreeLayer;
+			CGLayerRelease(subtreeLayer);
 		}
 
-		// render all sublayers, blocking on any that are still displaying
-		[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
-			// wait on this sublayer to be rendered
-			while (!sublayerIndicesRendered[index]) {
-				dispatch_semaphore_wait(sublayerSemaphore, DISPATCH_TIME_FOREVER);
-			}
-
-			@autoreleasepool {
-				CGContextSaveGState(subtreeLayerContext);
-
-				CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
-				CGContextConcatCTM(subtreeLayerContext, affineTransform);
-				[sublayer renderInContext:subtreeLayerContext];
-
-				CGContextRestoreGState(subtreeLayerContext);
-			}
-		}];
-
-		// TODO: this kind of caching is extremely naive, as it will result in
-		// EVERY layer having a cached copy of its subtree -- we need a better
-		// algorithm to determine when subtree caching is appropriate
-		self.cachedLayerTree = subtreeLayer;
-		CGLayerRelease(subtreeLayer);
+		CGContextDrawLayerAtPoint(context, CGPointZero, subtreeLayer);
+	} else {
+		[self renderInContextUncached:context bounds:bounds orderedSublayers:orderedSublayers];
 	}
-
-	CGContextDrawLayerAtPoint(context, CGPointZero, subtreeLayer);
 }
 
 - (void)setNeedsRender {
@@ -794,6 +726,91 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	}
 
 	[self.superlayer setNeedsRender];
+}
+
+- (void)renderInContextUncached:(CGContextRef)context bounds:(CGRect)bounds orderedSublayers:(NSArray *)orderedSublayers; {
+	// if we're on the main thread, increase rendering priority to avoid
+	// blocking as much as possible
+	long renderingPriority = DISPATCH_QUEUE_PRIORITY_DEFAULT;
+	if (dispatch_get_current_queue() == dispatch_get_main_queue())
+		renderingPriority = DISPATCH_QUEUE_PRIORITY_HIGH;
+
+	// start rendering sublayers
+	NSUInteger sublayerCount = [orderedSublayers count];
+
+	volatile int32_t *sublayerIndicesRendered = calloc(sublayerCount, sizeof(*sublayerIndicesRendered));
+	@onExit {
+		free((void *)sublayerIndicesRendered);
+	};
+
+	dispatch_queue_t sublayerRenderQueue = dispatch_get_global_queue(renderingPriority, 0);
+	dispatch_semaphore_t sublayerSemaphore = dispatch_semaphore_create(0);
+	@onExit {
+		dispatch_release(sublayerSemaphore);
+	};
+
+	[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
+		dispatch_async(sublayerRenderQueue, ^{
+			[sublayer displayIfNeeded];
+
+			OSAtomicIncrement32Barrier(sublayerIndicesRendered + index);
+			dispatch_semaphore_signal(sublayerSemaphore);
+		});
+	}];
+
+	// render self synchronously while sublayers are rendering concurrently
+	@autoreleasepool {
+		[self displayIfNeeded];
+
+		id contents = self.contents;
+		BOOL foundMatch = NO;
+
+		// 'contents' may still not exist, if there was nothing to cache
+		if (contents) {
+			CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
+
+			// draw whichever type of contents the layer has
+			if (typeID == CGLayerGetTypeID()) {
+				CGContextDrawLayerInRect(context, bounds, (__bridge CGLayerRef)contents);
+				foundMatch = YES;
+			} else if (typeID == CGImageGetTypeID()) {
+				CGContextDrawImage(context, bounds, (__bridge CGImageRef)contents);
+				foundMatch = YES;
+			}
+		}
+
+		if (!foundMatch) {
+			CGContextSaveGState(context);
+
+			// if it's some unrecognized type, just draw directly into the
+			// destination
+			id<MALayerDelegate> dg = self.delegate;
+			if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
+				[dg drawLayer:self inContext:context];
+			else
+				[self drawInContext:context];
+
+			CGContextRestoreGState(context);
+		}
+	}
+
+	// render all sublayers, blocking on any that are still displaying
+	[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
+		// wait on this sublayer to be rendered
+		while (!sublayerIndicesRendered[index]) {
+			dispatch_semaphore_wait(sublayerSemaphore, DISPATCH_TIME_FOREVER);
+		}
+
+		@autoreleasepool {
+			CGContextSaveGState(context);
+
+			CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
+			CGContextConcatCTM(context, affineTransform);
+			[sublayer renderInContext:context];
+
+			CGContextRestoreGState(context);
+		}
+	}];
 }
 
 #pragma mark Sublayer management
