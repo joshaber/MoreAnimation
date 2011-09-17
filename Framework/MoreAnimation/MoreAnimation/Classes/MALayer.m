@@ -8,6 +8,7 @@
 
 #import "MALayer.h"
 #import "MALayer+Private.h"
+#import "EXTScope.h"
 #import <libkern/OSAtomic.h>
 
 // unique pointer for KVO context
@@ -29,6 +30,25 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	 * performed in order.
 	 */
 	dispatch_queue_t m_renderQueue;
+
+	/**
+	 * A spin lock used to synchronize access to all the atomic geometry
+	 * properties (below).
+	 */
+	OSSpinLock m_geometrySpinLock;
+
+	/**
+	 * Geometry properties. Access to these should be protected using the
+	 * geometry spin lock.
+	 */
+	CGPoint m_position;
+	CGFloat m_zPosition;
+	CGPoint m_anchorPoint;
+	CGFloat m_anchorPointZ;
+	CGFloat m_contentsScale;
+	CGRect m_bounds;
+	CATransform3D m_sublayerTransform;
+	CATransform3D m_transform;
 }
 
 /**
@@ -113,6 +133,12 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 	dispatch_release(m_renderQueue);
 }
 
+#pragma mark Key-value coding
+
++ (NSSet *)keyPathsForValuesAffectingFrame {
+	return [NSSet setWithObjects:@"bounds", @"anchorPoint", @"position", nil];
+}
+
 #pragma mark Properties
 
 - (id)contents {
@@ -170,9 +196,15 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 }
 
 - (CGRect)frame {
-    CGSize size = self.bounds.size;
-    CGPoint anchor = self.anchorPoint;
-    CGPoint originalPosition = self.position;
+  	// apply geometry spin lock to freeze current values
+  	OSSpinLockLock(&m_geometrySpinLock);
+
+	// don't use properties here, to avoid recursively locking the spin lock
+    CGSize size = m_bounds.size;
+    CGPoint anchor = m_anchorPoint;
+    CGPoint originalPosition = m_position;
+
+	OSSpinLockUnlock(&m_geometrySpinLock);
 
     CGPoint transformedAnchorPoint = CGPointMake(
         (anchor.x - 0.5) * size.width,
@@ -193,20 +225,216 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 }
 
 - (void)setFrame:(CGRect)rect {
-    CGSize size = rect.size;
-    self.bounds = CGRectMake(0, 0, size.width, size.height);
+  	[self willChangeValueForKey:@"frame"];
+	@onExit {
+		[self didChangeValueForKey:@"frame"];
+	};
 
-    CGPoint anchor = self.anchorPoint;
+  	// apply geometry spin lock to protect the values we're setting
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+	
+	// don't use properties here, to avoid recursively locking the spin lock
+    CGSize size = rect.size;
+    m_bounds = CGRectMake(0, 0, size.width, size.height);
+
+    CGPoint anchor = m_anchorPoint;
 
     CGPoint transformedAnchorPoint = CGPointMake(
         (anchor.x - 0.5) * size.width,
         (anchor.y - 0.5) * size.height
     );
 
-    self.position = CGPointMake(
+    m_position = CGPointMake(
         CGRectGetMidX(rect) - transformedAnchorPoint.x,
         CGRectGetMidY(rect) - transformedAnchorPoint.y
     );
+}
+
+- (CGPoint)position {
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	return m_position;
+}
+
+- (void)setPosition:(CGPoint)value {
+  	[self willChangeValueForKey:@"position"];
+	@onExit {
+		[self didChangeValueForKey:@"position"];
+	};
+
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	m_position = value;
+}
+
+- (CGFloat)zPosition {
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	return m_zPosition;
+}
+
+- (void)setZPosition:(CGFloat)value {
+  	[self willChangeValueForKey:@"zPosition"];
+	@onExit {
+		[self didChangeValueForKey:@"zPosition"];
+	};
+
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	m_zPosition = value;
+}
+
+- (CGPoint)anchorPoint {
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	return m_anchorPoint;
+}
+
+- (void)setAnchorPoint:(CGPoint)value {
+  	[self willChangeValueForKey:@"anchorPoint"];
+	@onExit {
+		[self didChangeValueForKey:@"anchorPoint"];
+	};
+
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	m_anchorPoint = value;
+}
+
+- (CGFloat)anchorPointZ {
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	return m_anchorPointZ;
+}
+
+- (void)setAnchorPointZ:(CGFloat)value {
+  	[self willChangeValueForKey:@"anchorPointZ"];
+	@onExit {
+		[self didChangeValueForKey:@"anchorPointZ"];
+	};
+
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	m_anchorPointZ = value;
+}
+
+- (CGRect)bounds {
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	return m_bounds;
+}
+
+- (void)setBounds:(CGRect)value {
+  	[self willChangeValueForKey:@"bounds"];
+	@onExit {
+		[self didChangeValueForKey:@"bounds"];
+	};
+
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	m_bounds = value;
+}
+
+- (CATransform3D)sublayerTransform {
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	return m_sublayerTransform;
+}
+
+- (void)setSublayerTransform:(CATransform3D)value {
+  	[self willChangeValueForKey:@"sublayerTransform"];
+	@onExit {
+		[self didChangeValueForKey:@"sublayerTransform"];
+	};
+
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	m_sublayerTransform = value;
+}
+
+- (CATransform3D)transform {
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	return m_transform;
+}
+
+- (void)setTransform:(CATransform3D)value {
+  	[self willChangeValueForKey:@"transform"];
+	@onExit {
+		[self didChangeValueForKey:@"transform"];
+	};
+
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	m_transform = value;
+}
+
+- (CGFloat)contentsScale {
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	return m_contentsScale;
+}
+
+- (void)setContentsScale:(CGFloat)value {
+  	[self willChangeValueForKey:@"contentsScale"];
+	@onExit {
+		[self didChangeValueForKey:@"contentsScale"];
+	};
+
+	OSSpinLockLock(&m_geometrySpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_geometrySpinLock);
+	};
+
+	m_contentsScale = value;
 }
 
 @synthesize sublayers = m_sublayers;
@@ -214,14 +442,6 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 @synthesize delegate = m_delegate;
 @synthesize needsDisplay = m_needsDisplay;
 @synthesize needsLayout = m_needsLayout;
-@synthesize position = m_position;
-@synthesize zPosition = m_zPosition;
-@synthesize anchorPoint = m_anchorPoint;
-@synthesize anchorPointZ = m_anchorPointZ;
-@synthesize contentsScale = m_contentsScale;
-@synthesize sublayerTransform = m_sublayerTransform;
-@synthesize bounds = m_bounds;
-@synthesize transform = m_transform;
 
 #pragma mark NSObject overrides
 
