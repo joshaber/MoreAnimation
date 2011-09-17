@@ -67,6 +67,12 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	CGRect m_bounds;
 	CATransform3D m_sublayerTransform;
 	CATransform3D m_transform;
+
+	/**
+	 * The number of threads currently rendering. Used for the #rendering
+	 * property.
+	 */
+	volatile int32_t m_rendererCount;
 }
 
 /**
@@ -89,10 +95,24 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 - (void)removeSublayer:(MALayer *)layer;
 
 /**
- * Renders the receiver and its sublayers into \a context without caching the
- * subtree. \a bounds and \a orderedSublayers must be provided.
+ * Renders the receiver and its sublayers into \a context, caching the layer
+ * contents or subtree as appropriate.
  */
-- (void)renderInContextUncached:(CGContextRef)context bounds:(CGRect)bounds orderedSublayers:(NSArray *)orderedSublayers;
+- (void)renderInContextCached:(CGContextRef)context;
+
+/**
+ * Renders the receiver and its sublayers into \a context, without caching the
+ * layer contents, the contents of any sublayers, or the subtree as a whole.
+ */
+- (void)renderInContextUncached:(CGContextRef)context;
+
+/**
+ * Renders a cached representation of the receiver into \a context. If no cached
+ * representation exists, the receiver is drawn directly into \a context.
+ *
+ * This method does not render sublayers.
+ */
+- (void)renderSelfInContext:(CGContextRef)context;
 
 /**
  * Returns the affine transformation needed to move into the coordinate system
@@ -104,6 +124,18 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
  * A cached rendering of this layer's entire subtree.
  */
 @property CGLayerRef cachedLayerTree;
+
+/**
+ * Whether the layer or its subtree has changed since the last time it was
+ * rendered. This becomes \c YES any time #setNeedsRender is invoked.
+ */
+@property (assign) BOOL changedSinceLastRender;
+
+/**
+ * Whether the layer is currently rendering (on the current or another thread).
+ * If this is \c YES, #setNeedsRender does nothing.
+ */
+@property (readonly, getter = isRendering) BOOL rendering;
 
 // publicly readonly
 @property (readwrite, unsafe_unretained) MALayer *superlayer;
@@ -154,6 +186,11 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 }
 
 - (void)setContents:(id)contents {
+  	[self willChangeValueForKey:@"contents"];
+	@onExit {
+		[self didChangeValueForKey:@"contents"];
+	};
+
   	BOOL changed = NO;
 
 	// layer contents should only be read/written from a single thread at a time
@@ -561,11 +598,16 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	];
 }
 
+- (BOOL)isRendering {
+  	return (m_rendererCount > 0);
+}
+
 @synthesize superlayer = m_superlayer;
 @synthesize delegate = m_delegate;
 @synthesize needsDisplay = m_needsDisplay;
 @synthesize needsLayout = m_needsLayout;
 @synthesize needsRenderBlock = m_needsRenderBlock;
+@synthesize changedSinceLastRender;
 
 #pragma mark NSObject overrides
 
@@ -739,37 +781,79 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 #pragma mark Rendering
 
 - (void)renderInContext:(CGContextRef)context {
+  	[self renderInContext:context allowCaching:YES];
+}
+
+- (void)renderInContext:(CGContextRef)context allowCaching:(BOOL)allowCaching {
+  	OSAtomicIncrement32Barrier(&m_rendererCount);
+	@onExit {
+		OSAtomicDecrement32Barrier(&m_rendererCount);
+	};
+
 	[self layoutIfNeeded];
 
-	CGRect bounds = self.bounds;
-	NSArray *orderedSublayers = self.orderedSublayers;
-	NSUInteger sublayerCount = [orderedSublayers count];
+	if (allowCaching) {
+		OSSpinLockLock(&m_sublayersSpinLock);
+		NSUInteger sublayerCount = [m_sublayers count];
+		OSSpinLockUnlock(&m_sublayersSpinLock);
 
-	CGLayerRef subtreeLayer = self.cachedLayerTree;
-	BOOL shouldCacheSubtree = (sublayerCount > 0);
+		/*
+		 * If a layer has sublayers, has not changed since the last time it was
+		 * rendered, and no ancestor is already performing subtree caching, we
+		 * should try to cache the subtree.
+		 */
 
-	if (subtreeLayer || shouldCacheSubtree) {
-		if (!subtreeLayer) {
-			subtreeLayer = CGLayerCreateWithContext(context, bounds.size, NULL);
-			CGContextRef subtreeLayerContext = CGLayerGetContext(subtreeLayer);
+		BOOL shouldCacheSubtree = (sublayerCount > 0 && !self.changedSinceLastRender);
+		if (shouldCacheSubtree) {
+			CGLayerRef subtreeLayer = self.cachedLayerTree;
+			CGRect bounds = self.bounds;
 
-			[self renderInContextUncached:subtreeLayerContext bounds:bounds orderedSublayers:orderedSublayers];
+			if (!subtreeLayer) {
+				subtreeLayer = CGLayerCreateWithContext(context, bounds.size, NULL);
+				CGContextRef subtreeLayerContext = CGLayerGetContext(subtreeLayer);
+				
+				// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
+				CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
+				CGContextSetFillColorWithColor(subtreeLayerContext, defaultFillColor);
+				CGColorRelease(defaultFillColor);
 
-			// TODO: this kind of caching is extremely naive, as it will result in
-			// EVERY layer having a cached copy of its subtree -- we need a better
-			// algorithm to determine when subtree caching is appropriate
-			self.cachedLayerTree = subtreeLayer;
-			CGLayerRelease(subtreeLayer);
+				[self renderInContextUncached:subtreeLayerContext];
+
+				// TODO: this kind of caching is extremely naive, as it will result in
+				// EVERY layer having a cached copy of its subtree -- we need a better
+				// algorithm to determine when subtree caching is appropriate
+				self.cachedLayerTree = subtreeLayer;
+				CGLayerRelease(subtreeLayer);
+			}
+
+			CGContextDrawLayerInRect(context, bounds, subtreeLayer);
+		} else {
+			/*
+			 * If no ancestor is performing subtree caching, we should fall back
+			 * to trying to cache just this layer's contents.
+			 */
+
+			[self renderInContextCached:context];
 		}
-
-		CGContextDrawLayerAtPoint(context, CGPointZero, subtreeLayer);
 	} else {
-		[self renderInContextUncached:context bounds:bounds orderedSublayers:orderedSublayers];
+		/*
+		 * If an ancestor is performing subtree caching, we should discard our
+		 * caches and draw directly into its cache.
+		 */
+		[self renderInContextUncached:context];
 	}
+
+	// clear changed flag so that we can tell if a change occurs between now and
+	// next time
+	self.changedSinceLastRender = NO;
 }
 
 - (void)setNeedsRender {
+  	if (self.rendering)
+		return;
+	
   	self.cachedLayerTree = NULL;
+	self.changedSinceLastRender = YES;
 
   	MALayerNeedsRenderBlock callback = self.needsRenderBlock;
 	if (callback) {
@@ -779,7 +863,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	[self.superlayer setNeedsRender];
 }
 
-- (void)renderInContextUncached:(CGContextRef)context bounds:(CGRect)bounds orderedSublayers:(NSArray *)orderedSublayers; {
+- (void)renderInContextCached:(CGContextRef)context {
 	// if we're on the main thread, increase rendering priority to avoid
 	// blocking as much as possible
 	long renderingPriority = DISPATCH_QUEUE_PRIORITY_DEFAULT;
@@ -787,6 +871,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 		renderingPriority = DISPATCH_QUEUE_PRIORITY_HIGH;
 
 	// start rendering sublayers
+	NSArray *orderedSublayers = self.orderedSublayers;
 	NSUInteger sublayerCount = [orderedSublayers count];
 
 	volatile int32_t *sublayerIndicesRendered = calloc(sublayerCount, sizeof(*sublayerIndicesRendered));
@@ -812,37 +897,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	// render self synchronously while sublayers are rendering concurrently
 	@autoreleasepool {
 		[self displayIfNeeded];
-
-		id contents = self.contents;
-		BOOL foundMatch = NO;
-
-		// 'contents' may still not exist, if there was nothing to cache
-		if (contents) {
-			CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
-
-			// draw whichever type of contents the layer has
-			if (typeID == CGLayerGetTypeID()) {
-				CGContextDrawLayerInRect(context, bounds, (__bridge CGLayerRef)contents);
-				foundMatch = YES;
-			} else if (typeID == CGImageGetTypeID()) {
-				CGContextDrawImage(context, bounds, (__bridge CGImageRef)contents);
-				foundMatch = YES;
-			}
-		}
-
-		if (!foundMatch) {
-			CGContextSaveGState(context);
-
-			// if it's some unrecognized type, just draw directly into the
-			// destination
-			id<MALayerDelegate> dg = self.delegate;
-			if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
-				[dg drawLayer:self inContext:context];
-			else
-				[self drawInContext:context];
-
-			CGContextRestoreGState(context);
-		}
+		[self renderSelfInContext:context];
 	}
 
 	// render all sublayers, blocking on any that are still displaying
@@ -857,11 +912,70 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 			CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
 			CGContextConcatCTM(context, affineTransform);
-			[sublayer renderInContext:context];
+			[sublayer renderInContext:context allowCaching:YES];
 
 			CGContextRestoreGState(context);
 		}
 	}];
+}
+	
+- (void)renderInContextUncached:(CGContextRef)context {
+	// just trash contents if we need display, since this method isn't going
+	// to redisplay and recache anyways
+	if (self.needsDisplay) {
+		OSSpinLockLock(&m_contentsSpinLock);
+		m_contents = nil;
+		OSSpinLockUnlock(&m_contentsSpinLock);
+	}
+
+	// clear any subtree caching
+	self.cachedLayerTree = NULL;
+
+	[self renderSelfInContext:context];
+
+	[self.orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
+		CGContextSaveGState(context);
+
+		CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
+		CGContextConcatCTM(context, affineTransform);
+		[sublayer renderInContext:context allowCaching:NO];
+
+		CGContextRestoreGState(context);
+	}];
+}
+
+- (void)renderSelfInContext:(CGContextRef)context {
+  	CGRect bounds = self.bounds;
+	id contents = self.contents;
+	BOOL foundMatch = NO;
+
+	if (contents) {
+		CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
+
+		// draw whichever type of contents the layer has
+		if (typeID == CGLayerGetTypeID()) {
+			CGContextDrawLayerInRect(context, bounds, (__bridge CGLayerRef)contents);
+			foundMatch = YES;
+		} else if (typeID == CGImageGetTypeID()) {
+			CGContextDrawImage(context, bounds, (__bridge CGImageRef)contents);
+			foundMatch = YES;
+		}
+	}
+
+	if (!foundMatch) {
+		CGContextSaveGState(context);
+		CGContextClipToRect(context, bounds);
+
+		// if it's some unrecognized type, just draw directly into the
+		// destination
+		id<MALayerDelegate> dg = self.delegate;
+		if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
+			[dg drawLayer:self inContext:context];
+		else
+			[self drawInContext:context];
+
+		CGContextRestoreGState(context);
+	}
 }
 
 #pragma mark Sublayer management
