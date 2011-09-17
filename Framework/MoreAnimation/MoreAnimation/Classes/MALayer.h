@@ -13,6 +13,9 @@
 /**
  * The delegate for an #MALayer. Delegation can be used to provide custom layer
  * rendering without having to subclass #MALayer.
+ *
+ * @note Delegate methods may be invoked on a background thread. Implementations
+ * of these methods should therefore be thread-safe.
  */
 @protocol MALayerDelegate <NSObject>
 @optional
@@ -94,7 +97,7 @@
 /**
  * If set, a delegate to use for certain rendering operations.
  */
-@property (nonatomic, weak) id<MALayerDelegate> delegate;
+@property (weak) id<MALayerDelegate> delegate;
 
 /**
  * Whether the receiver has been marked as needing display.
