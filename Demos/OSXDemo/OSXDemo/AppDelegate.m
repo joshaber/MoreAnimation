@@ -8,17 +8,24 @@
 
 #import "AppDelegate.h"
 #import "GLDemoWindowController.h"
+#import "CGDemoWindowController.h"
 
 @implementation AppDelegate
 
 #pragma mark NSApplicationDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
-	NSWindowController *firstController = [[GLDemoWindowController alloc] init];
-	[firstController showWindow:self];
-	[firstController becomeFirstResponder];
+	self.windowControllers = [NSMutableArray arrayWithObjects:
+		[[GLDemoWindowController alloc] init],
+		[[CGDemoWindowController alloc] init],
+		nil
+	];
 
-	self.windowControllers = [NSMutableArray arrayWithObject:firstController];
+	[self.windowControllers enumerateObjectsUsingBlock:^(NSWindowController *controller, NSUInteger index, BOOL *stop){
+		[controller showWindow:self];
+	}];
+
+	[[self.windowControllers objectAtIndex:0] becomeFirstResponder];
 }
 
 #pragma mark API
