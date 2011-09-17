@@ -30,8 +30,11 @@
 	__unsafe_unretained MALayer *weakLayer = layer;
 
 	layer.needsRenderBlock = ^(MALayer *layerNeedingRender){
-		if (layerNeedingRender == weakLayer)
-			[weakSelf setNeedsDisplay:YES];
+		if (layerNeedingRender == weakLayer) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[weakSelf setNeedsDisplay:YES];
+			});
+		}
 	};
 }
 

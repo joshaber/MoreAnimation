@@ -145,8 +145,9 @@ typedef void (^MALayerNeedsRenderBlock)(MALayer *);
  *
  * The default value is \c nil.
  * 
- * @note This block may be invoked multiple times in quick succession. You
- * should not re-render the layer tree immediately each time.
+ * @note This block may be invoked multiple times in quick succession, and on
+ * a background thread. Your code should be thread-safe, and should not
+ * re-render the layer tree immediately each time.
  */
 @property (copy) MALayerNeedsRenderBlock needsRenderBlock;
 
