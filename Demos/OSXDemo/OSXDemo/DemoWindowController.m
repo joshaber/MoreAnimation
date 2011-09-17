@@ -111,7 +111,7 @@ static const CGPoint anchorArray[5] = {
 - (IBAction)infinitizeLayers:(id)sender {
     MALayer *topLayer = self.prettyLayer;
     for (NSUInteger i = 0;i < 1000;++i) {
-        MALayer *nextLayer = [[MALayer alloc] init];
+        MALayer *nextLayer = [[[topLayer class] alloc] init];
         nextLayer.delegate = [self weakReferenceProxy];
         nextLayer.frame = CGRectInset(topLayer.bounds, 2, 2);
         [topLayer addSublayer:nextLayer];
@@ -126,7 +126,7 @@ static const CGPoint anchorArray[5] = {
     CGFloat height = topLayer.frame.size.height / 10;
     for (NSUInteger i = 0;i < topLayer.frame.size.width/5;++i) {
         for(NSUInteger j = 0; j < 10; ++j) {
-            MALayer *nextLayer = [[MALayer alloc] init];
+            MALayer *nextLayer = [[[topLayer class] alloc] init];
             nextLayer.delegate = [self weakReferenceProxy];
             nextLayer.frame = CGRectMake(i * 5, height * j, 5, height);
             [topLayer addSublayer:nextLayer];
