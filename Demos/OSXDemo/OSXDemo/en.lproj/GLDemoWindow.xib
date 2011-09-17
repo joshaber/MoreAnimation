@@ -41,7 +41,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{335, 390}, {601, 460}}</string>
 				<int key="NSWTFlags">1685585920</int>
-				<string key="NSWindowTitle">MoreAnimation</string>
+				<string key="NSWindowTitle">GLDemo</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
@@ -57,6 +57,7 @@
 							<string key="NSFrameSize">{601, 460}</string>
 							<reference key="NSSuperview" ref="96440572"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
 								<object class="NSMutableData" key="NSPixelAttributes">
