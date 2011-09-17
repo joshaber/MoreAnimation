@@ -33,7 +33,9 @@ static char * const MAOpenGLViewNeedsDisplayContext = "MAOpenGLViewNeedsDisplayC
 - (void)setContentLayer:(MAOpenGLLayer *)layer {
   	if (layer != m_contentLayer) {
 		[m_contentLayer removeObserver:self forKeyPath:@"needsDisplay" context:MAOpenGLViewNeedsDisplayContext];
+		[m_contentLayer removeObserver:self forKeyPath:@"needsLayout" context:MAOpenGLViewNeedsDisplayContext];
 		[layer addObserver:self forKeyPath:@"needsDisplay" options:NSKeyValueObservingOptionNew context:MAOpenGLViewNeedsDisplayContext];
+		[layer addObserver:self forKeyPath:@"needsLayout" options:NSKeyValueObservingOptionNew context:MAOpenGLViewNeedsDisplayContext];
 		
 		m_contentLayer = layer;
 	}

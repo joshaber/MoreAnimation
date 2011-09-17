@@ -42,7 +42,9 @@ static char * const MAViewNeedsDisplayContext = "MAViewNeedsDisplayContext";
 - (void)setContentLayer:(MALayer *)layer {
   	if (layer != m_contentLayer) {
 		[m_contentLayer removeObserver:self forKeyPath:@"needsDisplay" context:MAViewNeedsDisplayContext];
+		[m_contentLayer removeObserver:self forKeyPath:@"needsLayout" context:MAViewNeedsDisplayContext];
 		[layer addObserver:self forKeyPath:@"needsDisplay" options:NSKeyValueObservingOptionNew context:MAViewNeedsDisplayContext];
+		[layer addObserver:self forKeyPath:@"needsLayout" options:NSKeyValueObservingOptionNew context:MAViewNeedsDisplayContext];
 		
 		m_contentLayer = layer;
 	}
