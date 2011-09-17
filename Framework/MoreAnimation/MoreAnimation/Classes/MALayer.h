@@ -130,7 +130,7 @@ typedef void (^MALayerNeedsRenderBlock)(MALayer *);
 /**
  * The superlayer of the receiver, or \c nil if it has no superlayer.
  */
-@property (readonly, weak) MALayer *superlayer;
+@property (readonly, unsafe_unretained) MALayer *superlayer;
 
 /**
  * Invoked when the receiver or any of its descendants have changed enough to

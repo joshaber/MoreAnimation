@@ -97,7 +97,7 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
 @property (readonly) CGAffineTransform affineTransformFromSuperlayer;
 
 // publicly readonly
-@property (readwrite, weak) MALayer *superlayer;
+@property (readwrite, unsafe_unretained) MALayer *superlayer;
 @property (readwrite, assign) BOOL needsDisplay;
 @property (readwrite, assign) BOOL needsLayout;
 @end
@@ -694,7 +694,7 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
 }
 
 - (void)setNeedsRender {
-  	MALayerNeedsRenderBlock callback = [self.needsRenderBlock copy];
+  	MALayerNeedsRenderBlock callback = self.needsRenderBlock;
 	if (callback) {
 		callback(self);
 	}
