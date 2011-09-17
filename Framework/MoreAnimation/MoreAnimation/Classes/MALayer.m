@@ -154,12 +154,19 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 }
 
 - (void)setContents:(id)contents {
+  	BOOL changed = NO;
+
 	// layer contents should only be read/written from a single thread at a time
 	OSSpinLockLock(&m_contentsSpinLock);
-	m_contents = contents;
+	if (contents != m_contents) {
+		m_contents = contents;
+		changed = YES;
+	}
+
 	OSSpinLockUnlock(&m_contentsSpinLock);
 
-	[self setNeedsRender];
+	if (changed)
+		[self setNeedsRender];
 }
 
 - (CGLayerRef)cachedLayerTree {
@@ -173,8 +180,10 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 - (void)setCachedLayerTree:(CGLayerRef)tree {
 	OSSpinLockLock(&m_contentsSpinLock);
+
 	CGLayerRelease(m_cachedLayerTree);
 	m_cachedLayerTree = CGLayerRetain(tree);
+
 	OSSpinLockUnlock(&m_contentsSpinLock);
 }
 
@@ -287,15 +296,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
   	[self willChangeValueForKey:@"position"];
 	@onExit {
 		[self didChangeValueForKey:@"position"];
-		[self.superlayer setNeedsRender];
 	};
+
+	BOOL changed = NO;
 
 	OSSpinLockLock(&m_geometrySpinLock);
-	@onExit {
-		OSSpinLockUnlock(&m_geometrySpinLock);
-	};
+	if (!CGPointEqualToPoint(m_position, value)) {
+		m_position = value;
+		changed = YES;
+	}
 
-	m_position = value;
+	OSSpinLockUnlock(&m_geometrySpinLock);
+
+	if (changed)
+		[self.superlayer setNeedsRender];
 }
 
 - (CGFloat)zPosition {
@@ -311,15 +325,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
   	[self willChangeValueForKey:@"zPosition"];
 	@onExit {
 		[self didChangeValueForKey:@"zPosition"];
-		[self.superlayer setNeedsRender];
 	};
+
+	BOOL changed = NO;
 
 	OSSpinLockLock(&m_geometrySpinLock);
-	@onExit {
-		OSSpinLockUnlock(&m_geometrySpinLock);
-	};
+	if (fabs(m_zPosition - value) > MALayerGeometryDifferenceTolerance) {
+		m_zPosition = value;
+		changed = YES;
+	}
 
-	m_zPosition = value;
+	OSSpinLockUnlock(&m_geometrySpinLock);
+
+	if (changed)
+		[self.superlayer setNeedsRender];
 }
 
 - (CGPoint)anchorPoint {
@@ -335,15 +354,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
   	[self willChangeValueForKey:@"anchorPoint"];
 	@onExit {
 		[self didChangeValueForKey:@"anchorPoint"];
-		[self.superlayer setNeedsRender];
 	};
+
+	BOOL changed = NO;
 
 	OSSpinLockLock(&m_geometrySpinLock);
-	@onExit {
-		OSSpinLockUnlock(&m_geometrySpinLock);
-	};
+	if (!CGPointEqualToPoint(m_anchorPoint, value)) {
+		m_anchorPoint = value;
+		changed = YES;
+	}
 
-	m_anchorPoint = value;
+	OSSpinLockUnlock(&m_geometrySpinLock);
+
+	if (changed)
+		[self.superlayer setNeedsRender];
 }
 
 - (CGFloat)anchorPointZ {
@@ -359,15 +383,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
   	[self willChangeValueForKey:@"anchorPointZ"];
 	@onExit {
 		[self didChangeValueForKey:@"anchorPointZ"];
-		[self.superlayer setNeedsRender];
 	};
+
+	BOOL changed = NO;
 
 	OSSpinLockLock(&m_geometrySpinLock);
-	@onExit {
-		OSSpinLockUnlock(&m_geometrySpinLock);
-	};
+	if (fabs(m_anchorPointZ - value) > MALayerGeometryDifferenceTolerance) {
+		m_anchorPointZ = value;
+		changed = YES;
+	}
 
-	m_anchorPointZ = value;
+	OSSpinLockUnlock(&m_geometrySpinLock);
+
+	if (changed)
+		[self.superlayer setNeedsRender];
 }
 
 - (CGRect)bounds {
@@ -383,15 +412,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
   	[self willChangeValueForKey:@"bounds"];
 	@onExit {
 		[self didChangeValueForKey:@"bounds"];
-		[self setNeedsRender];
 	};
+
+	BOOL changed = NO;
 
 	OSSpinLockLock(&m_geometrySpinLock);
-	@onExit {
-		OSSpinLockUnlock(&m_geometrySpinLock);
-	};
+	if (!CGRectEqualToRect(m_bounds, value)) {
+		m_bounds = value;
+		changed = YES;
+	}
 
-	m_bounds = value;
+	OSSpinLockUnlock(&m_geometrySpinLock);
+
+	if (changed)
+		[self setNeedsRender];
 }
 
 - (CATransform3D)sublayerTransform {
@@ -407,15 +441,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
   	[self willChangeValueForKey:@"sublayerTransform"];
 	@onExit {
 		[self didChangeValueForKey:@"sublayerTransform"];
-		[self setNeedsLayout];
 	};
+
+	BOOL changed = NO;
 
 	OSSpinLockLock(&m_geometrySpinLock);
-	@onExit {
-		OSSpinLockUnlock(&m_geometrySpinLock);
-	};
+	if (!CATransform3DEqualToTransform(m_sublayerTransform, value)) {
+		m_sublayerTransform = value;
+		changed = YES;
+	}
 
-	m_sublayerTransform = value;
+	OSSpinLockUnlock(&m_geometrySpinLock);
+
+	if (changed)
+		[self setNeedsLayout];
 }
 
 - (CATransform3D)transform {
@@ -431,15 +470,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
   	[self willChangeValueForKey:@"transform"];
 	@onExit {
 		[self didChangeValueForKey:@"transform"];
-		[self.superlayer setNeedsRender];
 	};
+
+	BOOL changed = NO;
 
 	OSSpinLockLock(&m_geometrySpinLock);
-	@onExit {
-		OSSpinLockUnlock(&m_geometrySpinLock);
-	};
+	if (!CATransform3DEqualToTransform(m_transform, value)) {
+		m_transform = value;
+		changed = YES;
+	}
 
-	m_transform = value;
+	OSSpinLockUnlock(&m_geometrySpinLock);
+
+	if (changed)
+		[self.superlayer setNeedsRender];
 }
 
 - (CGFloat)contentsScale {
@@ -455,15 +499,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
   	[self willChangeValueForKey:@"contentsScale"];
 	@onExit {
 		[self didChangeValueForKey:@"contentsScale"];
-		[self setNeedsDisplay];
 	};
+
+	BOOL changed = NO;
 
 	OSSpinLockLock(&m_geometrySpinLock);
-	@onExit {
-		OSSpinLockUnlock(&m_geometrySpinLock);
-	};
+	if (fabs(m_contentsScale - value) > MALayerGeometryDifferenceTolerance) {
+		m_contentsScale = value;
+		changed = YES;
+	}
 
-	m_contentsScale = value;
+	OSSpinLockUnlock(&m_geometrySpinLock);
+
+	if (changed)
+		[self setNeedsDisplay];
 }
 
 - (NSArray *)sublayers {
