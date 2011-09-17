@@ -190,25 +190,41 @@
 		D0355C52141D700C0053AF73 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D0355C54141D700C0053AF73 /* MALayer.h */,
-				D0355C55141D700C0053AF73 /* MALayer.m */,
-				D0355C53141D700C0053AF73 /* MALayer+Private.h */,
-				D0355C66141D701F0053AF73 /* OpenGL */,
+				D044F4DF14243C7E00C4EFCE /* Layers */,
+				D044F4E214243C8D00C4EFCE /* Model */,
+				D0355C66141D701F0053AF73 /* Views */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
 		};
-		D0355C66141D701F0053AF73 /* OpenGL */ = {
+		D0355C66141D701F0053AF73 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D0355C56141D700C0053AF73 /* MAOpenGLLayer.h */,
-				D0355C57141D700C0053AF73 /* MAOpenGLLayer.m */,
-				D0355C58141D700C0053AF73 /* MAOpenGLTexture.h */,
-				D0355C59141D700C0053AF73 /* MAOpenGLTexture.m */,
 				D0355C5A141D700C0053AF73 /* MAOpenGLView.h */,
 				D0355C5B141D700C0053AF73 /* MAOpenGLView.m */,
 			);
-			name = OpenGL;
+			name = Views;
+			sourceTree = "<group>";
+		};
+		D044F4DF14243C7E00C4EFCE /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				D0355C54141D700C0053AF73 /* MALayer.h */,
+				D0355C55141D700C0053AF73 /* MALayer.m */,
+				D0355C53141D700C0053AF73 /* MALayer+Private.h */,
+				D0355C56141D700C0053AF73 /* MAOpenGLLayer.h */,
+				D0355C57141D700C0053AF73 /* MAOpenGLLayer.m */,
+			);
+			name = Layers;
+			sourceTree = "<group>";
+		};
+		D044F4E214243C8D00C4EFCE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D0355C58141D700C0053AF73 /* MAOpenGLTexture.h */,
+				D0355C59141D700C0053AF73 /* MAOpenGLTexture.m */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 		D05A86091423E5C8009A4748 /* libextobjc */ = {
