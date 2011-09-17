@@ -99,12 +99,12 @@
 /**
  * Whether the receiver has been marked as needing display.
  */
-@property (nonatomic, readonly, assign) BOOL needsDisplay;
+@property (readonly, assign) BOOL needsDisplay;
 
 /**
  * Whether the receiver has been marked as needing layout.
  */
-@property (nonatomic, readonly, assign) BOOL needsLayout;
+@property (readonly, assign) BOOL needsLayout;
 
 /**
  * The contents of the layer. Can be set to a \c CGImageRef to display. If not

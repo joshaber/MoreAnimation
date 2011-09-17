@@ -82,8 +82,8 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 // publicly readonly
 @property (nonatomic, readwrite, strong) NSMutableArray *sublayers;
 @property (nonatomic, readwrite, weak) MALayer *superlayer;
-@property (nonatomic, readwrite, assign) BOOL needsDisplay;
-@property (nonatomic, readwrite, assign) BOOL needsLayout;
+@property (readwrite, assign) BOOL needsDisplay;
+@property (readwrite, assign) BOOL needsLayout;
 @end
 
 
