@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		36C4BFFB141F29DE00E5DFA5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */; };
 		88D1C56B141D7F9E00A58EB9 /* MoreAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C31141D6FDA0053AF73 /* MoreAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D016125F142470BA001DFB28 /* EXTScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D016125D142470BA001DFB28 /* EXTScope.h */; };
+		D0161260142470BA001DFB28 /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = D016125E142470BA001DFB28 /* EXTScope.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D0161264142470C3001DFB28 /* EXTScopeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D0161263142470C3001DFB28 /* EXTScopeTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D0355C25141D6FDA0053AF73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C24141D6FDA0053AF73 /* Cocoa.framework */; };
 		D0355C2F141D6FDA0053AF73 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0355C2D141D6FDA0053AF73 /* InfoPlist.strings */; };
 		D0355C3B141D6FDA0053AF73 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C3A141D6FDA0053AF73 /* SenTestingKit.framework */; };
@@ -51,6 +54,10 @@
 
 /* Begin PBXFileReference section */
 		36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D016125D142470BA001DFB28 /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScope.h; sourceTree = "<group>"; };
+		D016125E142470BA001DFB28 /* EXTScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTScope.m; sourceTree = "<group>"; };
+		D0161262142470C3001DFB28 /* EXTScopeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScopeTest.h; sourceTree = "<group>"; };
+		D0161263142470C3001DFB28 /* EXTScopeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTScopeTest.m; sourceTree = "<group>"; };
 		D0355C21141D6FDA0053AF73 /* MoreAnimation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoreAnimation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0355C24141D6FDA0053AF73 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D0355C27141D6FDA0053AF73 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -245,6 +252,10 @@
 				D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */,
 				D05A86151423E5EC009A4748 /* EXTSafeCategoryTest.h */,
 				D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */,
+				D016125D142470BA001DFB28 /* EXTScope.h */,
+				D016125E142470BA001DFB28 /* EXTScope.m */,
+				D0161262142470C3001DFB28 /* EXTScopeTest.h */,
+				D0161263142470C3001DFB28 /* EXTScopeTest.m */,
 			);
 			name = libextobjc;
 			sourceTree = "<group>";
@@ -287,6 +298,7 @@
 				D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */,
 				D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */,
 				D05A861A1423E600009A4748 /* metamacros.h in Headers */,
+				D016125F142470BA001DFB28 /* EXTScope.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,6 +416,7 @@
 				D05A86121423E5E0009A4748 /* EXTRuntimeExtensions.m in Sources */,
 				D05A862A1423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m in Sources */,
 				D044F4E614243CC400C4EFCE /* MAView.m in Sources */,
+				D0161260142470BA001DFB28 /* EXTScope.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +427,7 @@
 				D0355C48141D6FDA0053AF73 /* MoreAnimationTests.m in Sources */,
 				D05A86171423E5EC009A4748 /* EXTRuntimeExtensionsTest.m in Sources */,
 				D05A86181423E5EC009A4748 /* EXTSafeCategoryTest.m in Sources */,
+				D0161264142470C3001DFB28 /* EXTScopeTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
