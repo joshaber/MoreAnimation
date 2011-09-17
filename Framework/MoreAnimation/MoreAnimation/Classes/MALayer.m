@@ -11,7 +11,28 @@
 #import "EXTScope.h"
 #import <libkern/OSAtomic.h>
 
+static
+dispatch_queue_t renderQueueForCurrentThread (void) {
+	if (dispatch_get_current_queue() == dispatch_get_main_queue())
+		return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+	else
+		return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+}
+
+static
+dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
+	if (dispatch_get_current_queue() == dispatch_get_main_queue())
+		return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+	else
+		return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+}
+
 @interface MALayer () {
+	/**
+	 * A spin lock used to synchronize access to layer contents (below).
+	 */
+	OSSpinLock m_contentsSpinLock;
+
 	/**
 	 * The contents of this layer. This may be any object type needed to render
 	 * the layer efficiently, including a \c CGImageRef or \c CGLayerRef.
@@ -22,13 +43,9 @@
 	id m_contents;
 
 	/**
-	 * A dispatch queue used to serialize rendering operations that need to be
-	 * performed in order.
-	 *
-	 * This queue also synchronizes access to non-geometrical properties that
-	 * affect rendering, such as the render tree.
+	 * A spin lock used to synchronize mutation to the sublayers array (below).
 	 */
-	dispatch_queue_t m_renderQueue;
+	OSSpinLock m_sublayersSpinLock;
 
 	/**
 	 * Sublayers. Access to this array should be protected using the render
@@ -64,12 +81,6 @@
 - (MALayer *)commonParentLayerWithLayer:(MALayer *)layer;
 
 /**
- * Concurrently displays any layers from the receiver's layer tree that are
- * marked as needing display.
- */
-- (void)concurrentlyDisplayLayerTree;
-
-/**
  * Lays out the receiver and all of its descendant layers concurrently.
  */
 - (void)concurrentlyLayoutLayerTree;
@@ -100,8 +111,6 @@
 	self = [super init];
 	if(self == nil) return nil;
 
-	m_renderQueue = dispatch_queue_create("MoreAnimation.MALayer", DISPATCH_QUEUE_SERIAL);
-
 	// initialize geometry
 	self.anchorPoint = CGPointMake(0.5, 0.5);
 	self.transform = CATransform3DIdentity;
@@ -114,10 +123,6 @@
 	return self;
 }
 
-- (void)dealloc {
-	dispatch_release(m_renderQueue);
-}
-
 #pragma mark Key-value coding
 
 + (NSSet *)keyPathsForValuesAffectingFrame {
@@ -127,15 +132,21 @@
 #pragma mark Properties
 
 - (id)contents {
+  	OSSpinLockLock(&m_contentsSpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_contentsSpinLock);
+	};
+
   	return m_contents;
 }
 
 - (void)setContents:(id)contents {
 	// layer contents should only be read/written from a single thread at a time
-	dispatch_async(m_renderQueue, ^{
-		m_contents = contents;
-		[self setNeedsRender];
-	});
+	OSSpinLockLock(&m_contentsSpinLock);
+	m_contents = contents;
+	OSSpinLockUnlock(&m_contentsSpinLock);
+
+	[self setNeedsRender];
 }
 
 - (CGAffineTransform)affineTransform {
@@ -427,13 +438,12 @@
 }
 
 - (NSArray *)sublayers {
-  	__block NSArray *sublayersCopy = nil;
+	OSSpinLockLock(&m_sublayersSpinLock);
+	@onExit {
+		OSSpinLockUnlock(&m_sublayersSpinLock);
+	};
 
-	dispatch_sync(m_renderQueue, ^{
-		sublayersCopy = [m_sublayers copy];
-	});
-
-	return sublayersCopy;
+	return [m_sublayers copy];
 }
 
 @synthesize superlayer = m_superlayer;
@@ -546,28 +556,17 @@
 }
 
 - (void)displayIfNeeded {
-  	dispatch_async(m_renderQueue, ^{
-		if (!self.needsDisplay)
-			return;
+	if (!self.needsDisplay)
+		return;
 
-		// invoke delegate's display logic, if provided
-		id<MALayerDelegate> dg = self.delegate;
-		if ([dg respondsToSelector:@selector(displayLayer:)])
-			[dg displayLayer:self];
-		else
-			[self display];
+	// invoke delegate's display logic, if provided
+	id<MALayerDelegate> dg = self.delegate;
+	if ([dg respondsToSelector:@selector(displayLayer:)])
+		[dg displayLayer:self];
+	else
+		[self display];
 
-		self.needsDisplay = NO;
-	});
-}
-
-- (void)concurrentlyDisplayLayerTree {
-  	[self displayIfNeeded];
-
-	NSArray *sublayers = self.sublayers;
-	[sublayers enumerateObjectsUsingBlock:^(MALayer *layer, NSUInteger index, BOOL *stop){
-		[layer displayIfNeeded];
-	}];
+	self.needsDisplay = NO;
 }
 
 - (void)drawInContext:(CGContextRef)context {
@@ -621,24 +620,52 @@
     CGContextSaveGState(context);
 
 	[self layoutIfNeeded];
-  	[self concurrentlyDisplayLayerTree];
+
+	dispatch_group_t selfDisplayGroup = dispatch_group_create();
+	@onExit {
+		dispatch_release(selfDisplayGroup);
+	};
+
+	dispatch_group_async(selfDisplayGroup, renderQueueForCurrentThread(), ^{
+		[self displayIfNeeded];
+	});
+
+	NSArray *sublayers = self.sublayers;
+
+	dispatch_queue_t sublayerRenderQueue = sublayerRenderQueueForCurrentThread();
+	dispatch_group_t sublayerDisplayGroup = dispatch_group_create();
+	@onExit {
+		dispatch_release(sublayerDisplayGroup);
+	};
+
+	for (MALayer *sublayer in sublayers) {
+		dispatch_group_async(sublayerDisplayGroup, sublayerRenderQueue, ^{
+			[sublayer displayIfNeeded];
+		});
+	}
+
+	// block on the rendering
+	dispatch_group_wait(selfDisplayGroup, DISPATCH_TIME_FOREVER);
 
 	@autoreleasepool {
-		__block id contents = nil;
+		id contents = self.contents;
+		BOOL foundMatch = NO;
 
-		// block on the render queue until we've redisplayed for sure
-		dispatch_sync(m_renderQueue, ^{
-			contents = m_contents;
-		});
+		// 'contents' may still not exist, if there was nothing to cache
+		if (contents) {
+			CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
 
-		CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
+			// draw whichever type of contents the layer has
+			if (typeID == CGLayerGetTypeID()) {
+				CGContextDrawLayerInRect(context, self.bounds, (__bridge CGLayerRef)contents);
+				foundMatch = YES;
+			} else if (typeID == CGImageGetTypeID()) {
+				CGContextDrawImage(context, self.bounds, (__bridge CGImageRef)contents);
+				foundMatch = YES;
+			}
+		}
 
-		// draw whichever type of contents the layer has
-		if (typeID == CGLayerGetTypeID()) {
-			CGContextDrawLayerInRect(context, self.bounds, (__bridge CGLayerRef)contents);
-		} else if (typeID == CGImageGetTypeID()) {
-			CGContextDrawImage(context, self.bounds, (__bridge CGImageRef)contents);
-		} else {
+		if (!foundMatch) {
 			// if it's some unrecognized type, just draw directly into the
 			// destination
 			id<MALayerDelegate> dg = self.delegate;
@@ -651,8 +678,11 @@
 
 	CGContextRestoreGState(context);
 
+	// block on sublayer rendering
+	dispatch_group_wait(sublayerDisplayGroup, DISPATCH_TIME_FOREVER);
+
 	// render all sublayers
-	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
+	for (MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
 	    CGContextSaveGState(context);
 
         CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
@@ -677,15 +707,18 @@
 - (void)addSublayer:(MALayer *)layer {
   	[layer removeFromSuperlayer];
 
-  	dispatch_async(m_renderQueue, ^{
+	OSSpinLockLock(&m_sublayersSpinLock);
+	{
 		if (![m_sublayers count])
 			m_sublayers = [NSMutableArray array];
 
 		[m_sublayers addObject:layer];
-		layer.superlayer = self;
+	}
+	OSSpinLockUnlock(&m_sublayersSpinLock);
 
-		[self setNeedsLayout];
-	});
+	layer.superlayer = self;
+
+	[self setNeedsLayout];
 }
 
 - (void)removeFromSuperlayer {
@@ -696,13 +729,15 @@
 }
 
 - (void)removeSublayer:(MALayer *)sublayer {
-  	dispatch_async(m_renderQueue, ^{
+	OSSpinLockLock(&m_sublayersSpinLock);
+	{
 		[m_sublayers removeObjectIdenticalTo:sublayer];
 		if (![m_sublayers count])
 			m_sublayers = nil;
+	}
+	OSSpinLockUnlock(&m_sublayersSpinLock);
 
-		[self setNeedsLayout];
-	});
+	[self setNeedsLayout];
 }
 
 - (BOOL)isDescendantOfLayer:(MALayer *)layer {
