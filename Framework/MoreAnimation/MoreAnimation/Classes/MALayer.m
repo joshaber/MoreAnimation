@@ -372,7 +372,10 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
 	else {
 		// if it's some unrecognized type, just draw directly into the
 		// destination
-		[self drawInContext:context];
+		if ([self.delegate respondsToSelector:@selector(drawLayer:inContext:)])
+			[self.delegate drawLayer:self inContext:context];
+		else
+			[self drawInContext:context];
 	}
 
 	CGContextRestoreGState(context);
