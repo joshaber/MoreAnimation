@@ -12,9 +12,6 @@
 #import <OpenGL/gl.h>
 #import <OpenGL/glu.h>
 
-// unique pointer for KVO context
-static char * const MAOpenGLViewNeedsDisplayContext = "MAOpenGLViewNeedsDisplayContext";
-
 @interface MAOpenGLView () {
 	MAOpenGLLayer *m_contentLayer;
 }
@@ -23,22 +20,19 @@ static char * const MAOpenGLViewNeedsDisplayContext = "MAOpenGLViewNeedsDisplayC
 
 @implementation MAOpenGLView
 
-- (void)dealloc {
-  	// make sure to remove KVO observer
-  	self.contentLayer = nil;
-}
-
 #pragma mark Properties
 
 - (void)setContentLayer:(MAOpenGLLayer *)layer {
-  	if (layer != m_contentLayer) {
-		[m_contentLayer removeObserver:self forKeyPath:@"needsDisplay" context:MAOpenGLViewNeedsDisplayContext];
-		[m_contentLayer removeObserver:self forKeyPath:@"needsLayout" context:MAOpenGLViewNeedsDisplayContext];
-		[layer addObserver:self forKeyPath:@"needsDisplay" options:NSKeyValueObservingOptionNew context:MAOpenGLViewNeedsDisplayContext];
-		[layer addObserver:self forKeyPath:@"needsLayout" options:NSKeyValueObservingOptionNew context:MAOpenGLViewNeedsDisplayContext];
-		
-		m_contentLayer = layer;
-	}
+	m_contentLayer.needsRenderBlock = nil;
+	m_contentLayer = layer;
+
+	__weak id weakSelf = self;
+	__weak MALayer *weakLayer = layer;
+
+	layer.needsRenderBlock = ^(MALayer *layerNeedingRender){
+		if (layerNeedingRender == weakLayer)
+			[weakSelf setNeedsDisplay:YES];
+	};
 }
 
 @synthesize contentLayer = m_contentLayer;
@@ -81,19 +75,6 @@ static char * const MAOpenGLViewNeedsDisplayContext = "MAOpenGLViewNeedsDisplayC
 	CGRect bounds = NSRectToCGRect(self.bounds);
     self.contentLayer.bounds = bounds;
 	[self.contentLayer setNeedsDisplay];
-}
-
-#pragma mark Key-value observing
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-  	if (context != MAOpenGLViewNeedsDisplayContext) {
-		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-		return;
-	}
-
-	NSNumber *newValue = [change objectForKey:NSKeyValueChangeNewKey];
-	if ([newValue boolValue])
-		[self setNeedsDisplay:YES];
 }
 
 @end
