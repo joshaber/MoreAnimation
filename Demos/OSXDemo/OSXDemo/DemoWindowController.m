@@ -79,14 +79,12 @@ static const CGPoint anchorArray[5] = {
 #pragma mark Actions
 
 - (IBAction)changeAnchorPoint:(id)sender {
-    CGPoint oldAnchor = self.prettyLayer.anchorPoint;
     CGPoint newAnchor = anchorArray[self.anchorIndex % 5];
     self.anchorIndex++;
     self.prettyLayer.anchorPoint = newAnchor;
 }
 
 - (IBAction)flipABitch:(id)sender {
-    CGSize size = self.contentView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
     transform = CGAffineTransformScale(transform, -1, -1);
@@ -95,7 +93,6 @@ static const CGPoint anchorArray[5] = {
 }
 
 - (IBAction)flipDemTables:(id)sender {
-    CGSize size = self.contentView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
     transform = CGAffineTransformScale(transform, 1, -1);
@@ -104,7 +101,6 @@ static const CGPoint anchorArray[5] = {
 }
 
 - (IBAction)brotate:(id)sender {
-    CGSize size = self.contentView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
     transform = CGAffineTransformRotate(transform, M_PI_4/4);
