@@ -223,6 +223,19 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 @synthesize bounds = m_bounds;
 @synthesize transform = m_transform;
 
+#pragma mark NSObject overrides
+
+- (NSString *)description {
+  	NSString *superlayerString;
+	if (self.superlayer) {
+		superlayerString = [NSString stringWithFormat:@"<%@: %p>", [self.superlayer class], (__bridge void *)self.superlayer];
+	} else {
+		superlayerString = @"nil";
+	}
+
+  	return [NSString stringWithFormat:@"<%@: %p>{ frame: %@, superlayer: %@ }", [self class], (__bridge void *)self, NSStringFromRect(NSRectFromCGRect(self.frame)), superlayerString];
+}
+
 #pragma mark Coordinate systems and transformations
 
 - (CGAffineTransform)affineTransformToImmediateSublayer:(MALayer *)sublayer; {
