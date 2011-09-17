@@ -36,7 +36,7 @@
 	m_contentLayer = layer;
 
 	__weak id weakSelf = self;
-	__weak MALayer *weakLayer = layer;
+	__unsafe_unretained MALayer *weakLayer = layer;
 
 	layer.needsRenderBlock = ^(MALayer *layerNeedingRender){
 		if (layerNeedingRender == weakLayer)
