@@ -35,7 +35,7 @@ static const CGPoint anchorArray[5] = {
 {
     self = [super initWithWindow:window];
     if (self) {
-        // Initialization code here.
+		[window useOptimizedDrawing:YES];
     }
     
     return self;
