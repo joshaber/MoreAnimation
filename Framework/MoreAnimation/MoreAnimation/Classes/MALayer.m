@@ -266,6 +266,7 @@ static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDi
 
 - (CGAffineTransform)affineTransformToLayer:(MALayer *)layer {
     MALayer *parentLayer = [self commonParentLayerWithLayer:layer];
+	NSAssert(parentLayer != nil, @"layers must share an ancestor in order for an affine transform between them to be valid");
 
 	// FIXME: this is a really naive implementation
 
