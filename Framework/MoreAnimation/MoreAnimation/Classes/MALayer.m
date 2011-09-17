@@ -11,7 +11,8 @@
 #import <libkern/OSAtomic.h>
 
 // unique pointer for KVO context
-static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedContext";
+static char * const MALayerGeometryNeedsLayoutContext = "MALayerGeometryNeedsLayoutContext";
+static char * const MALayerGeometryNeedsDisplayContext = "MALayerGeometryNeedsDisplayContext";
 
 @interface MALayer () {
 	/**
@@ -87,27 +88,27 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
 
 	// observe all geometry properties for changes, so that we know when we need
 	// to redisplay
-	[self addObserver:self forKeyPath:@"position" options:0 context:MALayerGeometryChangedContext];
-	[self addObserver:self forKeyPath:@"zPosition" options:0 context:MALayerGeometryChangedContext];
-	[self addObserver:self forKeyPath:@"anchorPoint" options:0 context:MALayerGeometryChangedContext];
-	[self addObserver:self forKeyPath:@"anchorPointZ" options:0 context:MALayerGeometryChangedContext];
-	[self addObserver:self forKeyPath:@"contentsScale" options:0 context:MALayerGeometryChangedContext];
-	[self addObserver:self forKeyPath:@"sublayerTransform" options:0 context:MALayerGeometryChangedContext];
-	[self addObserver:self forKeyPath:@"bounds" options:0 context:MALayerGeometryChangedContext];
-	[self addObserver:self forKeyPath:@"transform" options:0 context:MALayerGeometryChangedContext];
+	[self addObserver:self forKeyPath:@"position" options:0 context:MALayerGeometryNeedsLayoutContext];
+	[self addObserver:self forKeyPath:@"zPosition" options:0 context:MALayerGeometryNeedsLayoutContext];
+	[self addObserver:self forKeyPath:@"anchorPoint" options:0 context:MALayerGeometryNeedsLayoutContext];
+	[self addObserver:self forKeyPath:@"anchorPointZ" options:0 context:MALayerGeometryNeedsLayoutContext];
+	[self addObserver:self forKeyPath:@"contentsScale" options:0 context:MALayerGeometryNeedsDisplayContext];
+	[self addObserver:self forKeyPath:@"sublayerTransform" options:0 context:MALayerGeometryNeedsLayoutContext];
+	[self addObserver:self forKeyPath:@"bounds" options:0 context:MALayerGeometryNeedsLayoutContext];
+	[self addObserver:self forKeyPath:@"transform" options:0 context:MALayerGeometryNeedsLayoutContext];
 
 	return self;
 }
 
 - (void)dealloc {
-	[self removeObserver:self forKeyPath:@"position" context:MALayerGeometryChangedContext];
-	[self removeObserver:self forKeyPath:@"zPosition" context:MALayerGeometryChangedContext];
-	[self removeObserver:self forKeyPath:@"anchorPoint" context:MALayerGeometryChangedContext];
-	[self removeObserver:self forKeyPath:@"anchorPointZ" context:MALayerGeometryChangedContext];
-	[self removeObserver:self forKeyPath:@"contentsScale" context:MALayerGeometryChangedContext];
-	[self removeObserver:self forKeyPath:@"sublayerTransform" context:MALayerGeometryChangedContext];
-	[self removeObserver:self forKeyPath:@"bounds" context:MALayerGeometryChangedContext];
-	[self removeObserver:self forKeyPath:@"transform" context:MALayerGeometryChangedContext];
+	[self removeObserver:self forKeyPath:@"position"];
+	[self removeObserver:self forKeyPath:@"zPosition"];
+	[self removeObserver:self forKeyPath:@"anchorPoint"];
+	[self removeObserver:self forKeyPath:@"anchorPointZ"];
+	[self removeObserver:self forKeyPath:@"contentsScale"];
+	[self removeObserver:self forKeyPath:@"sublayerTransform"];
+	[self removeObserver:self forKeyPath:@"bounds"];
+	[self removeObserver:self forKeyPath:@"transform"];
 
 	dispatch_release(m_renderQueue);
 }
@@ -484,9 +485,10 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
 #pragma mark Key-value observing
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-  	if (context == MALayerGeometryChangedContext) {
-		// goemetry changed, we need to re-render
+  	if (context == MALayerGeometryNeedsDisplayContext) {
 		[self setNeedsDisplay];
+	} else if (context == MALayerGeometryNeedsLayoutContext) {
+		[self setNeedsLayout];
 	} else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 		return;
