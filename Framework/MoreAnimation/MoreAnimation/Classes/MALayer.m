@@ -535,8 +535,9 @@
 	CGColorRelease(defaultFillColor);
 
 	// invoke delegate's drawing logic, if provided
-	if ([self.delegate respondsToSelector:@selector(drawLayer:inContext:)])
-		[self.delegate drawLayer:self inContext:context];
+	id<MALayerDelegate> dg = self.delegate;
+	if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
+		[dg drawLayer:self inContext:context];
 	else
 		[self drawInContext:context];
 
@@ -550,8 +551,9 @@
 			return;
 
 		// invoke delegate's display logic, if provided
-		if ([self.delegate respondsToSelector:@selector(displayLayer:)])
-			[self.delegate displayLayer:self];
+		id<MALayerDelegate> dg = self.delegate;
+		if ([dg respondsToSelector:@selector(displayLayer:)])
+			[dg displayLayer:self];
 		else
 			[self display];
 
@@ -639,8 +641,9 @@
 		} else {
 			// if it's some unrecognized type, just draw directly into the
 			// destination
-			if ([self.delegate respondsToSelector:@selector(drawLayer:inContext:)])
-				[self.delegate drawLayer:self inContext:context];
+			id<MALayerDelegate> dg = self.delegate;
+			if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
+				[dg drawLayer:self inContext:context];
 			else
 				[self drawInContext:context];
 		}
