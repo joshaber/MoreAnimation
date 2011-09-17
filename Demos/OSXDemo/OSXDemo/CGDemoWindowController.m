@@ -1,12 +1,12 @@
 //
-//  GLDemoWindowController.m
+//  CGDemoWindowController.m
 //  OSXDemo
 //
 //  Created by Justin Spahr-Summers on 2011-09-16.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "GLDemoWindowController.h"
+#import "CGDemoWindowController.h"
 #import <MoreAnimation/MoreAnimation.h>
 
 static const CGPoint anchorArray[5] = {
@@ -17,18 +17,18 @@ static const CGPoint anchorArray[5] = {
 	{0.5, 0.5} /*CenterAnchor*/
 };
 
-@interface GLDemoWindowController () <MALayerDelegate>
+@interface CGDemoWindowController () <MALayerDelegate>
 @property (nonatomic, assign) NSUInteger anchorIndex;
 @property (nonatomic, strong) MALayer *prettyLayer;
 @end
 
-@implementation GLDemoWindowController
+@implementation CGDemoWindowController
 @synthesize anchorIndex = m_anchorIndex;
 @synthesize prettyLayer = m_prettyLayer;
-@synthesize openGLView = m_openGLView;
+@synthesize contentView = m_contentView;
 
 - (id)init {
-  	return [self initWithWindowNibName:@"GLDemoWindow"];
+  	return [self initWithWindowNibName:@"CGDemoWindow"];
 }
 
 - (id)initWithWindow:(NSWindow *)window
@@ -47,8 +47,8 @@ static const CGPoint anchorArray[5] = {
     
 	self.prettyLayer = [[MALayer alloc] init];
 	self.prettyLayer.delegate = [self weakReferenceProxy];
-	self.prettyLayer.frame = CGRectInset(self.openGLView.contentLayer.frame, 20, 20);
-	[self.openGLView.contentLayer addSublayer:self.prettyLayer];
+	self.prettyLayer.frame = CGRectInset(self.contentView.contentLayer.frame, 20, 20);
+	[self.contentView.contentLayer addSublayer:self.prettyLayer];
 
     self.anchorIndex = 0;
 }
@@ -68,17 +68,17 @@ static const CGPoint anchorArray[5] = {
 
 #pragma mark Actions
 
-// TODO: combine this logic with that of CGDemoWindowController
+// TODO: combine this logic with that of GLDemoWindowController
 
 - (IBAction)changeAnchorPoint:(id)sender {
     CGPoint oldAnchor = self.prettyLayer.anchorPoint;
     CGPoint newAnchor = anchorArray[self.anchorIndex % 5];
     self.anchorIndex++;
-    self.openGLView.contentLayer.anchorPoint = newAnchor;
+    self.contentView.contentLayer.anchorPoint = newAnchor;
 }
 
 - (IBAction)flipABitch:(id)sender {
-    CGSize size = self.openGLView.bounds.size;
+    CGSize size = self.contentView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
     transform = CGAffineTransformScale(transform, -1, -1);
@@ -87,7 +87,7 @@ static const CGPoint anchorArray[5] = {
 }
 
 - (IBAction)flipDemTables:(id)sender {
-    CGSize size = self.openGLView.bounds.size;
+    CGSize size = self.contentView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
     transform = CGAffineTransformScale(transform, 1, -1);
@@ -96,7 +96,7 @@ static const CGPoint anchorArray[5] = {
 }
 
 - (IBAction)brotate:(id)sender {
-    CGSize size = self.openGLView.bounds.size;
+    CGSize size = self.contentView.bounds.size;
     CGAffineTransform transform = self.prettyLayer.affineTransform;
 
     transform = CGAffineTransformRotate(transform, M_PI_4/4);
@@ -129,6 +129,5 @@ static const CGPoint anchorArray[5] = {
         }
     }
 }
-
 
 @end

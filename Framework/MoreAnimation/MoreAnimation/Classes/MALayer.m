@@ -349,6 +349,8 @@ static char * const MALayerGeometryChangedContext = "MALayerGeometryChangedConte
 
 - (void)setNeedsDisplay {
   	self.needsDisplay = YES;
+
+	// TODO: this shouldn't be necessary
 	[self.superlayer setNeedsDisplay];
 }
 
