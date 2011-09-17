@@ -128,6 +128,13 @@ typedef void (^MALayerNeedsRenderBlock)(MALayer *);
 @property (readonly, copy) NSArray *sublayers;
 
 /**
+ * The sublayers of the receiver, in the order that they will be rendered
+ * visually, with the first item in the array being the layer furthest at the
+ * back.
+ */
+@property (readonly, copy) NSArray *orderedSublayers;
+
+/**
  * The superlayer of the receiver, or \c nil if it has no superlayer.
  */
 @property (readonly, unsafe_unretained) MALayer *superlayer;

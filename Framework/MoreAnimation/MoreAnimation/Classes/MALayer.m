@@ -11,21 +11,11 @@
 #import "EXTScope.h"
 #import <libkern/OSAtomic.h>
 
-static
-dispatch_queue_t renderQueueForCurrentThread (void) {
-	if (dispatch_get_current_queue() == dispatch_get_main_queue())
-		return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-	else
-		return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-}
-
-static
-dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
-	if (dispatch_get_current_queue() == dispatch_get_main_queue())
-		return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-	else
-		return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-}
+/**
+ * The maximum delta between two geometry values that will not be considered
+ * a change (due to the inherent inaccuracy of floating-point calculations).
+ */
+static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 @interface MALayer () {
 	/**
@@ -448,6 +438,43 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
 	return [m_sublayers copy];
 }
 
+- (NSArray *)orderedSublayers {
+	OSSpinLockLock(&m_sublayersSpinLock);
+
+	NSUInteger count = [m_sublayers count];
+	NSMutableArray *orderedSublayers = [[NSMutableArray alloc] initWithCapacity:count];
+
+	[m_sublayers
+		enumerateObjectsWithOptions:NSEnumerationReverse
+		usingBlock:^(id obj, NSUInteger index, BOOL *stop){
+			[orderedSublayers addObject:obj];
+		}
+	];
+	
+	OSSpinLockUnlock(&m_sublayersSpinLock);
+
+	return [orderedSublayers
+		sortedArrayWithOptions:NSSortConcurrent | NSSortStable
+		usingComparator:^ NSComparisonResult (MALayer *left, MALayer *right){
+			CGFloat zPosDifference = left.zPosition - right.zPosition;
+
+			// if the zPosition of the left layer is greater than the right
+			// layer...
+			if (zPosDifference > MALayerGeometryDifferenceTolerance) {
+				// the left layer should be on top
+				return NSOrderedDescending;
+			} else if (zPosDifference < -MALayerGeometryDifferenceTolerance) {
+				// or, the other way, then the right layer
+				return NSOrderedAscending;
+			} else {
+				// if the zPositions are "equal," preserve ordering based on
+				// position in sublayers array
+				return NSOrderedSame;
+			}
+		}
+	];
+}
+
 @synthesize superlayer = m_superlayer;
 @synthesize delegate = m_delegate;
 @synthesize needsDisplay = m_needsDisplay;
@@ -624,37 +651,42 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
 #pragma mark Rendering
 
 - (void)renderInContext:(CGContextRef)context {
-    CGContextSaveGState(context);
-
 	[self layoutIfNeeded];
 
-	dispatch_group_t selfDisplayGroup = dispatch_group_create();
+	// if we're on the main thread, increase rendering priority to avoid
+	// blocking as much as possible
+	long renderingPriority = DISPATCH_QUEUE_PRIORITY_DEFAULT;
+	if (dispatch_get_current_queue() == dispatch_get_main_queue())
+		renderingPriority = DISPATCH_QUEUE_PRIORITY_HIGH;
+
+	// start rendering sublayers
+	NSArray *orderedSublayers = self.orderedSublayers;
+	NSUInteger sublayerCount = [orderedSublayers count];
+
+	volatile int32_t *sublayerIndicesRendered = calloc(sublayerCount, sizeof(*sublayerIndicesRendered));
 	@onExit {
-		dispatch_release(selfDisplayGroup);
+		free((void *)sublayerIndicesRendered);
 	};
 
-	dispatch_group_async(selfDisplayGroup, renderQueueForCurrentThread(), ^{
-		[self displayIfNeeded];
-	});
-
-	NSArray *sublayers = self.sublayers;
-
-	dispatch_queue_t sublayerRenderQueue = sublayerRenderQueueForCurrentThread();
-	dispatch_group_t sublayerDisplayGroup = dispatch_group_create();
+	dispatch_queue_t sublayerRenderQueue = dispatch_get_global_queue(renderingPriority, 0);
+	dispatch_semaphore_t sublayerSemaphore = dispatch_semaphore_create(0);
 	@onExit {
-		dispatch_release(sublayerDisplayGroup);
+		dispatch_release(sublayerSemaphore);
 	};
 
-	for (MALayer *sublayer in sublayers) {
-		dispatch_group_async(sublayerDisplayGroup, sublayerRenderQueue, ^{
+	[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
+		dispatch_async(sublayerRenderQueue, ^{
 			[sublayer displayIfNeeded];
+
+			OSAtomicIncrement32Barrier(sublayerIndicesRendered + index);
+			dispatch_semaphore_signal(sublayerSemaphore);
 		});
-	}
+	}];
 
-	// block on the rendering
-	dispatch_group_wait(selfDisplayGroup, DISPATCH_TIME_FOREVER);
-
+	// render self synchronously while sublayers are rendering concurrently
 	@autoreleasepool {
+		[self displayIfNeeded];
+
 		id contents = self.contents;
 		BOOL foundMatch = NO;
 
@@ -673,6 +705,8 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
 		}
 
 		if (!foundMatch) {
+			CGContextSaveGState(context);
+
 			// if it's some unrecognized type, just draw directly into the
 			// destination
 			id<MALayerDelegate> dg = self.delegate;
@@ -680,24 +714,28 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
 				[dg drawLayer:self inContext:context];
 			else
 				[self drawInContext:context];
+
+			CGContextRestoreGState(context);
 		}
 	}
 
-	CGContextRestoreGState(context);
+	// render all sublayers, blocking on any that are still displaying
+	[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
+		// wait on this sublayer to be rendered
+		while (!sublayerIndicesRendered[index]) {
+			dispatch_semaphore_wait(sublayerSemaphore, DISPATCH_TIME_FOREVER);
+		}
 
-	// block on sublayer rendering
-	dispatch_group_wait(sublayerDisplayGroup, DISPATCH_TIME_FOREVER);
+		@autoreleasepool {
+			CGContextSaveGState(context);
 
-	// render all sublayers
-	for (MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
-	    CGContextSaveGState(context);
+			CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
+			CGContextConcatCTM(context, affineTransform);
+			[sublayer renderInContext:context];
 
-        CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
-        CGContextConcatCTM(context, affineTransform);
-		[sublayer renderInContext:context];
-
-		CGContextRestoreGState(context);
-	}
+			CGContextRestoreGState(context);
+		}
+	}];
 }
 
 - (void)setNeedsRender {
