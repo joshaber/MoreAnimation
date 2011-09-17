@@ -106,7 +106,7 @@ static const CGPoint anchorArray[5] = {
     MALayer *topLayer = self.prettyLayer;
     for (NSUInteger i = 0;i < 10000;++i) {
         MALayer *nextLayer = [[MALayer alloc] init];
-        nextLayer.delegate = self;
+        nextLayer.delegate = [self weakReferenceProxy];
         nextLayer.frame = CGRectInset(topLayer.bounds, 2, 2);
         [topLayer addSublayer:nextLayer];
 
@@ -121,7 +121,7 @@ static const CGPoint anchorArray[5] = {
     for (NSUInteger i = 0;i < topLayer.frame.size.width/5;++i) {
         for(NSUInteger j = 0; j < 10; ++j) {
             MALayer *nextLayer = [[MALayer alloc] init];
-            nextLayer.delegate = self;
+            nextLayer.delegate = [self weakReferenceProxy];
             nextLayer.frame = CGRectMake(i * 5, height * j, 5, height);
             [topLayer addSublayer:nextLayer];
         }
