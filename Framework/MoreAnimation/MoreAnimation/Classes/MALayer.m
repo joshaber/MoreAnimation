@@ -80,10 +80,12 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
  */
 - (MALayer *)commonParentLayerWithLayer:(MALayer *)layer;
 
+#if 0
 /**
  * Lays out the receiver and all of its descendant layers concurrently.
  */
 - (void)concurrentlyLayoutLayerTree;
+#endif
 
 /**
  * Removes \a layer from the receiver's list of sublayers.
@@ -583,6 +585,7 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
   	if (!self.needsLayout)
 		return;
 	
+	#if 0
   	MALayer *lastNeedingLayout = self;
 	MALayer *nextLayer = self.superlayer;
 
@@ -592,11 +595,13 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
 	}
 
 	[lastNeedingLayout concurrentlyLayoutLayerTree];
+	#endif
+	
+	[self layoutSublayers];
+	self.needsLayout = NO;
 }
 
-- (void)layoutSublayers {
-}
-
+#if 0
 - (void)concurrentlyLayoutLayerTree {
 	[self layoutSublayers];
 	[self.sublayers
@@ -605,8 +610,10 @@ dispatch_queue_t sublayerRenderQueueForCurrentThread (void) {
 			[layer concurrentlyLayoutLayerTree];
 		}
 	];
+}
+#endif
 
-	self.needsLayout = NO;
+- (void)layoutSublayers {
 }
 
 - (void)setNeedsLayout {
