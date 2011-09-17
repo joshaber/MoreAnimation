@@ -7,12 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "JAWindowController.h"
+#import "DemoWindowController.h"
 
 @class MAOpenGLView;
 
-@interface GLDemoWindowController : JAWindowController
-@property (assign) IBOutlet MAOpenGLView *openGLView;
-
-- (id)init;
+@interface GLDemoWindowController : DemoWindowController
+@property (assign) IBOutlet MAOpenGLView *contentView;
 @end

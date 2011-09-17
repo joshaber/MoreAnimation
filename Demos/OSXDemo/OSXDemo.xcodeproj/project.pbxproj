@@ -23,6 +23,7 @@
 		D08B81151423FE9800F887A5 /* JAWeakReferenceHaterProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B81121423FE9800F887A5 /* JAWeakReferenceHaterProxy.m */; };
 		D08B81161423FE9800F887A5 /* JAWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B81141423FE9800F887A5 /* JAWindowController.m */; };
 		D091863C141D7267005F86FF /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = D091863B141D7267005F86FF /* test.png */; };
+		D098C97F14246978000B98BA /* DemoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D098C97E14246978000B98BA /* DemoWindowController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,8 @@
 		D0918642141D755E005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D0918643141D755E005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D0918644141D755E005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		D098C97D14246978000B98BA /* DemoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoWindowController.h; sourceTree = "<group>"; };
+		D098C97E14246978000B98BA /* DemoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoWindowController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +178,8 @@
 		D08B81081423F35000F887A5 /* Windows */ = {
 			isa = PBXGroup;
 			children = (
+				D098C97D14246978000B98BA /* DemoWindowController.h */,
+				D098C97E14246978000B98BA /* DemoWindowController.m */,
 				D044F4D814243B6600C4EFCE /* CGDemoWindowController.h */,
 				D044F4D914243B6600C4EFCE /* CGDemoWindowController.m */,
 				D044F4DB14243B8100C4EFCE /* CGDemoWindow.xib */,
@@ -304,6 +309,7 @@
 				D08B81161423FE9800F887A5 /* JAWindowController.m in Sources */,
 				D08B810B1423F3D700F887A5 /* GLDemoWindowController.m in Sources */,
 				D044F4DA14243B6600C4EFCE /* CGDemoWindowController.m in Sources */,
+				D098C97F14246978000B98BA /* DemoWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

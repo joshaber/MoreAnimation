@@ -9,5 +9,5 @@
 #import <Cocoa/Cocoa.h>
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
-@property (strong) NSMutableArray *windowControllers;
+@property (nonatomic, strong) NSMutableArray *windowControllers;
 @end

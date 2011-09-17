@@ -7,12 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "JAWindowController.h"
+#import "DemoWindowController.h"
 
 @class MAView;
 
-@interface CGDemoWindowController : JAWindowController
+@interface CGDemoWindowController : DemoWindowController
 @property (assign) IBOutlet MAView *contentView;
-
-- (id)init;
 @end
