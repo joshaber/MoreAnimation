@@ -998,6 +998,8 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 #pragma mark Sublayer management
 
 - (void)addSublayer:(MALayer *)layer {
+  	NSParameterAssert(layer != nil);
+
   	[layer removeFromSuperlayer];
 
 	OSSpinLockLock(&m_sublayersSpinLock);
@@ -1010,7 +1012,62 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	OSSpinLockUnlock(&m_sublayersSpinLock);
 
 	layer.superlayer = self;
+	[self setNeedsLayout];
+}
 
+- (void)insertSublayer:(MALayer *)layer above:(MALayer *)otherLayer {
+  	NSParameterAssert(layer != nil);
+  	NSParameterAssert(otherLayer != nil);
+	NSParameterAssert(otherLayer.superlayer == self);
+
+  	[layer removeFromSuperlayer];
+
+	OSSpinLockLock(&m_sublayersSpinLock);
+	{
+		NSUInteger existingIndex = [m_sublayers indexOfObjectIdenticalTo:otherLayer];
+		[m_sublayers insertObject:layer atIndex:existingIndex + 1];
+	}
+	OSSpinLockUnlock(&m_sublayersSpinLock);
+
+	layer.superlayer = self;
+	[self setNeedsLayout];
+}
+
+- (void)insertSublayer:(MALayer *)layer atIndex:(NSUInteger)index; {
+  	NSParameterAssert(layer != nil);
+
+  	[layer removeFromSuperlayer];
+
+	OSSpinLockLock(&m_sublayersSpinLock);
+	{
+		if (![m_sublayers count]) {
+			NSAssert(index == 0, @"index is out-of-bounds for sublayers array");
+			m_sublayers = [NSMutableArray array];
+		}
+
+		[m_sublayers insertObject:layer atIndex:index];
+	}
+	OSSpinLockUnlock(&m_sublayersSpinLock);
+
+	layer.superlayer = self;
+	[self setNeedsLayout];
+}
+
+- (void)insertSublayer:(MALayer *)layer below:(MALayer *)otherLayer {
+  	NSParameterAssert(layer != nil);
+	NSParameterAssert(otherLayer != nil);
+	NSParameterAssert(otherLayer.superlayer == self);
+
+  	[layer removeFromSuperlayer];
+
+	OSSpinLockLock(&m_sublayersSpinLock);
+	{
+		NSUInteger existingIndex = [m_sublayers indexOfObjectIdenticalTo:otherLayer];
+		[m_sublayers insertObject:layer atIndex:existingIndex];
+	}
+	OSSpinLockUnlock(&m_sublayersSpinLock);
+
+	layer.superlayer = self;
 	[self setNeedsLayout];
 }
 

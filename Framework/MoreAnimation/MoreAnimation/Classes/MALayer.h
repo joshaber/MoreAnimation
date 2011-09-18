@@ -234,6 +234,24 @@ typedef void (^MALayerNeedsRenderBlock)(MALayer *);
 - (void)addSublayer:(MALayer *)layer;
 
 /**
+ * Adds \a layer as a sublayer of the receiver, positioned above \a otherLayer.
+ * \a otherLayer must be a sublayer of the receiver.
+ */
+- (void)insertSublayer:(MALayer *)layer above:(MALayer *)otherLayer;
+
+/**
+ * Inserts \a layer as a sublayer of the receiver at the given index in the
+ * #sublayers array.
+ */
+- (void)insertSublayer:(MALayer *)layer atIndex:(NSUInteger)index;
+
+/**
+ * Adds \a layer as a sublayer of the receiver, positioned below \a otherLayer.
+ * \a otherLayer must be a sublayer of the receiver.
+ */
+- (void)insertSublayer:(MALayer *)layer below:(MALayer *)otherLayer;
+
+/**
  * Removes the receiver from its current #superlayer. If the receiver has no
  * #superlayer, nothing happens.
  */
