@@ -242,8 +242,8 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	OSSpinLockUnlock(&m_geometrySpinLock);
 
     CGPoint transformedAnchorPoint = CGPointMake(
-        (anchor.x - 0.5) * size.width,
-        (anchor.y - 0.5) * size.height
+        anchor.x * size.width,
+        anchor.y * size.height
     );
 
     CGPoint newPosition = CGPointMake(
@@ -279,13 +279,13 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
     CGPoint anchor = m_anchorPoint;
 
     CGPoint transformedAnchorPoint = CGPointMake(
-        (anchor.x - 0.5) * size.width,
-        (anchor.y - 0.5) * size.height
+        anchor.x * size.width,
+        anchor.y * size.height
     );
 
     m_position = CGPointMake(
-        CGRectGetMidX(rect) - transformedAnchorPoint.x,
-        CGRectGetMidY(rect) - transformedAnchorPoint.y
+        CGRectGetMinX(rect) + transformedAnchorPoint.x,
+        CGRectGetMinY(rect) + transformedAnchorPoint.y
     );
 }
 
