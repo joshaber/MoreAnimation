@@ -90,6 +90,11 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 #endif
 
 /**
+ * Draws the receiver into \a context, using #drawInContext: or the #delegate.
+ */
+- (void)drawSelfInContext:(CGContextRef)context;
+
+/**
  * Removes \a layer from the receiver's list of sublayers.
  */
 - (void)removeSublayer:(MALayer *)layer;
@@ -703,12 +708,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	CGContextSetFillColorWithColor(context, defaultFillColor);
 	CGColorRelease(defaultFillColor);
 
-	// invoke delegate's drawing logic, if provided
-	id<MALayerDelegate> dg = self.delegate;
-	if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
-		[dg drawLayer:self inContext:context];
-	else
-		[self drawInContext:context];
+	[self drawSelfInContext:context];
 
 	// store the drawn CGLayer as the cached contents
 	self.contents = (__bridge_transfer id)layer;
@@ -729,6 +729,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 }
 
 - (void)drawInContext:(CGContextRef)context {
+}
+
+- (void)drawSelfInContext:(CGContextRef)context {
+	CGContextSaveGState(context);
+	CGContextClipToRect(context, self.bounds);
+
+	// invoke delegate's drawing logic, if provided
+	id<MALayerDelegate> dg = self.delegate;
+	if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
+		[dg drawLayer:self inContext:context];
+	else
+		[self drawInContext:context];
+
+	CGContextRestoreGState(context);
 }
 
 - (void)setNeedsDisplay {
@@ -938,12 +952,12 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 }
 
 - (void)renderSelfInContext:(CGContextRef)context {
-  	CGRect bounds = self.bounds;
 	id contents = self.contents;
 	BOOL foundMatch = NO;
 
 	if (contents) {
 		CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
+		CGRect bounds = self.bounds;
 
 		// draw whichever type of contents the layer has
 		if (typeID == CGLayerGetTypeID()) {
@@ -956,18 +970,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	}
 
 	if (!foundMatch) {
-		CGContextSaveGState(context);
-		CGContextClipToRect(context, bounds);
-
-		// if it's some unrecognized type, just draw directly into the
-		// destination
-		id<MALayerDelegate> dg = self.delegate;
-		if ([dg respondsToSelector:@selector(drawLayer:inContext:)])
-			[dg drawLayer:self inContext:context];
-		else
-			[self drawInContext:context];
-
-		CGContextRestoreGState(context);
+		[self drawSelfInContext:context];
 	}
 }
 
