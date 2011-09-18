@@ -18,6 +18,7 @@ static const CGPoint anchorArray[5] = {
 
 @interface DemoWindowController () <MALayerDelegate>
 @property (nonatomic, assign) NSUInteger anchorIndex;
+@property (strong) MATextLayer *textLayer;
 @end
 
 @implementation DemoWindowController
@@ -26,6 +27,7 @@ static const CGPoint anchorArray[5] = {
 
 @synthesize anchorIndex = m_anchorIndex;
 @synthesize prettyLayer = m_prettyLayer;
+@synthesize textLayer = m_textLayer;
 @synthesize contentView = m_contentView;
 
 #pragma mark Lifecycle
@@ -60,10 +62,10 @@ static const CGPoint anchorArray[5] = {
 	self.prettyLayer.frame = CGRectInset([layerView contentLayer].frame, 20, 20);
 	[[layerView contentLayer] addSublayer:self.prettyLayer];
 
-	MATextLayer *textLayer = [[MATextLayer alloc] init];
-	textLayer.string = @"** Hello world! **";
-	textLayer.frame = CGRectInset(self.prettyLayer.bounds, 40, 40);
-	[self.prettyLayer addSublayer:textLayer];
+	self.textLayer = [[MATextLayer alloc] init];
+	self.textLayer.string = @"** Hello world! **";
+	self.textLayer.frame = CGRectInset(self.prettyLayer.bounds, 40, 40);
+	[self.prettyLayer addSublayer:self.textLayer];
 
     self.anchorIndex = 0;
 }
