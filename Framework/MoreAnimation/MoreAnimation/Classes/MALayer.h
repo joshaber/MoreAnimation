@@ -258,6 +258,13 @@ typedef void (^MALayerNeedsRenderBlock)(MALayer *);
 - (void)removeFromSuperlayer;
 
 /**
+ * If the receiver and \a layer share a common ancestor (or one is an ancestor
+ * of the other), this returns that ancestor. If the receiver and \a layer do
+ * not exist in the same layer tree, \c nil is returned.
+ */
+- (MALayer *)ancestorSharedWithLayer:(MALayer *)layer;
+
+/**
  * Returns whether the receiver is a descendant of or identical to \a layer.
  */
 - (BOOL)isDescendantOfLayer:(MALayer *)layer;

@@ -75,13 +75,6 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	volatile int32_t m_rendererCount;
 }
 
-/**
- * If the receiver and \a layer share a common parent (or one is the parent of
- * the other), this returns that parent layer. If the receiver and \a layer do
- * not exist in the same layer tree, \c nil is returned.
- */
-- (MALayer *)commonParentLayerWithLayer:(MALayer *)layer;
-
 #if 0
 /**
  * Lays out the receiver and all of its descendant layers concurrently.
@@ -622,7 +615,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 #pragma mark Coordinate systems and transformations
 
 - (CGAffineTransform)affineTransformToLayer:(MALayer *)layer {
-    MALayer *parentLayer = [self commonParentLayerWithLayer:layer];
+    MALayer *parentLayer = [self ancestorSharedWithLayer:layer];
 	NSAssert(parentLayer != nil, @"layers must share an ancestor in order for an affine transform between them to be valid");
 
 	// FIXME: this is a really naive implementation
@@ -1104,7 +1097,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
     return NO;
 }
 
-- (MALayer *)commonParentLayerWithLayer:(MALayer *)layer {
+- (MALayer *)ancestorSharedWithLayer:(MALayer *)layer {
     // TODO: this is a naive implementation
 
     MALayer *parentLayer = self;
