@@ -569,19 +569,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 - (NSArray *)orderedSublayers {
 	OSSpinLockLock(&m_sublayersSpinLock);
 
-	NSUInteger count = [m_sublayers count];
-	NSMutableArray *orderedSublayers = [[NSMutableArray alloc] initWithCapacity:count];
-
-	[m_sublayers
-		enumerateObjectsWithOptions:NSEnumerationReverse
-		usingBlock:^(id obj, NSUInteger index, BOOL *stop){
-			[orderedSublayers addObject:obj];
-		}
-	];
-	
-	OSSpinLockUnlock(&m_sublayersSpinLock);
-
-	return [orderedSublayers
+	NSArray *orderedSublayers = [m_sublayers
 		sortedArrayWithOptions:NSSortConcurrent | NSSortStable
 		usingComparator:^ NSComparisonResult (MALayer *left, MALayer *right){
 			CGFloat zPosDifference = left.zPosition - right.zPosition;
@@ -601,6 +589,10 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 			}
 		}
 	];
+	
+	OSSpinLockUnlock(&m_sublayersSpinLock);
+
+	return orderedSublayers;
 }
 
 - (BOOL)isRendering {

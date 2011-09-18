@@ -72,7 +72,7 @@
 		[self drawInGLContext:context pixelFormat:pixelFormat];
 
 		// TODO: need to figure out how to render sublayers appropriately
-		for (MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
+		for (MALayer *sublayer in self.orderedSublayers) {
 			if ([sublayer isKindOfClass:[MAOpenGLLayer class]]) {
 				// TODO: transform matrix for the sublayer
 				MAOpenGLLayer *sublayerGL = (MAOpenGLLayer *)sublayer;
