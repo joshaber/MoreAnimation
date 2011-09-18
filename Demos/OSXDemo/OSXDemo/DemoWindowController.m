@@ -63,7 +63,14 @@ static const CGPoint anchorArray[5] = {
 	[[layerView contentLayer] addSublayer:self.prettyLayer];
 
 	self.textLayer = [[MATextLayer alloc] init];
-	self.textLayer.string = @"** Hello world! **";
+
+	NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+		(__bridge_transfer id)CGColorCreateGenericGray(1, 1), (__bridge id)kCTForegroundColorAttributeName,
+		(__bridge_transfer id)CTFontCreateUIFontForLanguage(kCTFontSystemFontType, 48, NULL), (__bridge id)kCTFontAttributeName,
+		nil
+	];
+
+	self.textLayer.attributedString = [[NSAttributedString alloc] initWithString:@"** Hello world! **" attributes:attributes];
 	self.textLayer.frame = CGRectInset(self.prettyLayer.bounds, 40, 40);
 	[self.prettyLayer addSublayer:self.textLayer];
 

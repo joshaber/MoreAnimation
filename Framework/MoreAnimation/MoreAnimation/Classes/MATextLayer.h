@@ -16,11 +16,5 @@
 /**
  * The string to render in this layer.
  */
-@property (copy) NSString *string;
-
-/**
- * The color in which to render the receiver's #string. Defaults to opaque
- * white.
- */
-@property CGColorRef foregroundColor;
+@property (copy) NSAttributedString *attributedString;
 @end
