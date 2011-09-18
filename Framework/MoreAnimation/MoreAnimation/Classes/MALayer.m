@@ -732,8 +732,10 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 }
 
 - (void)drawSelfInContext:(CGContextRef)context {
+  	CGRect bounds = self.bounds;
+
 	CGContextSaveGState(context);
-	CGContextClipToRect(context, self.bounds);
+	CGContextClipToRect(context, bounds);
 
 	// invoke delegate's drawing logic, if provided
 	id<MALayerDelegate> dg = self.delegate;
@@ -741,6 +743,33 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 		[dg drawLayer:self inContext:context];
 	else
 		[self drawInContext:context];
+
+	#if MA_LAYER_DEBUG
+	CGFloat width = bounds.size.width;
+	CGFloat height = bounds.size.height;
+
+	CGColorRef whiteColor = CGColorCreateGenericGray(1, 1);
+	CGContextSetStrokeColorWithColor(context, whiteColor);
+	CGColorRelease(whiteColor);
+
+	CGContextSetLineWidth(context, 2);
+	CGContextSetLineCap(context, kCGLineCapSquare);
+
+	CGContextBeginPath(context);
+
+	// draw a 10x10 grid over the layer
+	for (CGFloat x = 0;x - width < 0.001;x += width / 10) {
+		CGContextMoveToPoint(context, x, 0);
+		CGContextAddLineToPoint(context, x, height);
+	}
+
+	for (CGFloat y = 0;y - height < 0.001;y += height / 10) {
+		CGContextMoveToPoint(context, 0, y);
+		CGContextAddLineToPoint(context, width, y);
+	}
+
+	CGContextStrokePath(context);
+	#endif
 
 	CGContextRestoreGState(context);
 }
