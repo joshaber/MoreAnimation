@@ -62,7 +62,11 @@ static const CGPoint anchorArray[5] = {
 	self.prettyLayer.frame = CGRectInset([layerView contentLayer].frame, 20, 20);
 	[[layerView contentLayer] addSublayer:self.prettyLayer];
 
+	CGRect textFrame, remainder;
+	CGRectDivide(CGRectInset(self.prettyLayer.bounds, 20, 20), &textFrame, &remainder, 100, CGRectMinYEdge);
+
 	self.textLayer = [[MATextLayer alloc] init];
+	self.textLayer.frame = textFrame;
 
 	NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
 		(__bridge_transfer id)CGColorCreateGenericGray(1, 1), (__bridge id)kCTForegroundColorAttributeName,
@@ -71,7 +75,6 @@ static const CGPoint anchorArray[5] = {
 	];
 
 	self.textLayer.attributedString = [[NSAttributedString alloc] initWithString:@"** Hello world! **" attributes:attributes];
-	self.textLayer.frame = CGRectInset(self.prettyLayer.bounds, 40, 40);
 	[self.prettyLayer addSublayer:self.textLayer];
 
     self.anchorIndex = 0;
