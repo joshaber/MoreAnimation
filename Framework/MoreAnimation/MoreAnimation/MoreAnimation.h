@@ -11,4 +11,5 @@
 #import <MoreAnimation/MAOpenGLLayer.h>
 #import <MoreAnimation/MAOpenGLView.h>
 #import <MoreAnimation/MAOpenGLTexture.h>
+#import <MoreAnimation/MATextLayer.h>
 #import <MoreAnimation/MAView.h>
