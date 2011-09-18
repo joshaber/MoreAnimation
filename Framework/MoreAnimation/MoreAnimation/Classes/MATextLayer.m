@@ -60,14 +60,22 @@
 - (void)drawInContext:(CGContextRef)context {
 	CGContextSetShouldAntialias(context, YES);
   	CGContextSetShouldSmoothFonts(context, YES);
+	CGContextSetTextMatrix(context, CGAffineTransformIdentity);
 
-	CTLineRef line = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
+	CGMutablePathRef path = CGPathCreateMutable();
 	@onExit {
-		CFRelease(line);
+		CGPathRelease(path);
 	};
 
-	CGContextSetTextPosition(context, 0, 0);
-	CTLineDraw(line, context);
+	CGPathAddRect(path, NULL, self.bounds);
+
+	CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)self.attributedString);
+	@onExit {
+		CFRelease(framesetter);
+	};
+
+	CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, NULL);
+	CTFrameDraw(frame, context);
 }
 
 @end

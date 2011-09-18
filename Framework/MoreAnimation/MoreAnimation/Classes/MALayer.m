@@ -829,7 +829,6 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 			 * If no ancestor is performing subtree caching, we should fall back
 			 * to trying to cache just this layer's contents.
 			 */
-
 			[self renderInContextCached:context];
 		}
 	} else {
