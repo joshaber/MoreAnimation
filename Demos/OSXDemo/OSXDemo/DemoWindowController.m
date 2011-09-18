@@ -60,6 +60,11 @@ static const CGPoint anchorArray[5] = {
 	self.prettyLayer.frame = CGRectInset([layerView contentLayer].frame, 20, 20);
 	[[layerView contentLayer] addSublayer:self.prettyLayer];
 
+	MATextLayer *textLayer = [[MATextLayer alloc] init];
+	textLayer.string = @"** Hello world! **";
+	textLayer.frame = CGRectInset(self.prettyLayer.bounds, 40, 40);
+	[self.prettyLayer addSublayer:textLayer];
+
     self.anchorIndex = 0;
 }
 
