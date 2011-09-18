@@ -146,7 +146,7 @@ static const CGPoint anchorArray[5] = {
             MALayer *nextLayer = [[[topLayer class] alloc] init];
             nextLayer.delegate = [self weakReferenceProxy];
             nextLayer.frame = CGRectMake(i * 5, height * j, 5, height);
-            [topLayer addSublayer:nextLayer];
+            [topLayer insertSublayer:nextLayer below:self.textLayer];
         }
     }
 }
