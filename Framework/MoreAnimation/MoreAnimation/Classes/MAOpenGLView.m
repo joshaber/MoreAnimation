@@ -76,7 +76,7 @@
 	glLoadIdentity();
 
 	CGRect bounds = NSRectToCGRect(self.bounds);
-    self.contentLayer.bounds = bounds;
+    self.contentLayer.frame = bounds;
 	[self.contentLayer setNeedsDisplay];
 }
 

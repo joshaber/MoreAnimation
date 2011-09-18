@@ -53,7 +53,7 @@
 
 - (void)drawRect:(NSRect)dirtyRect {
 	CGRect bounds = NSRectToCGRect(self.bounds);
-    self.contentLayer.bounds = bounds;
+    self.contentLayer.frame = bounds;
 
   	CGContextRef context = [NSGraphicsContext currentContext].graphicsPort;
 	[self.contentLayer renderInContext:context];
