@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		36C4BFFB141F29DE00E5DFA5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */; };
 		88D1C56B141D7F9E00A58EB9 /* MoreAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C31141D6FDA0053AF73 /* MoreAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D016125F142470BA001DFB28 /* EXTScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D016125D142470BA001DFB28 /* EXTScope.h */; };
+		D0161260142470BA001DFB28 /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = D016125E142470BA001DFB28 /* EXTScope.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D0161264142470C3001DFB28 /* EXTScopeTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D0161263142470C3001DFB28 /* EXTScopeTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D0355C25141D6FDA0053AF73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C24141D6FDA0053AF73 /* Cocoa.framework */; };
 		D0355C2F141D6FDA0053AF73 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0355C2D141D6FDA0053AF73 /* InfoPlist.strings */; };
 		D0355C3B141D6FDA0053AF73 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C3A141D6FDA0053AF73 /* SenTestingKit.framework */; };
@@ -26,6 +29,19 @@
 		D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C5A141D700C0053AF73 /* MAOpenGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C64141D700C0053AF73 /* MAOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C5B141D700C0053AF73 /* MAOpenGLView.m */; };
 		D0355C6C141D70EE0053AF73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C6B141D70EE0053AF73 /* OpenGL.framework */; };
+		D044F4E514243CC400C4EFCE /* MAView.h in Headers */ = {isa = PBXBuildFile; fileRef = D044F4E314243CC400C4EFCE /* MAView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D044F4E614243CC400C4EFCE /* MAView.m in Sources */ = {isa = PBXBuildFile; fileRef = D044F4E414243CC400C4EFCE /* MAView.m */; };
+		D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */; };
+		D05A860E1423E5D7009A4748 /* EXTSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */; };
+		D05A86121423E5E0009A4748 /* EXTRuntimeExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86101423E5E0009A4748 /* EXTRuntimeExtensions.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -Wno-sign-conversion -Wno-conversion"; }; };
+		D05A86171423E5EC009A4748 /* EXTRuntimeExtensionsTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86141423E5EC009A4748 /* EXTRuntimeExtensionsTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D05A86181423E5EC009A4748 /* EXTSafeCategoryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D05A861A1423E600009A4748 /* metamacros.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A86191423E600009A4748 /* metamacros.h */; };
+		D05A86291423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A86271423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D05A862A1423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86281423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m */; };
+		D0863C051425BB6D00CDE087 /* MATextLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = D0863C031425BB6D00CDE087 /* MATextLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0863C061425BB6D00CDE087 /* MATextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0863C041425BB6D00CDE087 /* MATextLayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +56,10 @@
 
 /* Begin PBXFileReference section */
 		36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D016125D142470BA001DFB28 /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScope.h; sourceTree = "<group>"; };
+		D016125E142470BA001DFB28 /* EXTScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTScope.m; sourceTree = "<group>"; };
+		D0161262142470C3001DFB28 /* EXTScopeTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScopeTest.h; sourceTree = "<group>"; };
+		D0161263142470C3001DFB28 /* EXTScopeTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTScopeTest.m; sourceTree = "<group>"; };
 		D0355C21141D6FDA0053AF73 /* MoreAnimation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoreAnimation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0355C24141D6FDA0053AF73 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D0355C27141D6FDA0053AF73 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -64,6 +84,21 @@
 		D0355C5A141D700C0053AF73 /* MAOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAOpenGLView.h; sourceTree = "<group>"; };
 		D0355C5B141D700C0053AF73 /* MAOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAOpenGLView.m; sourceTree = "<group>"; };
 		D0355C6B141D70EE0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		D044F4E314243CC400C4EFCE /* MAView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAView.h; sourceTree = "<group>"; };
+		D044F4E414243CC400C4EFCE /* MAView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAView.m; sourceTree = "<group>"; };
+		D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTSafeCategory.h; sourceTree = "<group>"; };
+		D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTSafeCategory.m; sourceTree = "<group>"; };
+		D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTRuntimeExtensions.h; sourceTree = "<group>"; };
+		D05A86101423E5E0009A4748 /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTRuntimeExtensions.m; sourceTree = "<group>"; };
+		D05A86131423E5EC009A4748 /* EXTRuntimeExtensionsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTRuntimeExtensionsTest.h; path = MoreAnimationTests/EXTRuntimeExtensionsTest.h; sourceTree = "<group>"; };
+		D05A86141423E5EC009A4748 /* EXTRuntimeExtensionsTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTRuntimeExtensionsTest.m; path = MoreAnimationTests/EXTRuntimeExtensionsTest.m; sourceTree = "<group>"; };
+		D05A86151423E5EC009A4748 /* EXTSafeCategoryTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EXTSafeCategoryTest.h; path = MoreAnimationTests/EXTSafeCategoryTest.h; sourceTree = "<group>"; };
+		D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EXTSafeCategoryTest.m; path = MoreAnimationTests/EXTSafeCategoryTest.m; sourceTree = "<group>"; };
+		D05A86191423E600009A4748 /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metamacros.h; sourceTree = "<group>"; };
+		D05A86271423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOpenGLContext+MoreAnimationExtensions.h"; sourceTree = "<group>"; };
+		D05A86281423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOpenGLContext+MoreAnimationExtensions.m"; sourceTree = "<group>"; };
+		D0863C031425BB6D00CDE087 /* MATextLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MATextLayer.h; sourceTree = "<group>"; };
+		D0863C041425BB6D00CDE087 /* MATextLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MATextLayer.m; sourceTree = "<group>"; };
 		D0918649141D7564005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D091864A141D7564005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D091864B141D7564005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -116,6 +151,7 @@
 		D0355C23141D6FDA0053AF73 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D05A86091423E5C8009A4748 /* libextobjc */,
 				D0355C27141D6FDA0053AF73 /* AppKit.framework */,
 				D0355C24141D6FDA0053AF73 /* Cocoa.framework */,
 				D0355C29141D6FDA0053AF73 /* Foundation.framework */,
@@ -131,6 +167,7 @@
 			children = (
 				D0355C31141D6FDA0053AF73 /* MoreAnimation.h */,
 				D0355C52141D700C0053AF73 /* Classes */,
+				D05A86251423E734009A4748 /* Extensions */,
 				D0355C2B141D6FDA0053AF73 /* Supporting Files */,
 			);
 			path = MoreAnimation;
@@ -168,25 +205,74 @@
 		D0355C52141D700C0053AF73 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D0355C54141D700C0053AF73 /* MALayer.h */,
-				D0355C55141D700C0053AF73 /* MALayer.m */,
-				D0355C53141D700C0053AF73 /* MALayer+Private.h */,
-				D0355C66141D701F0053AF73 /* OpenGL */,
+				D044F4DF14243C7E00C4EFCE /* Layers */,
+				D044F4E214243C8D00C4EFCE /* Model */,
+				D0355C66141D701F0053AF73 /* Views */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
 		};
-		D0355C66141D701F0053AF73 /* OpenGL */ = {
+		D0355C66141D701F0053AF73 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D0355C56141D700C0053AF73 /* MAOpenGLLayer.h */,
-				D0355C57141D700C0053AF73 /* MAOpenGLLayer.m */,
-				D0355C58141D700C0053AF73 /* MAOpenGLTexture.h */,
-				D0355C59141D700C0053AF73 /* MAOpenGLTexture.m */,
 				D0355C5A141D700C0053AF73 /* MAOpenGLView.h */,
 				D0355C5B141D700C0053AF73 /* MAOpenGLView.m */,
+				D044F4E314243CC400C4EFCE /* MAView.h */,
+				D044F4E414243CC400C4EFCE /* MAView.m */,
 			);
-			name = OpenGL;
+			name = Views;
+			sourceTree = "<group>";
+		};
+		D044F4DF14243C7E00C4EFCE /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				D0355C54141D700C0053AF73 /* MALayer.h */,
+				D0355C55141D700C0053AF73 /* MALayer.m */,
+				D0355C53141D700C0053AF73 /* MALayer+Private.h */,
+				D0355C56141D700C0053AF73 /* MAOpenGLLayer.h */,
+				D0355C57141D700C0053AF73 /* MAOpenGLLayer.m */,
+				D0863C031425BB6D00CDE087 /* MATextLayer.h */,
+				D0863C041425BB6D00CDE087 /* MATextLayer.m */,
+			);
+			name = Layers;
+			sourceTree = "<group>";
+		};
+		D044F4E214243C8D00C4EFCE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D0355C58141D700C0053AF73 /* MAOpenGLTexture.h */,
+				D0355C59141D700C0053AF73 /* MAOpenGLTexture.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		D05A86091423E5C8009A4748 /* libextobjc */ = {
+			isa = PBXGroup;
+			children = (
+				D05A86191423E600009A4748 /* metamacros.h */,
+				D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */,
+				D05A86101423E5E0009A4748 /* EXTRuntimeExtensions.m */,
+				D05A86131423E5EC009A4748 /* EXTRuntimeExtensionsTest.h */,
+				D05A86141423E5EC009A4748 /* EXTRuntimeExtensionsTest.m */,
+				D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */,
+				D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */,
+				D05A86151423E5EC009A4748 /* EXTSafeCategoryTest.h */,
+				D05A86161423E5EC009A4748 /* EXTSafeCategoryTest.m */,
+				D016125D142470BA001DFB28 /* EXTScope.h */,
+				D016125E142470BA001DFB28 /* EXTScope.m */,
+				D0161262142470C3001DFB28 /* EXTScopeTest.h */,
+				D0161263142470C3001DFB28 /* EXTScopeTest.m */,
+			);
+			name = libextobjc;
+			sourceTree = "<group>";
+		};
+		D05A86251423E734009A4748 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D05A86271423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h */,
+				D05A86281423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		D0918645141D7564005F86FF /* Configuration */ = {
@@ -212,7 +298,14 @@
 				D0355C5F141D700C0053AF73 /* MAOpenGLLayer.h in Headers */,
 				D0355C61141D700C0053AF73 /* MAOpenGLTexture.h in Headers */,
 				D0355C63141D700C0053AF73 /* MAOpenGLView.h in Headers */,
+				D05A86291423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h in Headers */,
+				D044F4E514243CC400C4EFCE /* MAView.h in Headers */,
+				D0863C051425BB6D00CDE087 /* MATextLayer.h in Headers */,
 				D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */,
+				D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */,
+				D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */,
+				D05A861A1423E600009A4748 /* metamacros.h in Headers */,
+				D016125F142470BA001DFB28 /* EXTScope.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +419,12 @@
 				D0355C60141D700C0053AF73 /* MAOpenGLLayer.m in Sources */,
 				D0355C62141D700C0053AF73 /* MAOpenGLTexture.m in Sources */,
 				D0355C64141D700C0053AF73 /* MAOpenGLView.m in Sources */,
+				D05A860E1423E5D7009A4748 /* EXTSafeCategory.m in Sources */,
+				D05A86121423E5E0009A4748 /* EXTRuntimeExtensions.m in Sources */,
+				D05A862A1423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m in Sources */,
+				D044F4E614243CC400C4EFCE /* MAView.m in Sources */,
+				D0161260142470BA001DFB28 /* EXTScope.m in Sources */,
+				D0863C061425BB6D00CDE087 /* MATextLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,6 +433,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0355C48141D6FDA0053AF73 /* MoreAnimationTests.m in Sources */,
+				D05A86171423E5EC009A4748 /* EXTRuntimeExtensionsTest.m in Sources */,
+				D05A86181423E5EC009A4748 /* EXTSafeCategoryTest.m in Sources */,
+				D0161264142470C3001DFB28 /* EXTScopeTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

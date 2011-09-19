@@ -3,7 +3,7 @@
 //  MoreAnimation
 //
 //  Created by Josh Abernathy on 9/10/11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Released into the public domain.
 //
 
 #import "MAOpenGLView.h"
@@ -12,8 +12,33 @@
 #import <OpenGL/gl.h>
 #import <OpenGL/glu.h>
 
+@interface MAOpenGLView () {
+	MAOpenGLLayer *m_contentLayer;
+}
+
+@end
+
 @implementation MAOpenGLView
 
+#pragma mark Properties
+
+- (void)setContentLayer:(MAOpenGLLayer *)layer {
+	m_contentLayer.needsRenderBlock = nil;
+	m_contentLayer = layer;
+
+	__weak id weakSelf = self;
+	__unsafe_unretained MALayer *weakLayer = layer;
+
+	layer.needsRenderBlock = ^(MALayer *layerNeedingRender){
+		if (layerNeedingRender == weakLayer) {
+			dispatch_async(dispatch_get_main_queue(), ^{
+				[weakSelf setNeedsDisplay:YES];
+			});
+		}
+	};
+}
+
+@synthesize contentLayer = m_contentLayer;
 
 #pragma mark NSView
 
@@ -22,13 +47,9 @@
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
-	CGLContextObj CGLContext = self.openGLContext.CGLContextObj;
-	CGLPixelFormatObj CGLPixelFormat = self.pixelFormat.CGLPixelFormatObj;
-
-	[self.contentLayer renderInCGLContext:CGLContext pixelFormat:CGLPixelFormat];
+	[self.contentLayer renderInGLContext:self.openGLContext pixelFormat:self.pixelFormat];
 	[[self openGLContext] flushBuffer];
 }
-
 
 #pragma mark NSOpenGLView
 
@@ -54,24 +75,9 @@
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	CGRect bounds = NSRectToCGRect(self.frame);
-    self.contentLayer.bounds = bounds;
-//	self.contentLayer.frame = CGRectInset(bounds, 50, 50);
-
-	// TODO: we shouldn't always force redisplay
-	[self.contentLayer display];
-
-	[self.contentLayer.sublayers enumerateObjectsUsingBlock:^(MALayer *layer, NSUInteger index, BOOL *stop) {
-		layer.bounds = bounds;
-		[layer display];
-	}];
-
-	[self setNeedsDisplay:YES];
+	CGRect bounds = NSRectToCGRect(self.bounds);
+    self.contentLayer.frame = bounds;
+	[self.contentLayer setNeedsDisplay];
 }
-
-
-#pragma mark API
-
-@synthesize contentLayer;
 
 @end

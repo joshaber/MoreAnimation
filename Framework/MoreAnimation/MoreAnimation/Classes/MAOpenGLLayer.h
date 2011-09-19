@@ -3,7 +3,7 @@
 //  MoreAnimation
 //
 //  Created by Justin Spahr-Summers on 2011-09-10.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Released into the public domain.
 //
 
 #import "MALayer.h"
@@ -26,11 +26,11 @@
  *
  * This method does not draw sublayers.
  */
-- (void)drawInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat;
+- (void)drawInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat;
 
 /**
  * Renders a cached representation of the receiver into the provided OpenGL
  * context, which is of the specified pixel format.
  */
-- (void)renderInCGLContext:(CGLContextObj)context pixelFormat:(CGLPixelFormatObj)pixelFormat;
+- (void)renderInGLContext:(NSOpenGLContext *)context pixelFormat:(NSOpenGLPixelFormat *)pixelFormat;
 @end

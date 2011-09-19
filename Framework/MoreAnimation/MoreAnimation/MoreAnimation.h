@@ -3,10 +3,13 @@
 //  MoreAnimation
 //
 //  Created by Justin Spahr-Summers on 2011-09-11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Released into the public domain.
 //
 
+#import <MoreAnimation/NSOpenGLContext+MoreAnimationExtensions.h>
 #import <MoreAnimation/MALayer.h>
 #import <MoreAnimation/MAOpenGLLayer.h>
 #import <MoreAnimation/MAOpenGLView.h>
 #import <MoreAnimation/MAOpenGLTexture.h>
+#import <MoreAnimation/MATextLayer.h>
+#import <MoreAnimation/MAView.h>

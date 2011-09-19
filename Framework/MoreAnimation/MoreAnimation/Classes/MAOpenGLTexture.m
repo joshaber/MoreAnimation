@@ -3,66 +3,43 @@
 //  MoreAnimation
 //
 //  Created by Justin Spahr-Summers on 2011-09-10.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Released into the public domain.
 //
 
 #import "MAOpenGLTexture.h"
+#import "NSOpenGLContext+MoreAnimationExtensions.h"
 #import <OpenGL/gl.h>
 
-@interface MAOpenGLTexture () {
-	CGLContextObj m_context;
-}
-
+@interface MAOpenGLTexture ()
 // publicly readonly
 @property (nonatomic, assign, readwrite) GLuint textureID;
-@property (nonatomic, readwrite) CGLContextObj CGLContext;
-
-/**
- * Locks the #CGLContext, executes the given \a block, then unlocks the
- * #CGLContext.
- */
-- (void)executeWhileLocked:(dispatch_block_t)block;
+@property (nonatomic, strong, readwrite) NSOpenGLContext *GLContext;
 @end
 
 @implementation MAOpenGLTexture
 
 #pragma mark Properties
 
-- (CGLContextObj)CGLContext {
-  	return m_context;
-}
-
-- (void)setCGLContext:(CGLContextObj)cxt {
-  	if (cxt != m_context) {
-		if (m_context)
-			CGLReleaseContext(m_context);
-		
-		if (cxt)
-			CGLRetainContext(cxt);
-
-		m_context = cxt;
-	}
-}
-
-@synthesize textureID;
+@synthesize textureID = m_textureID;
+@synthesize GLContext = m_GLContext;
 
 #pragma mark Lifecycle
 
-+ (id)textureWithCGLContext:(CGLContextObj)cxt {
-	return [[self alloc] initWithCGLContext:cxt];
++ (id)textureWithGLContext:(NSOpenGLContext *)cxt {
+	return [[self alloc] initWithGLContext:cxt];
 }
 
-+ (id)textureWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt {
-	return [[self alloc] initWithImage:image CGLContext:cxt];
++ (id)textureWithImage:(CGImageRef)image GLContext:(NSOpenGLContext *)cxt {
+	return [[self alloc] initWithImage:image GLContext:cxt];
 }
 
-- (id)initWithCGLContext:(CGLContextObj)cxt {
+- (id)initWithGLContext:(NSOpenGLContext *)cxt {
   	if ((self = [super init])) {
-		self.CGLContext = cxt;
+		self.GLContext = cxt;
 
 		__block GLuint tex = 0;
 
-		[self executeWhileLocked:^{
+		[cxt executeWhileCurrentContext:^{
 			glGenTextures(1, &tex);
 		}];
 		
@@ -72,8 +49,8 @@
 	return self;
 }
 
-- (id)initWithImage:(CGImageRef)image CGLContext:(CGLContextObj)cxt {
-  	if ((self = [self initWithCGLContext:cxt])) {
+- (id)initWithImage:(CGImageRef)image GLContext:(NSOpenGLContext *)cxt {
+  	if ((self = [self initWithGLContext:cxt])) {
 		size_t width = CGImageGetWidth(image);
 		size_t height = CGImageGetHeight(image);
 			
@@ -97,7 +74,7 @@
 
 		CGContextDrawImage(context, CGRectMake(0, 0, width, height), image);
 
-		[self executeWhileLocked:^{
+		[cxt executeWhileCurrentContext:^{
 			glBindTexture(GL_TEXTURE_2D, self.textureID);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -115,25 +92,11 @@
 - (void)dealloc {
   	GLuint tex = self.textureID;
 
-  	[self executeWhileLocked:^{
+  	[self.GLContext executeWhileCurrentContext:^{
 		glDeleteTextures(1, &tex);
 	}];
 
 	self.textureID = 0;
-	self.CGLContext = NULL;
-}
-
-#pragma mark Context management
-
-- (void)executeWhileLocked:(dispatch_block_t)block {
-  	CGLError error = CGLLockContext(self.CGLContext);
-	if (error != 0) {
-		// TODO: proper error handling!
-		NSAssert(NO, @"error while locking CGL context");
-	}
-
-	block();
-	CGLUnlockContext(self.CGLContext);
 }
 
 @end
