@@ -978,15 +978,43 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 }
 
 - (void)renderInContextUncached:(CGContextRef)context {
-  	// clear contents
-	OSSpinLockLock(&m_contentsSpinLock);
-	m_contents = nil;
-	OSSpinLockUnlock(&m_contentsSpinLock);
+  	void (^clearCaches)(void) = ^{
+		// clear contents
+		OSSpinLockLock(&m_contentsSpinLock);
+		m_contents = nil;
+		OSSpinLockUnlock(&m_contentsSpinLock);
 
-	// clear any subtree caching
-	self.cachedLayerTree = NULL;
+		// clear any subtree caching
+		self.cachedLayerTree = NULL;
+	};
+
+	// even though we're not supposed to cache anything we render right now, we
+	// can still use any caches we have (before discarding them)
+	BOOL cachedContentsAreGood = !self.needsDisplay;
+
+	if (cachedContentsAreGood) {
+		CGLayerRef subtreeLayer = self.cachedLayerTree;
+		
+		if (subtreeLayer) {
+			// render the subtree as-is
+			[self renderCachedSubtree:subtreeLayer inContext:context];
+
+			// dump caches and exit
+			clearCaches();
+			return;
+		}
+
+		// if we don't have a cached subtree, but do have cached contents, we'll
+		// wait until after rendering into the context to purge them
+	} else {
+		// dump caches pre-emptively
+		clearCaches();
+	}
 
 	[self renderSelfInContext:context];
+
+	if (cachedContentsAreGood)
+		clearCaches();
 
 	NSArray *sublayers = self.orderedSublayers;
 	for (MALayer *sublayer in sublayers) {
