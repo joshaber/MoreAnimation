@@ -154,6 +154,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	self.anchorPoint = CGPointMake(0.5, 0.5);
 	self.transform = CATransform3DIdentity;
 	self.sublayerTransform = CATransform3DIdentity;
+	self.contentsScale = 1;
 
 	// mark layer as needing display right off the bat, since no content has
 	// yet been rendered
@@ -680,12 +681,13 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 - (void)display {
 	CGSize size = self.bounds.size;
-	size_t width = (size_t)ceil(size.width);
-	size_t height = (size_t)ceil(size.height);
+
+	CGFloat scaleFactor = self.contentsScale;
+	size = CGSizeMake(ceil(size.width * scaleFactor), ceil(size.height * scaleFactor));
 
 	self.contents = nil;
 
-	if (!width || !height)
+	if (size.width <= 0 || size.height <= 0)
 	    return;
 
 	CGContextRef windowContext = [NSGraphicsContext currentContext].graphicsPort;
@@ -843,6 +845,12 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 			CGRect bounds = self.bounds;
 
 			if (!subtreeLayer) {
+				CGFloat scaleFactor = self.contentsScale;
+				CGSize size = CGSizeMake(ceil(bounds.size.width * scaleFactor), ceil(bounds.size.height * scaleFactor));
+
+				if (size.width <= 0 || size.height <= 0)
+					return;
+
 				subtreeLayer = CGLayerCreateWithContext(context, bounds.size, NULL);
 				CGContextRef subtreeLayerContext = CGLayerGetContext(subtreeLayer);
 				
