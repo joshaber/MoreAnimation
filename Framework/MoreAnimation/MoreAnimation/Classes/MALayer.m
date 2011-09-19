@@ -113,6 +113,12 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 - (void)renderSelfInContext:(CGContextRef)context;
 
 /**
+ * Renders \a sublayer into \a context with all the necessary transformations
+ * applied.
+ */
+- (void)renderSublayer:(MALayer *)sublayer inContext:(CGContextRef)context allowCaching:(BOOL)allowCaching;
+
+/**
  * Returns the affine transformation needed to move into the coordinate system
  * of the receiver from that of its superlayer.
  */
@@ -957,15 +963,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 			dispatch_semaphore_wait(sublayerSemaphore, DISPATCH_TIME_FOREVER);
 		}
 
-		@autoreleasepool {
-			CGContextSaveGState(context);
-
-			CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
-			CGContextConcatCTM(context, affineTransform);
-			[sublayer renderInContext:context allowCaching:YES];
-
-			CGContextRestoreGState(context);
-		}
+		[self renderSublayer:sublayer inContext:context allowCaching:YES];
 	}];
 }
 	
@@ -980,15 +978,10 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 	[self renderSelfInContext:context];
 
-	[self.orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
-		CGContextSaveGState(context);
-
-		CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
-		CGContextConcatCTM(context, affineTransform);
-		[sublayer renderInContext:context allowCaching:NO];
-
-		CGContextRestoreGState(context);
-	}];
+	NSArray *sublayers = self.orderedSublayers;
+	for (MALayer *sublayer in sublayers) {
+		[self renderSublayer:sublayer inContext:context allowCaching:NO];
+	}
 }
 
 - (void)renderSelfInContext:(CGContextRef)context {
@@ -1021,6 +1014,18 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 	if (!foundMatch) {
 		[self drawSelfInContext:context];
+	}
+}
+
+- (void)renderSublayer:(MALayer *)sublayer inContext:(CGContextRef)context allowCaching:(BOOL)allowCaching; {
+	@autoreleasepool {
+		CGContextSaveGState(context);
+
+		CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
+		CGContextConcatCTM(context, affineTransform);
+		[sublayer renderInContext:context allowCaching:allowCaching];
+
+		CGContextRestoreGState(context);
 	}
 }
 
