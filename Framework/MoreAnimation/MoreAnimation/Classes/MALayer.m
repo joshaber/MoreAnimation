@@ -459,8 +459,12 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 	OSSpinLockUnlock(&m_geometrySpinLock);
 
-	if (changed)
-		[self setNeedsRender];
+	if (changed) {
+		if (self.needsDisplayOnBoundsChange)
+			[self setNeedsDisplay];
+		else
+			[self setNeedsRender];
+	}
 }
 
 - (CATransform3D)sublayerTransform {
@@ -598,7 +602,8 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 @synthesize needsLayout = m_needsLayout;
 @synthesize needsRenderBlock = m_needsRenderBlock;
 @synthesize opaque = m_opaque;
-@synthesize changedSinceLastRender;
+@synthesize needsDisplayOnBoundsChange = m_needsDisplayOnBoundsChange;
+@synthesize changedSinceLastRender = m_changedSinceLastRender;
 
 #pragma mark NSObject overrides
 

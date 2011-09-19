@@ -122,6 +122,12 @@ typedef void (^MALayerNeedsRenderBlock)(MALayer *);
 @property (assign, getter = isOpaque) BOOL opaque;
 
 /**
+ * Whether to redisplay the receiver whenever its bounds change. The default
+ * value is \c NO.
+ */
+@property (assign) BOOL needsDisplayOnBoundsChange;
+
+/**
  * The contents of the layer. Can be set to a \c CGImageRef to display. If not
  * explicitly set, the layer may store its own cached contents here in an
  * unspecified format (i.e., you cannot depend on this being a \c CGImageRef).
