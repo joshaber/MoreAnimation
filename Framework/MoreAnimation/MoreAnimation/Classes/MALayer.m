@@ -701,7 +701,8 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	if (size.width <= 0 || size.height <= 0)
 	    return;
 
-	CGContextRef windowContext = [NSGraphicsContext currentContext].graphicsPort;
+	NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
+	CGContextRef windowContext = graphicsContext.graphicsPort;
 	CGLayerRef layer = CGLayerCreateWithContext(windowContext, size, NULL);
 
 	// now pull out the layer's context to actually draw into
@@ -914,53 +915,15 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 }
 
 - (void)renderInContextCached:(CGContextRef)context {
-	// if we're on the main thread, increase rendering priority to avoid
-	// blocking as much as possible
-	long renderingPriority = DISPATCH_QUEUE_PRIORITY_DEFAULT;
-	if (dispatch_get_current_queue() == dispatch_get_main_queue())
-		renderingPriority = DISPATCH_QUEUE_PRIORITY_HIGH;
-
-	// start rendering sublayers
-	NSArray *orderedSublayers = self.orderedSublayers;
-	NSUInteger sublayerCount = [orderedSublayers count];
-
-	volatile int32_t *sublayerIndicesRendered = calloc(sublayerCount, sizeof(*sublayerIndicesRendered));
-	@onExit {
-		free((void *)sublayerIndicesRendered);
-	};
-
-	dispatch_queue_t sublayerRenderQueue = dispatch_get_global_queue(renderingPriority, 0);
-	dispatch_semaphore_t sublayerSemaphore = dispatch_semaphore_create(0);
-	@onExit {
-		dispatch_release(sublayerSemaphore);
-	};
-
-	[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
-		dispatch_async(sublayerRenderQueue, ^{
-			[sublayer displayIfNeeded];
-
-			OSAtomicIncrement32Barrier(sublayerIndicesRendered + index);
-			dispatch_semaphore_signal(sublayerSemaphore);
-		});
-	}];
-
-	// render self synchronously while sublayers are rendering concurrently
 	@autoreleasepool {
-		// TODO: if sublayers are going to perform subtree caching, this is
-		// a waste
 		[self displayIfNeeded];
 		[self renderSelfInContext:context];
 	}
 
-	// render all sublayers, blocking on any that are still displaying
-	[orderedSublayers enumerateObjectsUsingBlock:^(MALayer *sublayer, NSUInteger index, BOOL *stop){
-		// wait on this sublayer to be rendered
-		while (!sublayerIndicesRendered[index]) {
-			dispatch_semaphore_wait(sublayerSemaphore, DISPATCH_TIME_FOREVER);
-		}
-
+	NSArray *orderedSublayers = self.orderedSublayers;
+	for (MALayer *sublayer in orderedSublayers) {
 		[self renderSublayer:sublayer inContext:context allowCaching:YES];
-	}];
+	};
 }
 	
 - (void)renderCachedSubtree:(CGLayerRef)subtreeLayer inContext:(CGContextRef)context; {
