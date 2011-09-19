@@ -93,6 +93,11 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 - (void)removeSublayer:(MALayer *)layer;
 
 /**
+ * Renders the cached subtree in \a subtreeLayer into \a context.
+ */
+- (void)renderCachedSubtree:(CGLayerRef)subtreeLayer inContext:(CGContextRef)context;
+
+/**
  * Renders the receiver and its sublayers into \a context, caching the layer
  * contents or subtree as appropriate.
  */
@@ -848,16 +853,17 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 		BOOL shouldCacheSubtree = (sublayerCount > 0 && !self.changedSinceLastRender);
 		if (shouldCacheSubtree) {
 			CGLayerRef subtreeLayer = self.cachedLayerTree;
-			CGRect bounds = self.bounds;
 
 			if (!subtreeLayer) {
+				CGSize size = self.bounds.size;
+
 				CGFloat scaleFactor = self.contentsScale;
-				CGSize size = CGSizeMake(ceil(bounds.size.width * scaleFactor), ceil(bounds.size.height * scaleFactor));
+				size = CGSizeMake(ceil(size.width * scaleFactor), ceil(size.height * scaleFactor));
 
 				if (size.width <= 0 || size.height <= 0)
 					return;
 
-				subtreeLayer = CGLayerCreateWithContext(context, bounds.size, NULL);
+				subtreeLayer = CGLayerCreateWithContext(context, size, NULL);
 				CGContextRef subtreeLayerContext = CGLayerGetContext(subtreeLayer);
 				
 				// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
@@ -871,17 +877,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 				CGLayerRelease(subtreeLayer);
 			}
 
-			BOOL opaque = self.opaque;
-			if (opaque) {
-				CGContextSaveGState(context);
-				CGContextSetBlendMode(context, kCGBlendModeCopy);
-			}
-
-			CGContextDrawLayerInRect(context, bounds, subtreeLayer);
-
-			if (opaque) {
-				CGContextRestoreGState(context);
-			}
+			[self renderCachedSubtree:subtreeLayer inContext:context];
 		} else {
 			/*
 			 * If no ancestor is performing subtree caching, we should fall back
@@ -967,6 +963,20 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	}];
 }
 	
+- (void)renderCachedSubtree:(CGLayerRef)subtreeLayer inContext:(CGContextRef)context; {
+	BOOL opaque = self.opaque;
+	if (opaque) {
+		CGContextSaveGState(context);
+		CGContextSetBlendMode(context, kCGBlendModeCopy);
+	}
+
+	CGContextDrawLayerInRect(context, self.bounds, subtreeLayer);
+
+	if (opaque) {
+		CGContextRestoreGState(context);
+	}
+}
+
 - (void)renderInContextUncached:(CGContextRef)context {
   	// clear contents
 	OSSpinLockLock(&m_contentsSpinLock);
