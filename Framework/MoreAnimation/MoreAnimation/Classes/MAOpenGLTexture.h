@@ -28,6 +28,11 @@
 @property (nonatomic, strong, readonly) NSOpenGLContext *GLContext;
 
 /**
+ * Returns an autoreleased texture initialized with #init.
+ */
++ (id)texture;
+
+/**
  * Returns an autoreleased texture initialized with #initWithGLContext:.
  */
 + (id)textureWithGLContext:(NSOpenGLContext *)cxt;
@@ -38,9 +43,17 @@
 + (id)textureWithImage:(CGImageRef)image GLContext:(NSOpenGLContext *)cxt;
 
 /**
+ * Invokes #initWithGLContext: with the current \c NSOpenGLContext for the
+ * current thread.
+ */
+- (id)init;
+
+/**
  * Initializes a texture object with the specified OpenGL context. A #textureID
  * will be automatically created, and can be associated with any image data
  * desired.
+ *
+ * This is the designated initializer for this class.
  */
 - (id)initWithGLContext:(NSOpenGLContext *)cxt;
 

@@ -25,12 +25,20 @@
 
 #pragma mark Lifecycle
 
++ (id)texture {
+	return [[self alloc] init];
+}
+
 + (id)textureWithGLContext:(NSOpenGLContext *)cxt {
 	return [[self alloc] initWithGLContext:cxt];
 }
 
 + (id)textureWithImage:(CGImageRef)image GLContext:(NSOpenGLContext *)cxt {
 	return [[self alloc] initWithImage:image GLContext:cxt];
+}
+
+- (id)init {
+  	return [self initWithGLContext:[NSOpenGLContext currentContext]];
 }
 
 - (id)initWithGLContext:(NSOpenGLContext *)cxt {
