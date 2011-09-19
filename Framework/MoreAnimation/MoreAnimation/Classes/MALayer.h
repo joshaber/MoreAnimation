@@ -3,7 +3,7 @@
 //  MoreAnimation
 //
 //  Created by Josh Abernathy on 9/9/11.
-//  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+//  Released into the public domain.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,6 +13,9 @@
 /**
  * The delegate for an #MALayer. Delegation can be used to provide custom layer
  * rendering without having to subclass #MALayer.
+ *
+ * @note Delegate methods may be invoked on a background thread. Implementations
+ * of these methods should therefore be thread-safe.
  */
 @protocol MALayerDelegate <NSObject>
 @optional
@@ -31,6 +34,12 @@
  */
 - (void)drawLayer:(MALayer *)layer inContext:(CGContextRef)context;
 @end
+
+/**
+ * A block callback for when an #MALayer needs to be re-rendered. The argument
+ * is the layer that triggered the call.
+ */
+typedef void (^MALayerNeedsRenderBlock)(MALayer *);
 
 /**
  * A layer, which can have arbitrary content and any number of sublayers.
@@ -94,12 +103,17 @@
 /**
  * If set, a delegate to use for certain rendering operations.
  */
-@property (nonatomic, weak) id<MALayerDelegate> delegate;
+@property (weak) id<MALayerDelegate> delegate;
 
 /**
  * Whether the receiver has been marked as needing display.
  */
-@property (nonatomic, readonly, assign) BOOL needsDisplay;
+@property (readonly, assign) BOOL needsDisplay;
+
+/**
+ * Whether the receiver has been marked as needing layout.
+ */
+@property (readonly, assign) BOOL needsLayout;
 
 /**
  * The contents of the layer. Can be set to a \c CGImageRef to display. If not
@@ -111,12 +125,31 @@
 /**
  * The sublayers of the receiver.
  */
-@property (nonatomic, readonly, strong) NSMutableArray *sublayers;
+@property (readonly, copy) NSArray *sublayers;
+
+/**
+ * The sublayers of the receiver, in the order that they will be rendered
+ * visually, with the first item in the array being the layer furthest at the
+ * back.
+ */
+@property (readonly, copy) NSArray *orderedSublayers;
 
 /**
  * The superlayer of the receiver, or \c nil if it has no superlayer.
  */
-@property (nonatomic, readonly, weak) MALayer *superlayer;
+@property (readonly, unsafe_unretained) MALayer *superlayer;
+
+/**
+ * Invoked when the receiver or any of its descendants have changed enough to
+ * invalidate any existing renderings of the receiver's layer tree.
+ *
+ * The default value is \c nil.
+ * 
+ * @note This block may be invoked multiple times in quick succession, and on
+ * a background thread. Your code should be thread-safe, and should not
+ * re-render the layer tree immediately each time.
+ */
+@property (copy) MALayerNeedsRenderBlock needsRenderBlock;
 
 /**
  * Returns the affine transformation that would have to be applied to convert
@@ -170,6 +203,16 @@
 - (void)drawInContext:(CGContextRef)context;
 
 /**
+ * Lays out the receiver if it has been marked as needing layout.
+ */
+- (void)layoutIfNeeded;
+
+/**
+ * Lays out the receiver's sublayers. The default implementation does nothing.
+ */
+- (void)layoutSublayers;
+
+/**
  * Renders the receiver and all of its sublayers into \a context.
  */
 - (void)renderInContext:(CGContextRef)context;
@@ -180,16 +223,46 @@
 - (void)setNeedsDisplay;
 
 /**
+ * Marks the receiver as needing layout.
+ */
+- (void)setNeedsLayout;
+
+/**
  * Adds \a layer as a sublayer of the receiver after removing it from its
  * current superlayer.
  */
 - (void)addSublayer:(MALayer *)layer;
 
 /**
+ * Adds \a layer as a sublayer of the receiver, positioned above \a otherLayer.
+ * \a otherLayer must be a sublayer of the receiver.
+ */
+- (void)insertSublayer:(MALayer *)layer above:(MALayer *)otherLayer;
+
+/**
+ * Inserts \a layer as a sublayer of the receiver at the given index in the
+ * #sublayers array.
+ */
+- (void)insertSublayer:(MALayer *)layer atIndex:(NSUInteger)index;
+
+/**
+ * Adds \a layer as a sublayer of the receiver, positioned below \a otherLayer.
+ * \a otherLayer must be a sublayer of the receiver.
+ */
+- (void)insertSublayer:(MALayer *)layer below:(MALayer *)otherLayer;
+
+/**
  * Removes the receiver from its current #superlayer. If the receiver has no
  * #superlayer, nothing happens.
  */
 - (void)removeFromSuperlayer;
+
+/**
+ * If the receiver and \a layer share a common ancestor (or one is an ancestor
+ * of the other), this returns that ancestor. If the receiver and \a layer do
+ * not exist in the same layer tree, \c nil is returned.
+ */
+- (MALayer *)ancestorSharedWithLayer:(MALayer *)layer;
 
 /**
  * Returns whether the receiver is a descendant of or identical to \a layer.

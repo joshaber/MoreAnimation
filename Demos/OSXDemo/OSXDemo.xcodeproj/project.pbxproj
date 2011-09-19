@@ -16,7 +16,17 @@
 		D0355C90141D71600053AF73 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D0355C8F141D71600053AF73 /* AppDelegate.m */; };
 		D0355C93141D71600053AF73 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0355C91141D71600053AF73 /* MainMenu.xib */; };
 		D0355C9C141D71ED0053AF73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C9A141D71ED0053AF73 /* OpenGL.framework */; };
+		D044F4DA14243B6600C4EFCE /* CGDemoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D044F4D914243B6600C4EFCE /* CGDemoWindowController.m */; };
+		D044F4DD14243B8100C4EFCE /* CGDemoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D044F4DB14243B8100C4EFCE /* CGDemoWindow.xib */; };
+		D08B810B1423F3D700F887A5 /* GLDemoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B810A1423F3D700F887A5 /* GLDemoWindowController.m */; };
+		D08B810E1423F70800F887A5 /* GLDemoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D08B810C1423F70800F887A5 /* GLDemoWindow.xib */; };
+		D08B81151423FE9800F887A5 /* JAWeakReferenceHaterProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B81121423FE9800F887A5 /* JAWeakReferenceHaterProxy.m */; };
+		D08B81161423FE9800F887A5 /* JAWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D08B81141423FE9800F887A5 /* JAWindowController.m */; };
 		D091863C141D7267005F86FF /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = D091863B141D7267005F86FF /* test.png */; };
+		D098C97F14246978000B98BA /* DemoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D098C97E14246978000B98BA /* DemoWindowController.m */; };
+		D0AEF94D14253149000D42B2 /* CADemoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D0AEF94C14253149000D42B2 /* CADemoWindowController.m */; };
+		D0AEF94F142531F6000D42B2 /* CADemoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = D0AEF94E142531F6000D42B2 /* CADemoWindow.xib */; };
+		D0AEF95114253250000D42B2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0AEF95014253250000D42B2 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,10 +81,26 @@
 		D0355C8F141D71600053AF73 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		D0355C92141D71600053AF73 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D0355C9A141D71ED0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		D044F4D814243B6600C4EFCE /* CGDemoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGDemoWindowController.h; sourceTree = "<group>"; };
+		D044F4D914243B6600C4EFCE /* CGDemoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CGDemoWindowController.m; sourceTree = "<group>"; };
+		D044F4DC14243B8100C4EFCE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CGDemoWindow.xib; sourceTree = "<group>"; };
+		D08B81091423F3D700F887A5 /* GLDemoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLDemoWindowController.h; sourceTree = "<group>"; };
+		D08B810A1423F3D700F887A5 /* GLDemoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLDemoWindowController.m; sourceTree = "<group>"; };
+		D08B810D1423F70800F887A5 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GLDemoWindow.xib; sourceTree = "<group>"; };
+		D08B81111423FE9800F887A5 /* JAWeakReferenceHaterProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JAWeakReferenceHaterProxy.h; sourceTree = "<group>"; };
+		D08B81121423FE9800F887A5 /* JAWeakReferenceHaterProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JAWeakReferenceHaterProxy.m; sourceTree = "<group>"; };
+		D08B81131423FE9800F887A5 /* JAWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JAWindowController.h; sourceTree = "<group>"; };
+		D08B81141423FE9800F887A5 /* JAWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JAWindowController.m; sourceTree = "<group>"; };
 		D091863B141D7267005F86FF /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		D0918642141D755E005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D0918643141D755E005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D0918644141D755E005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		D098C97D14246978000B98BA /* DemoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoWindowController.h; sourceTree = "<group>"; };
+		D098C97E14246978000B98BA /* DemoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoWindowController.m; sourceTree = "<group>"; };
+		D0AEF94B14253149000D42B2 /* CADemoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CADemoWindowController.h; sourceTree = "<group>"; };
+		D0AEF94C14253149000D42B2 /* CADemoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CADemoWindowController.m; sourceTree = "<group>"; };
+		D0AEF94E142531F6000D42B2 /* CADemoWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CADemoWindow.xib; sourceTree = "<group>"; };
+		D0AEF95014253250000D42B2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0AEF95114253250000D42B2 /* QuartzCore.framework in Frameworks */,
 				88D1C569141D7F3100A58EB9 /* MoreAnimation.framework in Frameworks */,
 				D0355C9C141D71ED0053AF73 /* OpenGL.framework in Frameworks */,
 				D0355C7D141D71600053AF73 /* Cocoa.framework in Frameworks */,
@@ -121,11 +148,13 @@
 		D0355C7B141D71600053AF73 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D08B81101423FE8400F887A5 /* JAWeakReferenceHaterProxy */,
 				88D1C55E141D7F0A00A58EB9 /* MoreAnimation.xcodeproj */,
 				D0355C7F141D71600053AF73 /* AppKit.framework */,
 				D0355C7C141D71600053AF73 /* Cocoa.framework */,
 				D0355C81141D71600053AF73 /* Foundation.framework */,
 				D0355C9A141D71ED0053AF73 /* OpenGL.framework */,
+				D0AEF95014253250000D42B2 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -136,6 +165,7 @@
 				D0355C8E141D71600053AF73 /* AppDelegate.h */,
 				D0355C8F141D71600053AF73 /* AppDelegate.m */,
 				D0355C91141D71600053AF73 /* MainMenu.xib */,
+				D08B81081423F35000F887A5 /* Windows */,
 				D0355C83141D71600053AF73 /* Supporting Files */,
 			);
 			path = OSXDemo;
@@ -152,6 +182,35 @@
 				D091863B141D7267005F86FF /* test.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D08B81081423F35000F887A5 /* Windows */ = {
+			isa = PBXGroup;
+			children = (
+				D098C97D14246978000B98BA /* DemoWindowController.h */,
+				D098C97E14246978000B98BA /* DemoWindowController.m */,
+				D0AEF94B14253149000D42B2 /* CADemoWindowController.h */,
+				D0AEF94C14253149000D42B2 /* CADemoWindowController.m */,
+				D0AEF94E142531F6000D42B2 /* CADemoWindow.xib */,
+				D044F4D814243B6600C4EFCE /* CGDemoWindowController.h */,
+				D044F4D914243B6600C4EFCE /* CGDemoWindowController.m */,
+				D044F4DB14243B8100C4EFCE /* CGDemoWindow.xib */,
+				D08B81091423F3D700F887A5 /* GLDemoWindowController.h */,
+				D08B810A1423F3D700F887A5 /* GLDemoWindowController.m */,
+				D08B810C1423F70800F887A5 /* GLDemoWindow.xib */,
+			);
+			name = Windows;
+			sourceTree = "<group>";
+		};
+		D08B81101423FE8400F887A5 /* JAWeakReferenceHaterProxy */ = {
+			isa = PBXGroup;
+			children = (
+				D08B81111423FE9800F887A5 /* JAWeakReferenceHaterProxy.h */,
+				D08B81121423FE9800F887A5 /* JAWeakReferenceHaterProxy.m */,
+				D08B81131423FE9800F887A5 /* JAWindowController.h */,
+				D08B81141423FE9800F887A5 /* JAWindowController.m */,
+			);
+			name = JAWeakReferenceHaterProxy;
 			sourceTree = "<group>";
 		};
 		D091863E141D755E005F86FF /* Configuration */ = {
@@ -244,6 +303,9 @@
 				D0355C8D141D71600053AF73 /* Credits.rtf in Resources */,
 				D0355C93141D71600053AF73 /* MainMenu.xib in Resources */,
 				D091863C141D7267005F86FF /* test.png in Resources */,
+				D08B810E1423F70800F887A5 /* GLDemoWindow.xib in Resources */,
+				D044F4DD14243B8100C4EFCE /* CGDemoWindow.xib in Resources */,
+				D0AEF94F142531F6000D42B2 /* CADemoWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +318,12 @@
 			files = (
 				D0355C89141D71600053AF73 /* main.m in Sources */,
 				D0355C90141D71600053AF73 /* AppDelegate.m in Sources */,
+				D08B81151423FE9800F887A5 /* JAWeakReferenceHaterProxy.m in Sources */,
+				D08B81161423FE9800F887A5 /* JAWindowController.m in Sources */,
+				D08B810B1423F3D700F887A5 /* GLDemoWindowController.m in Sources */,
+				D044F4DA14243B6600C4EFCE /* CGDemoWindowController.m in Sources */,
+				D098C97F14246978000B98BA /* DemoWindowController.m in Sources */,
+				D0AEF94D14253149000D42B2 /* CADemoWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +362,22 @@
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
+		D044F4DB14243B8100C4EFCE /* CGDemoWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D044F4DC14243B8100C4EFCE /* en */,
+			);
+			name = CGDemoWindow.xib;
+			sourceTree = "<group>";
+		};
+		D08B810C1423F70800F887A5 /* GLDemoWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D08B810D1423F70800F887A5 /* en */,
+			);
+			name = GLDemoWindow.xib;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -327,6 +411,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OSXDemo/OSXDemo-Prefix.pch";
 				INFOPLIST_FILE = "OSXDemo/OSXDemo-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -342,6 +427,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OSXDemo/OSXDemo-Prefix.pch";
 				INFOPLIST_FILE = "OSXDemo/OSXDemo-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

@@ -5,3 +5,11 @@
 #ifdef __OBJC__
 	#import <Cocoa/Cocoa.h>
 #endif
+
+#ifdef DEBUG
+	/**
+	 * If defined, this will draw a grid over individual layers so that their
+	 * rendering can be debugged.
+	 */
+	//#define MA_LAYER_DEBUG 1
+#endif
