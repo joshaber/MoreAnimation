@@ -1021,8 +1021,14 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 	@autoreleasepool {
 		CGContextSaveGState(context);
 
+		// apply the necessary transformations to get to the sublayer
 		CGAffineTransform affineTransform = [self affineTransformToLayer:sublayer];
 		CGContextConcatCTM(context, affineTransform);
+
+		// now apply any sublayer transform that's been set
+		CGAffineTransform sublayerTransform = CATransform3DGetAffineTransform(self.sublayerTransform);
+		CGContextConcatCTM(context, sublayerTransform);
+
 		[sublayer renderInContext:context allowCaching:allowCaching];
 
 		CGContextRestoreGState(context);
