@@ -128,7 +128,7 @@ static const CGPoint anchorArray[5] = {
 
 - (IBAction)infinitizeLayers:(id)sender {
     MALayer *topLayer = self.prettyLayer;
-    for (NSUInteger i = 0;i < 1000;++i) {
+    for (NSUInteger i = 0;i < 100;++i) {
         MALayer *nextLayer = [[[topLayer class] alloc] init];
         nextLayer.delegate = [self weakReferenceProxy];
         nextLayer.frame = CGRectInset(topLayer.bounds, 2, 2);
