@@ -597,6 +597,7 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 @synthesize needsDisplay = m_needsDisplay;
 @synthesize needsLayout = m_needsLayout;
 @synthesize needsRenderBlock = m_needsRenderBlock;
+@synthesize opaque = m_opaque;
 @synthesize changedSinceLastRender;
 
 #pragma mark NSObject overrides
@@ -851,7 +852,17 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 				CGLayerRelease(subtreeLayer);
 			}
 
+			BOOL opaque = self.opaque;
+			if (opaque) {
+				CGContextSaveGState(context);
+				CGContextSetBlendMode(context, kCGBlendModeCopy);
+			}
+
 			CGContextDrawLayerInRect(context, bounds, subtreeLayer);
+
+			if (opaque) {
+				CGContextRestoreGState(context);
+			}
 		} else {
 			/*
 			 * If no ancestor is performing subtree caching, we should fall back
@@ -920,6 +931,8 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 
 	// render self synchronously while sublayers are rendering concurrently
 	@autoreleasepool {
+		// TODO: if sublayers are going to perform subtree caching, this is
+		// a waste
 		[self displayIfNeeded];
 		[self renderSelfInContext:context];
 	}
@@ -973,6 +986,12 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 		CFTypeID typeID = CFGetTypeID((__bridge CFTypeRef)contents);
 		CGRect bounds = self.bounds;
 
+		BOOL opaque = self.opaque;
+		if (opaque) {
+			CGContextSaveGState(context);
+			CGContextSetBlendMode(context, kCGBlendModeCopy);
+		}
+
 		// draw whichever type of contents the layer has
 		if (typeID == CGLayerGetTypeID()) {
 			CGContextDrawLayerInRect(context, bounds, (__bridge CGLayerRef)contents);
@@ -980,6 +999,10 @@ static const CGFloat MALayerGeometryDifferenceTolerance = 0.000001;
 		} else if (typeID == CGImageGetTypeID()) {
 			CGContextDrawImage(context, bounds, (__bridge CGImageRef)contents);
 			foundMatch = YES;
+		}
+
+		if (opaque) {
+			CGContextRestoreGState(context);
 		}
 	}
 

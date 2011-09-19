@@ -116,6 +116,12 @@ typedef void (^MALayerNeedsRenderBlock)(MALayer *);
 @property (readonly, assign) BOOL needsLayout;
 
 /**
+ * Whether the layer's #contents are drawn fully opaque, such that the drawing
+ * completely covers the bounds of the layer. The default value is \c NO.
+ */
+@property (assign, getter = isOpaque) BOOL opaque;
+
+/**
  * The contents of the layer. Can be set to a \c CGImageRef to display. If not
  * explicitly set, the layer may store its own cached contents here in an
  * unspecified format (i.e., you cannot depend on this being a \c CGImageRef).
