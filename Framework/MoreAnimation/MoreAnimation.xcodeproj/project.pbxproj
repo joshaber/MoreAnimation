@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36C4BFFB141F29DE00E5DFA5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */; };
 		88D1C56B141D7F9E00A58EB9 /* MoreAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = D0355C31141D6FDA0053AF73 /* MoreAnimation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0355C25141D6FDA0053AF73 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C24141D6FDA0053AF73 /* Cocoa.framework */; };
 		D0355C2F141D6FDA0053AF73 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0355C2D141D6FDA0053AF73 /* InfoPlist.strings */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D0355C21141D6FDA0053AF73 /* MoreAnimation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MoreAnimation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0355C24141D6FDA0053AF73 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		D0355C27141D6FDA0053AF73 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -62,9 +64,6 @@
 		D0355C5A141D700C0053AF73 /* MAOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAOpenGLView.h; sourceTree = "<group>"; };
 		D0355C5B141D700C0053AF73 /* MAOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAOpenGLView.m; sourceTree = "<group>"; };
 		D0355C6B141D70EE0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		D0918646141D7564005F86FF /* .Base.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Base.xcconfig.swp; sourceTree = "<group>"; };
-		D0918647141D7564005F86FF /* .Debug.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Debug.xcconfig.swp; sourceTree = "<group>"; };
-		D0918648141D7564005F86FF /* .Release.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Release.xcconfig.swp; sourceTree = "<group>"; };
 		D0918649141D7564005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D091864A141D7564005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D091864B141D7564005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -75,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36C4BFFB141F29DE00E5DFA5 /* QuartzCore.framework in Frameworks */,
 				D0355C6C141D70EE0053AF73 /* OpenGL.framework in Frameworks */,
 				D0355C25141D6FDA0053AF73 /* Cocoa.framework in Frameworks */,
 			);
@@ -120,6 +120,7 @@
 				D0355C24141D6FDA0053AF73 /* Cocoa.framework */,
 				D0355C29141D6FDA0053AF73 /* Foundation.framework */,
 				D0355C6B141D70EE0053AF73 /* OpenGL.framework */,
+				36C4BFFA141F29DE00E5DFA5 /* QuartzCore.framework */,
 				D0355C3A141D6FDA0053AF73 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
@@ -191,9 +192,6 @@
 		D0918645141D7564005F86FF /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				D0918646141D7564005F86FF /* .Base.xcconfig.swp */,
-				D0918647141D7564005F86FF /* .Debug.xcconfig.swp */,
-				D0918648141D7564005F86FF /* .Release.xcconfig.swp */,
 				D0918649141D7564005F86FF /* Base.xcconfig */,
 				D091864A141D7564005F86FF /* Debug.xcconfig */,
 				D091864B141D7564005F86FF /* Release.xcconfig */,

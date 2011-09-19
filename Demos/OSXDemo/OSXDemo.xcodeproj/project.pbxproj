@@ -72,9 +72,6 @@
 		D0355C92141D71600053AF73 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D0355C9A141D71ED0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		D091863B141D7267005F86FF /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
-		D091863F141D755E005F86FF /* .Base.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Base.xcconfig.swp; sourceTree = "<group>"; };
-		D0918640141D755E005F86FF /* .Debug.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Debug.xcconfig.swp; sourceTree = "<group>"; };
-		D0918641141D755E005F86FF /* .Release.xcconfig.swp */ = {isa = PBXFileReference; lastKnownFileType = file; path = .Release.xcconfig.swp; sourceTree = "<group>"; };
 		D0918642141D755E005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D0918643141D755E005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D0918644141D755E005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -160,9 +157,6 @@
 		D091863E141D755E005F86FF /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				D091863F141D755E005F86FF /* .Base.xcconfig.swp */,
-				D0918640141D755E005F86FF /* .Debug.xcconfig.swp */,
-				D0918641141D755E005F86FF /* .Release.xcconfig.swp */,
 				D0918642141D755E005F86FF /* Base.xcconfig */,
 				D0918643141D755E005F86FF /* Debug.xcconfig */,
 				D0918644141D755E005F86FF /* Release.xcconfig */,

@@ -37,6 +37,19 @@
  */
 @property (readonly) CGLayerRef contentsLayer;
 
+/**
+ * If the receiver and \a layer share a common parent (or one is the parent of
+ * the other), this returns that parent layer. If the receiver and \a layer do
+ * not exist in the same layer tree, \c nil is returned.
+ */
+- (MALayer *)commonParentLayerWithLayer:(MALayer *)layer;
+
+/**
+ * Returns the affine transformation needed to move into the coordinate system
+ * of \a sublayer, which must be an immediate descendant of the receiver.
+ */
+- (CGAffineTransform)affineTransformToImmediateSublayer:(MALayer *)sublayer;
+
 // publicly readonly
 @property (nonatomic, readwrite, strong) NSMutableArray *sublayers;
 @property (nonatomic, readwrite, weak) MALayer *superlayer;
@@ -51,27 +64,26 @@
 - (id)init {
 	self = [super init];
 	if(self == nil) return nil;
-	
+
 	m_renderQueue = dispatch_queue_create("MoreAnimation.MALayer", DISPATCH_QUEUE_SERIAL);
-	
+
 	self.sublayers = [NSMutableArray array];
-	
+	self.anchorPoint = CGPointMake(0.5, 0.5);
+	self.transform = CATransform3DIdentity;
+	self.sublayerTransform = CATransform3DIdentity;
+
 	// mark layers as needing display right off the bat, since no content has
 	// yet been rendered
 	self.needsDisplay = YES;
-	
+
 	return self;
 }
 
-- (void)dealloc {	
+- (void)dealloc {
 	dispatch_release(m_renderQueue);
 }
 
 #pragma mark Properties
-
-- (CGRect)bounds {
-	return CGRectMake(0.0f, 0.0f, self.frame.size.width, self.frame.size.height);
-}
 
 - (id)contents {
   	__block id image = NULL;
@@ -88,7 +100,7 @@
   	CGImageRef obj = (__bridge CGImageRef)self.contents;
 	if (!obj)
 		return NULL;
-	
+
 	CFTypeID typeID = CFGetTypeID(obj);
 
 	// return self.contents if it is a CGImageRef
@@ -102,7 +114,7 @@
   	CGLayerRef obj = (__bridge CGLayerRef)self.contents;
 	if (!obj)
 		return NULL;
-	
+
 	CFTypeID typeID = CFGetTypeID(obj);
 
 	// return self.contents if it is a CGLayerRef
@@ -119,11 +131,146 @@
 	});
 }
 
-@synthesize frame;
+- (CGAffineTransform)affineTransform {
+    return CATransform3DGetAffineTransform(self.transform);
+}
+
+- (void)setAffineTransform:(CGAffineTransform)affineTransform {
+    self.transform = CATransform3DMakeAffineTransform(affineTransform);
+}
+
+- (CGRect)frame {
+    CGSize size = self.bounds.size;
+    CGPoint anchor = self.anchorPoint;
+    CGPoint originalPosition = self.position;
+
+    CGPoint transformedAnchorPoint = CGPointMake(
+        (anchor.x - 0.5) * size.width,
+        (anchor.y - 0.5) * size.height
+    );
+
+    CGPoint newPosition = CGPointMake(
+        originalPosition.x - transformedAnchorPoint.x,
+        originalPosition.y - transformedAnchorPoint.y
+    );
+
+    return CGRectMake(
+        newPosition.x,
+        newPosition.y,
+        size.width,
+        size.height
+    );
+}
+
+- (void)setFrame:(CGRect)rect {
+    CGSize size = rect.size;
+    self.bounds = CGRectMake(0, 0, size.width, size.height);
+
+    CGPoint anchor = self.anchorPoint;
+
+    CGPoint transformedAnchorPoint = CGPointMake(
+        (anchor.x - 0.5) * size.width,
+        (anchor.y - 0.5) * size.height
+    );
+
+    self.position = CGPointMake(
+        CGRectGetMidX(rect) - transformedAnchorPoint.x,
+        CGRectGetMidY(rect) - transformedAnchorPoint.y
+    );
+}
+
 @synthesize sublayers;
 @synthesize superlayer;
 @synthesize delegate;
 @synthesize needsDisplay;
+@synthesize position;
+@synthesize zPosition;
+@synthesize anchorPoint;
+@synthesize anchorPointZ;
+@synthesize contentsScale;
+@synthesize sublayerTransform;
+@synthesize bounds;
+@synthesize transform;
+
+#pragma mark Coordinate systems and transformations
+
+- (CGAffineTransform)affineTransformToImmediateSublayer:(MALayer *)sublayer; {
+    NSAssert(sublayer.superlayer == self, @"argument to -affineTransformToImmediateSublayer: must have the receiver as its superlayer");
+
+    CGPoint layerAnchor = sublayer.anchorPoint;
+    CGPoint layerPosition = sublayer.position;
+    CGSize size = sublayer.bounds.size;
+
+    // translate to anchor point of the sublayer
+    CGAffineTransform affineTransform = CGAffineTransformMakeTranslation(
+        layerPosition.x + ((layerAnchor.x - 0.5) * size.width),
+        layerPosition.y + ((layerAnchor.y - 0.5) * size.height)
+    );
+
+    // apply the sublayer's affine affineTransform
+    affineTransform = CGAffineTransformConcat(sublayer.affineTransform, affineTransform);
+
+    // translate back to the origin in the sublayer's coordinate system
+    affineTransform = CGAffineTransformTranslate(
+        affineTransform,
+        -(layerAnchor.x * size.width ),
+        -(layerAnchor.y * size.height)
+    );
+
+    return affineTransform;
+}
+
+- (CGAffineTransform)affineTransformToLayer:(MALayer *)layer {
+    MALayer *parentLayer = [self commonParentLayerWithLayer:layer];
+
+    // returns the transformation needed to get from 'fromLayer' to
+    // 'parentLayer'
+    CGAffineTransform (^transformFromLayer)(MALayer *) = ^(MALayer *fromLayer){
+        CGAffineTransform affineTransform = CGAffineTransformIdentity;
+
+        while (fromLayer != parentLayer) {
+            // work backwards, getting the transformation from the superlayer to
+            // the sublayer
+            MALayer *toLayer = fromLayer.superlayer;
+            CGAffineTransform invertedTransform = [toLayer affineTransformToImmediateSublayer:fromLayer];
+
+            // then invert that, to get the other direction
+            affineTransform = CGAffineTransformConcat(affineTransform, CGAffineTransformInvert(invertedTransform));
+
+            fromLayer = toLayer;
+        }
+
+        return affineTransform;
+    };
+
+    // get the transformation from self to 'parentLayer'
+    CGAffineTransform transformFromSelf = transformFromLayer(self);
+
+    // get the transformation from 'parentLayer' to 'layer'
+    CGAffineTransform transformFromOther = transformFromLayer(layer);
+    CGAffineTransform transformToOther = CGAffineTransformInvert(transformFromOther);
+
+    // combine the two
+    return CGAffineTransformConcat(transformFromSelf, transformToOther);
+}
+
+- (CGPoint)convertPoint:(CGPoint)point fromLayer:(MALayer *)layer; {
+    return [layer convertPoint:point toLayer:self];
+}
+
+- (CGPoint)convertPoint:(CGPoint)point toLayer:(MALayer *)layer; {
+    CGAffineTransform affineTransform = [self affineTransformToLayer:layer];
+    return CGPointApplyAffineTransform(point, affineTransform);
+}
+
+- (CGRect)convertRect:(CGRect)rect fromLayer:(MALayer *)layer; {
+    return [layer convertRect:rect toLayer:self];
+}
+
+- (CGRect)convertRect:(CGRect)rect toLayer:(MALayer *)layer; {
+    CGAffineTransform affineTransform = [self affineTransformToLayer:layer];
+    return CGRectApplyAffineTransform(rect, affineTransform);
+}
 
 #pragma mark Displaying and drawing
 
@@ -132,31 +279,15 @@
 	size_t width = (size_t)ceil(size.width);
 	size_t height = (size_t)ceil(size.height);
 
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+	if (!width || !height)
+	    return;
 
-	// create a bitmap context suitable for drawing the receiver
-	// this will be used as input to a CGLayer, where we actually draw
-	CGContextRef referenceContext = CGBitmapContextCreate(
-		NULL,
-		width,
-		height,
-		8,
-		4 * width,
-		colorSpace,
-		kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast
-	);
-	
-	CGColorSpaceRelease(colorSpace);
-	
-	// A NULL context probably means the width or height are 0. CG doesn't appreciate NULL contexts, so let's just get out of here.
-	if(referenceContext == NULL) return;
-
-	CGLayerRef layer = CGLayerCreateWithContext(referenceContext, size, NULL);
-	CGContextRelease(referenceContext);
+	CGContextRef windowContext = [NSGraphicsContext currentContext].graphicsPort;
+	CGLayerRef layer = CGLayerCreateWithContext(windowContext, size, NULL);
 
 	// now pull out the layer's context to actually draw into
 	CGContextRef context = CGLayerGetContext(layer);
-	
+
 	// Be sure to set a default fill color, otherwise CGContextSetFillColor behaves oddly (doesn't actually set the color?).
 	CGColorRef defaultFillColor = CGColorCreateGenericRGB(0.0f, 0.0f, 0.0f, 1.0f);
 	CGContextSetFillColorWithColor(context, defaultFillColor);
@@ -175,7 +306,7 @@
 - (void)displayIfNeeded {
   	if (!self.needsDisplay)
 		return;
-	
+
 	// invoke delegate's display logic, if provided
 	if ([self.delegate respondsToSelector:@selector(displayLayer:)])
 		[self.delegate displayLayer:self];
@@ -186,7 +317,7 @@
 }
 
 - (void)drawInContext:(CGContextRef)context {
-	
+
 }
 
 - (void)setNeedsDisplay {
@@ -196,6 +327,8 @@
 #pragma mark Rendering
 
 - (void)renderInContext:(CGContextRef)context {
+    CGContextSaveGState(context);
+
   	[self displayIfNeeded];
 
 	CGImageRef image;
@@ -211,11 +344,18 @@
 		// destination
 		[self drawInContext:context];
 	}
-	
+
+	CGContextRestoreGState(context);
+
 	// render all sublayers
 	for(MALayer *sublayer in [self.sublayers reverseObjectEnumerator]) {
-		// TODO: transform CTM to sublayer
+	    CGContextSaveGState(context);
+
+        CGAffineTransform affineTransform = [self affineTransformToImmediateSublayer:sublayer];
+        CGContextConcatCTM(context, affineTransform);
 		[sublayer renderInContext:context];
+
+		CGContextRestoreGState(context);
 	}
 }
 
@@ -231,6 +371,34 @@
 - (void)removeFromSuperlayer {
   	[self.superlayer.sublayers removeObjectIdenticalTo:self];
 	self.superlayer = nil;
+}
+
+- (BOOL)isDescendantOfLayer:(MALayer *)layer {
+    NSParameterAssert(layer != nil);
+
+    MALayer *testLayer = self;
+    do {
+        if (testLayer == layer)
+            return YES;
+
+        testLayer = testLayer.superlayer;
+    } while (testLayer);
+
+    return NO;
+}
+
+- (MALayer *)commonParentLayerWithLayer:(MALayer *)layer {
+    // TODO: this is a naive implementation
+
+    MALayer *parentLayer = self;
+    do {
+        if ([self isDescendantOfLayer:parentLayer] && [layer isDescendantOfLayer:parentLayer])
+            return parentLayer;
+
+        parentLayer = parentLayer.superlayer;
+    } while (parentLayer);
+
+    return nil;
 }
 
 @end
