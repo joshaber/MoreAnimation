@@ -6,7 +6,7 @@
 //  Released into the public domain.
 //
 
-#import "MALayer.h"
+#import <MoreAnimation/MALayer.h>
 
 /**
  * A layer that renders a text string. Whenever possible, subpixel antialiasing

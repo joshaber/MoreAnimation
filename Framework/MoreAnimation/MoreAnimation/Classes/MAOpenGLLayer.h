@@ -6,7 +6,7 @@
 //  Released into the public domain.
 //
 
-#import "MALayer.h"
+#import <MoreAnimation/MALayer.h>
 
 /**
  * A layer for rendering OpenGL content. An OpenGL layer can host any other kind
