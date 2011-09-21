@@ -57,6 +57,13 @@
 
 #pragma mark Drawing
 
+- (void)display {
+  	// only cache contents if this layer is opaque
+  	if (self.opaque) {
+		[super display];
+	}
+}
+
 - (void)drawInContext:(CGContextRef)context {
 	CGContextSetShouldAntialias(context, YES);
   	CGContextSetShouldSmoothFonts(context, YES);

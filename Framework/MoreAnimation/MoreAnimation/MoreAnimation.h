@@ -6,6 +6,7 @@
 //  Released into the public domain.
 //
 
+#import <MoreAnimation/NSGraphicsContext+MoreAnimationExtensions.h>
 #import <MoreAnimation/NSOpenGLContext+MoreAnimationExtensions.h>
 #import <MoreAnimation/MALayer.h>
 #import <MoreAnimation/MAOpenGLLayer.h>

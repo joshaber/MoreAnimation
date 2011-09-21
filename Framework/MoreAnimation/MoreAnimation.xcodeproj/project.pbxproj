@@ -31,6 +31,8 @@
 		D0355C6C141D70EE0053AF73 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0355C6B141D70EE0053AF73 /* OpenGL.framework */; };
 		D044F4E514243CC400C4EFCE /* MAView.h in Headers */ = {isa = PBXBuildFile; fileRef = D044F4E314243CC400C4EFCE /* MAView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D044F4E614243CC400C4EFCE /* MAView.m in Sources */ = {isa = PBXBuildFile; fileRef = D044F4E414243CC400C4EFCE /* MAView.m */; };
+		D058C1DE14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = D058C1DC14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D058C1DF14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = D058C1DD14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.m */; };
 		D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */; };
 		D05A860E1423E5D7009A4748 /* EXTSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */; };
@@ -86,6 +88,8 @@
 		D0355C6B141D70EE0053AF73 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		D044F4E314243CC400C4EFCE /* MAView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAView.h; sourceTree = "<group>"; };
 		D044F4E414243CC400C4EFCE /* MAView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAView.m; sourceTree = "<group>"; };
+		D058C1DC14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSGraphicsContext+MoreAnimationExtensions.h"; sourceTree = "<group>"; };
+		D058C1DD14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSGraphicsContext+MoreAnimationExtensions.m"; sourceTree = "<group>"; };
 		D05A860B1423E5D7009A4748 /* EXTSafeCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTSafeCategory.h; sourceTree = "<group>"; };
 		D05A860C1423E5D7009A4748 /* EXTSafeCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTSafeCategory.m; sourceTree = "<group>"; };
 		D05A860F1423E5E0009A4748 /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTRuntimeExtensions.h; sourceTree = "<group>"; };
@@ -269,6 +273,8 @@
 		D05A86251423E734009A4748 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				D058C1DC14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.h */,
+				D058C1DD14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.m */,
 				D05A86271423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h */,
 				D05A86281423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m */,
 			);
@@ -301,6 +307,7 @@
 				D05A86291423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.h in Headers */,
 				D044F4E514243CC400C4EFCE /* MAView.h in Headers */,
 				D0863C051425BB6D00CDE087 /* MATextLayer.h in Headers */,
+				D058C1DE14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.h in Headers */,
 				D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */,
 				D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */,
 				D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */,
@@ -425,6 +432,7 @@
 				D044F4E614243CC400C4EFCE /* MAView.m in Sources */,
 				D0161260142470BA001DFB28 /* EXTScope.m in Sources */,
 				D0863C061425BB6D00CDE087 /* MATextLayer.m in Sources */,
+				D058C1DF14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
