@@ -24,6 +24,7 @@
     self = [super initWithFrame:frame];
     if (self) {
 		self.contentLayer = [[MALayer alloc] init];
+		[self setCanDrawConcurrently:YES];
     }
     
     return self;

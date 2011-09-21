@@ -57,6 +57,7 @@ static const CGPoint anchorArray[5] = {
     
 	self.prettyLayer = [[MALayer alloc] init];
 	self.prettyLayer.delegate = [self weakReferenceProxy];
+	self.prettyLayer.opaque = YES;
 
 	id layerView = self.contentView;
 	self.prettyLayer.frame = CGRectInset([layerView contentLayer].frame, 20, 20);
@@ -127,10 +128,11 @@ static const CGPoint anchorArray[5] = {
 
 - (IBAction)infinitizeLayers:(id)sender {
     MALayer *topLayer = self.prettyLayer;
-    for (NSUInteger i = 0;i < 1000;++i) {
+    for (NSUInteger i = 0;i < 100;++i) {
         MALayer *nextLayer = [[[topLayer class] alloc] init];
         nextLayer.delegate = [self weakReferenceProxy];
         nextLayer.frame = CGRectInset(topLayer.bounds, 2, 2);
+		nextLayer.opaque = YES;
         [topLayer addSublayer:nextLayer];
 
         topLayer = nextLayer;
@@ -146,6 +148,7 @@ static const CGPoint anchorArray[5] = {
             MALayer *nextLayer = [[[topLayer class] alloc] init];
             nextLayer.delegate = [self weakReferenceProxy];
             nextLayer.frame = CGRectMake(i * 5, height * j, 5, height);
+			nextLayer.opaque = YES;
             [topLayer insertSublayer:nextLayer below:self.textLayer];
         }
     }

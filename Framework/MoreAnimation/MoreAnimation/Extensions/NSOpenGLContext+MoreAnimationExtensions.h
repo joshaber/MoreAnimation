@@ -18,7 +18,8 @@
 
 /**
  * Executes \a block while the receiver has been locked and set as the current
- * thread's OpenGL context.
+ * thread's OpenGL context. The previous context for the current thread is
+ * restored when finished.
  * 
  * @warning This method may block for an indefinite amount of time, if the
  * receiver's CGL context has been locked on another thread.
