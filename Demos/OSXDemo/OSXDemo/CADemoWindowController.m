@@ -12,7 +12,7 @@
 @end
 
 @interface NSView (LayerExtensions)
-@property (nonatomic, retain) CALayer *contentLayer;
+@property (nonatomic, retain) MALayer *contentLayer;
 @end
 
 @implementation CADemoWindowController
@@ -20,28 +20,24 @@
 
 - (void)windowDidLoad
 {
-    [super windowDidLoad];
+	MAHostingCALayer *hostingLayer = [[MAHostingCALayer alloc] init];
 
-	[self.contentView setLayer:[[CALayer alloc] init]];
+	[self.contentView setLayer:hostingLayer];
 	[self.contentView setWantsLayer:YES];
 	[self.contentView setLayerContentsRedrawPolicy:NSViewLayerContentsRedrawDuringViewResize];
-    
-	// hack to verify interface compatibility with CALayer
-	self.prettyLayer = (id)[[CALayer alloc] init];
-	self.prettyLayer.delegate = [self weakReferenceProxy];
-	self.prettyLayer.frame = CGRectInset(self.contentView.frame, 20, 20);
-	[self.contentView.layer addSublayer:(id)self.prettyLayer];
 
-	[self.contentView.layer setNeedsDisplay];
-	[self.contentView setNeedsDisplay:YES];
+	self.contentView.contentLayer = [[MALayer alloc] init];
+	self.contentView.contentLayer.frame = NSRectToCGRect(self.contentView.bounds);
+    [super windowDidLoad];
 }
 @end
 
 @implementation NSView (LayerExtensions)
-- (CALayer *)contentLayer {
-  	return nil;
+- (MALayer *)contentLayer {
+  	return [(id)self.layer MALayer];
 }
 
-- (void)setContentLayer:(CALayer *)layer {
+- (void)setContentLayer:(MALayer *)layer {
+  	[(id)self.layer setMALayer:layer];
 }
 @end
