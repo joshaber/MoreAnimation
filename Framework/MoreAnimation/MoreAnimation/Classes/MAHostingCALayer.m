@@ -51,6 +51,9 @@
   	OSSpinLockLock(&m_MALayerSpinLock);
 	m_MALayer = layer;
   	OSSpinLockUnlock(&m_MALayerSpinLock);
+
+	[self setNeedsLayout];
+	[self setNeedsDisplay];
 }
 
 - (BOOL)needsDisplayOnBoundsChange {
@@ -69,6 +72,15 @@
   	self.MALayer.opaque = value;
 }
 
+#pragma mark Animation
+
+- (id<CAAction>)actionForKey:(NSString *)key {
+	if ([key isEqualToString:@"contents"])
+		return nil;
+	else
+		return [super actionForKey:key];
+}
+
 #pragma mark Layout
 
 - (void)layoutSublayers {
@@ -77,15 +89,14 @@
 
 #pragma mark Rendering and drawing
 
-- (void)display {
-  	// don't draw anything -- depend on MALayer caching
-}
-
 - (void)drawInContext:(CGContextRef)context {
-  	[self.MALayer drawInContext:context];
+	[CATransaction begin];
+	[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+  	[self.MALayer renderInContext:context];
+	[CATransaction commit];
 }
 
 - (void)renderInContext:(CGContextRef)context {
-  	[self.MALayer renderInContext:context];
+  	[self drawInContext:context];
 }
 @end
