@@ -42,6 +42,12 @@
 }
 
 - (void)setMALayer:(MALayer *)layer {
+  	__weak CALayer *weakSelf = self;
+
+  	layer.needsRenderBlock = ^(MALayer *layer){
+		[weakSelf setNeedsDisplay];
+	};
+
   	OSSpinLockLock(&m_MALayerSpinLock);
 	m_MALayer = layer;
   	OSSpinLockUnlock(&m_MALayerSpinLock);

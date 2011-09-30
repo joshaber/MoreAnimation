@@ -20,6 +20,9 @@
  * 
  * Most non-geometrical Core Animation properties accessed on the receiver will
  * simply call through to the properties on this layer.
+ * 
+ * @note This will override the MALayer#needsRenderBlock of any set layer. You
+ * should not attempt to change the block set.
  */
 @property (strong) MALayer *MALayer;
 @end
