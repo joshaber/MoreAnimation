@@ -44,6 +44,8 @@
 		D05A862A1423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = D05A86281423E767009A4748 /* NSOpenGLContext+MoreAnimationExtensions.m */; };
 		D0863C051425BB6D00CDE087 /* MATextLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = D0863C031425BB6D00CDE087 /* MATextLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0863C061425BB6D00CDE087 /* MATextLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0863C041425BB6D00CDE087 /* MATextLayer.m */; };
+		D0FA5DAF14357AFF00612DE1 /* MAHostingCALayer.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FA5DAD14357AFF00612DE1 /* MAHostingCALayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D0FA5DB014357AFF00612DE1 /* MAHostingCALayer.m in Sources */ = {isa = PBXBuildFile; fileRef = D0FA5DAE14357AFF00612DE1 /* MAHostingCALayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +108,8 @@
 		D0918649141D7564005F86FF /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		D091864A141D7564005F86FF /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		D091864B141D7564005F86FF /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		D0FA5DAD14357AFF00612DE1 /* MAHostingCALayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAHostingCALayer.h; sourceTree = "<group>"; };
+		D0FA5DAE14357AFF00612DE1 /* MAHostingCALayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAHostingCALayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +237,8 @@
 				D0355C54141D700C0053AF73 /* MALayer.h */,
 				D0355C55141D700C0053AF73 /* MALayer.m */,
 				D0355C53141D700C0053AF73 /* MALayer+Private.h */,
+				D0FA5DAD14357AFF00612DE1 /* MAHostingCALayer.h */,
+				D0FA5DAE14357AFF00612DE1 /* MAHostingCALayer.m */,
 				D0355C56141D700C0053AF73 /* MAOpenGLLayer.h */,
 				D0355C57141D700C0053AF73 /* MAOpenGLLayer.m */,
 				D0863C031425BB6D00CDE087 /* MATextLayer.h */,
@@ -308,6 +314,7 @@
 				D044F4E514243CC400C4EFCE /* MAView.h in Headers */,
 				D0863C051425BB6D00CDE087 /* MATextLayer.h in Headers */,
 				D058C1DE14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.h in Headers */,
+				D0FA5DAF14357AFF00612DE1 /* MAHostingCALayer.h in Headers */,
 				D0355C5C141D700C0053AF73 /* MALayer+Private.h in Headers */,
 				D05A860D1423E5D7009A4748 /* EXTSafeCategory.h in Headers */,
 				D05A86111423E5E0009A4748 /* EXTRuntimeExtensions.h in Headers */,
@@ -433,6 +440,7 @@
 				D0161260142470BA001DFB28 /* EXTScope.m in Sources */,
 				D0863C061425BB6D00CDE087 /* MATextLayer.m in Sources */,
 				D058C1DF14273AEE001672BB /* NSGraphicsContext+MoreAnimationExtensions.m in Sources */,
+				D0FA5DB014357AFF00612DE1 /* MAHostingCALayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

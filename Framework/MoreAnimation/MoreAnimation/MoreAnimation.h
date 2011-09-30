@@ -8,6 +8,7 @@
 
 #import <MoreAnimation/NSGraphicsContext+MoreAnimationExtensions.h>
 #import <MoreAnimation/NSOpenGLContext+MoreAnimationExtensions.h>
+#import <MoreAnimation/MAHostingCALayer.h>
 #import <MoreAnimation/MALayer.h>
 #import <MoreAnimation/MAOpenGLLayer.h>
 #import <MoreAnimation/MAOpenGLView.h>
