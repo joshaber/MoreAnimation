@@ -9,8 +9,5 @@
 #import <Cocoa/Cocoa.h>
 #import "DemoWindowController.h"
 
-@class MAView;
-
 @interface CADemoWindowController : DemoWindowController
-@property (assign) IBOutlet MAView *contentView;
 @end
