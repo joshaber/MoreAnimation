@@ -1,5 +1,5 @@
 //
-//  MAOpenGLView.h
+//  MANSView.h
 //  MoreAnimation
 //
 //  Created by Josh Abernathy on 9/10/11.
@@ -11,8 +11,8 @@
 @class MALayer;
 
 
-@interface MAOpenGLView : NSOpenGLView
+@interface MANSView : NSOpenGLView
 
-@property (nonatomic, strong) MALayer *contentLayer;
+@property (nonatomic, strong) MALayer *rootLayer;
 
 @end

@@ -16,7 +16,7 @@
 		88E5CE51141B3E9600E54623 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 88E5CE4F141B3E9600E54623 /* MainMenu.xib */; };
 		88E5CE59141B408800E54623 /* MALayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE58141B408800E54623 /* MALayer.m */; };
 		88E5CE5B141B40FC00E54623 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88E5CE5A141B40FC00E54623 /* OpenGL.framework */; };
-		88E5CE62141B42B500E54623 /* MAOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE61141B42B500E54623 /* MAOpenGLView.m */; };
+		88E5CE62141B42B500E54623 /* MANSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 88E5CE61141B42B500E54623 /* MANSView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,8 +37,8 @@
 		88E5CE57141B408800E54623 /* MALayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MALayer.h; path = Classes/MALayer.h; sourceTree = "<group>"; };
 		88E5CE58141B408800E54623 /* MALayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MALayer.m; path = Classes/MALayer.m; sourceTree = "<group>"; };
 		88E5CE5A141B40FC00E54623 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		88E5CE60141B42B500E54623 /* MAOpenGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAOpenGLView.h; path = Classes/MAOpenGLView.h; sourceTree = "<group>"; };
-		88E5CE61141B42B500E54623 /* MAOpenGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAOpenGLView.m; path = Classes/MAOpenGLView.m; sourceTree = "<group>"; };
+		88E5CE60141B42B500E54623 /* MANSView.h */ = {isa = PBXFileReference; fileEncoding = 4; name = MANSView.h; path = Classes/MANSView.h; sourceTree = "<group>"; };
+		88E5CE61141B42B500E54623 /* MANSView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MANSView.m; path = Classes/MANSView.m; sourceTree = "<group>"; };
 		88E5CE6B141B53F000E54623 /* MALayer+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MALayer+Private.h"; path = "Classes/MALayer+Private.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -102,8 +102,8 @@
 				88E5CE57141B408800E54623 /* MALayer.h */,
 				88E5CE58141B408800E54623 /* MALayer.m */,
 				88E5CE6B141B53F000E54623 /* MALayer+Private.h */,
-				88E5CE60141B42B500E54623 /* MAOpenGLView.h */,
-				88E5CE61141B42B500E54623 /* MAOpenGLView.m */,
+				88E5CE60141B42B500E54623 /* MANSView.h */,
+				88E5CE61141B42B500E54623 /* MANSView.m */,
 			);
 			path = MoreAnimation;
 			sourceTree = "<group>";
@@ -188,7 +188,7 @@
 				88E5CE47141B3E9600E54623 /* main.m in Sources */,
 				88E5CE4E141B3E9600E54623 /* MAAppDelegate.m in Sources */,
 				88E5CE59141B408800E54623 /* MALayer.m in Sources */,
-				88E5CE62141B42B500E54623 /* MAOpenGLView.m in Sources */,
+				88E5CE62141B42B500E54623 /* MANSView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

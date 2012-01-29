@@ -1,27 +1,26 @@
 //
-//  MAOpenGLView.m
+//  MANSView.m
 //  MoreAnimation
 //
 //  Created by Josh Abernathy on 9/10/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "MAOpenGLView.h"
+#import "MANSView.h"
 #import "MALayer.h"
-#import "MALayer+Private.h"
 
 
-@implementation MAOpenGLView
+@implementation MANSView
 
 
 #pragma mark NSView
 
 - (void)drawRect:(NSRect)dirtyRect {
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	
-	[self.contentLayer displayRecursively];
+	[self.rootLayer displayIfNeeded];
 	
 	[[self openGLContext] flushBuffer];
 }
@@ -36,13 +35,14 @@
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
 	
-	self.contentLayer = [[MALayer alloc] init];
+	self.rootLayer = [[MALayer alloc] init];
+	self.rootLayer.needsDisplayOnBoundsChange = YES;
 }
 
 - (void)reshape {
 	[super reshape];
 			
-	glViewport(0, 0, (GLsizei) self.bounds.size.width, (GLsizei) self.bounds.size.height);
+	glViewport(0, 0, (GLsizei) CGRectGetWidth(self.bounds), (GLsizei) CGRectGetHeight(self.bounds));
 	
 	glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -51,12 +51,12 @@
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	self.contentLayer.frame = NSRectToCGRect(self.bounds);
+	self.rootLayer.frame = NSRectToCGRect(self.bounds);
 }
 
 
 #pragma mark API
 
-@synthesize contentLayer;
+@synthesize rootLayer;
 
 @end
